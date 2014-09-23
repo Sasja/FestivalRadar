@@ -1,0 +1,77 @@
+package com.pollytronics.festivalradar;
+
+import android.util.Log;
+
+import com.pollytronics.festivalradar.lib.RadarBlip;
+import com.pollytronics.festivalradar.lib.RadarContact;
+
+import java.util.Random;
+
+/**
+ * Created by pollywog on 9/23/14.
+ */
+public class LocalisationSubService extends AbstractSubService {
+
+    private final String TAG = "LocalisationSubService";
+    private int updateTime_ms;
+
+    RadarBlip lastBlip;
+
+    public LocalisationSubService(RadarService rs) {
+        super(rs);
+        lastBlip = new RadarBlip();
+    }
+
+    @Override
+    public void onCreate() {
+        Log.i(TAG, "onCreate");
+        updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();
+        getMainHandler().post(localiseLoop);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG,"onDestroy");
+        getMainHandler().removeCallbacks(localiseLoop);
+    }
+
+    @Override
+    protected void onRegister() {
+        Log.i(TAG,"onRegister");
+    }
+
+    @Override
+    protected void onUnregister() {
+        Log.i(TAG,"onUnregister");
+    }
+
+    @Override
+    protected void onNewSettings() {
+        getMainHandler().removeCallbacks(localiseLoop);
+        updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();
+        Log.i(TAG, "set updateTime to (ms) "+Integer.toString(updateTime_ms));
+        getMainHandler().post(localiseLoop);
+    }
+
+    //-------------------------------------------------
+
+    private final Runnable localiseLoop = new Runnable() {
+        @Override
+        public void run() {
+            try{
+                RadarContact selfContact = getRadarDatabase().getSelfContact();
+                selfContact.addBlip(selfContact.getLastBlip().brownian(2.0).reClock());
+                getRadarDatabase().updateSelfContact(selfContact);
+                getRadarService().notifyNewData();
+                getMainHandler().postDelayed(localiseLoop,updateTime_ms);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
+    public RadarBlip getLastBlip(){
+        return new RadarBlip(lastBlip);
+    }
+}

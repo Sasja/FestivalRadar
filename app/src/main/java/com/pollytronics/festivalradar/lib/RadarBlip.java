@@ -1,20 +1,18 @@
 package com.pollytronics.festivalradar.lib;
 
-import android.os.SystemClock;
-import android.provider.Settings;
-
 import java.util.Random;
 
 /**
  * Created by pollywog on 9/22/14.
+ * yup
  */
 public class RadarBlip {
     private double x,y;
     private long t;
 
     public RadarBlip(){
-        this.x = 0;
-        this.y = 0;
+        this.x = 0.0;
+        this.y = 0.0;
         this.t = 0;
     }
 

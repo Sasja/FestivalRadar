@@ -39,9 +39,7 @@ public class SettingsRadarActivity extends RadarActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 getRadarPreferences().setLocalisationUpdateRate_percent(seekBar.getProgress());
                 Log.i(TAG, "setting Localisation update rate to " + Integer.toString(seekBar.getProgress()));
-                if(isBoundToService()) {
-                    getBoundRadarService().notifyNewSettings();
-                }
+                getBoundRadarService().notifyNewSettings();
             }
         });
 
@@ -60,9 +58,7 @@ public class SettingsRadarActivity extends RadarActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 getRadarPreferences().setCloudUpdateRate_percent(seekBar.getProgress());
                 Log.i(TAG, "setting Cloud update rate to " + Integer.toString(seekBar.getProgress()));
-                if(isBoundToService()) {
-                    getBoundRadarService().notifyNewSettings();
-                }
+                getBoundRadarService().notifyNewSettings();
             }
         });
     }

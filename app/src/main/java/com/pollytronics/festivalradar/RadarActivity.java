@@ -42,7 +42,21 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
      * @return interface to instance of RadarService
      */
     protected RadarService_interface4RadarActivity getBoundRadarService() {
-        return (RadarService_interface4RadarActivity) rs;
+        if(rsBound){
+            return (RadarService_interface4RadarActivity) rs;
+        } else {
+            return new RadarService_interface4RadarActivity() {
+                @Override
+                public void sayYo() {
+                    Log.i(TAG, "called sayYo() while not connected to service");
+                }
+
+                @Override
+                public void notifyNewSettings() {
+                    Log.i(TAG, "called notifyNewSettings() while not connected to service");
+                }
+            };
+        }
     }
 
     protected RadarDatabase_Interface4RadarActivity getRadarDatabase() {

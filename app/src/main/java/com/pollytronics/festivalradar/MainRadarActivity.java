@@ -30,12 +30,8 @@ public class MainRadarActivity extends RadarActivity {
         sayYoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isBoundToService()){
-                    Log.i(TAG, "calling rs.sayYo()");
-                    getBoundRadarService().sayYo();
-                } else {
-                    Log.i(TAG,"fuck");
-                }
+                Log.i(TAG, "calling rs.sayYo()");
+                getBoundRadarService().sayYo();
             }
         });
 

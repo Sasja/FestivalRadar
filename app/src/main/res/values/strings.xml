@@ -20,15 +20,13 @@
         Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
     <string name="action_about">About</string>
     <string name="title_activity_settings_radar">SettingsRadarActivity</string>
-    <string name="settings_dummytext">settings are set here</string>
     <string name="title_activity_manage_contacts_radar">ManageContactsRadarActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_manage_contacts">Contacts</string>
     <string name="button_add_contact">Add</string>
     <string name="button_remove_contact">Remove</string>
     <string name="title_activity_debug_radar">Debug RadarActivity</string>
     <string name="action_debug">Debug</string>
     <string name="settings_localisation_update_rate">Localisation Update Rate</string>
-    <string name="settings_cloud_update_rate">Network connection rate</string>
+    <string name="settings_cloud_update_rate">Network Connection Rate</string>
 
 </resources>

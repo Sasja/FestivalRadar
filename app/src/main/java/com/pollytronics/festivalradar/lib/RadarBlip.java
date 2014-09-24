@@ -26,16 +26,10 @@ public class RadarBlip extends Location{
         super(blip);
     }
 
-    public RadarBlip(double latitude, double longitude) {
-        super(PROVIDER);
-        setLatitude(latitude);
-        setLongitude(longitude);
-    }
-
     @Override
     public String toString() {
         if(getTime()!=0) {
-            return String.format("%.3f lat %.3f lon", getLatitude(), getLongitude());
+            return String.format("%.6f lat %.6f lon", getLatitude(), getLongitude());
         } else {
             return "no data";
         }

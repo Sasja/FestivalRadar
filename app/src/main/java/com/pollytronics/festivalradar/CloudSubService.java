@@ -67,7 +67,7 @@ public class CloudSubService extends AbstractSubService {
     public void updateAllContactsInDatabase(){
         Collection<RadarContact> contacts = getRadarDatabase().getAllContacts();
         for(RadarContact c : contacts){
-            c.addBlip(new RadarBlip(c.getLastBlip().brownian(1.0).reClock()));
+            c.addBlip(new RadarBlip(c.getLastBlip().brownian(0.0001).reClock()));
             getRadarDatabase().updateContact(c);
         }
     }

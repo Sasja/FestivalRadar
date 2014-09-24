@@ -2,7 +2,6 @@ package com.pollytronics.festivalradar;
 
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.RadarBlip;
 import com.pollytronics.festivalradar.lib.RadarContact;
 
 /**
@@ -55,7 +54,7 @@ public class LocalisationSubService extends AbstractSubService {
         public void run() {
             try{
                 RadarContact selfContact = getRadarDatabase().getSelfContact();
-                selfContact.addBlip(selfContact.getLastBlip().brownian(0.2).reClock());
+                selfContact.addBlip(selfContact.getLastBlip().brownian(0.00001).reClock());
                 getRadarDatabase().updateSelfContact(selfContact);
                 getRadarService().notifyNewData();
                 getMainHandler().postDelayed(localiseLoop,updateTime_ms);

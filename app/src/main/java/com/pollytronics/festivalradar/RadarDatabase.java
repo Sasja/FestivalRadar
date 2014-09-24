@@ -1,12 +1,12 @@
 package com.pollytronics.festivalradar;
 
+import android.os.SystemClock;
+
 import com.pollytronics.festivalradar.lib.RadarBlip;
 import com.pollytronics.festivalradar.lib.RadarContact;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -25,15 +25,31 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     private RadarContact selfContact;
 
     private RadarDatabase(){
-        Random rand = new Random();
-        addContact((new RadarContact()).setName("Jos").addBlip(new RadarBlip(rand.nextFloat()*200-100,rand.nextFloat()*200-100)));            // some dummy contacts
-        addContact((new RadarContact()).setName("Korneel").addBlip(new RadarBlip(rand.nextFloat()*200-100,rand.nextFloat()*200-100)));
-        addContact((new RadarContact()).setName("Merel").addBlip(new RadarBlip(rand.nextFloat()*200-100,rand.nextFloat()*200-100)));
-        addContact((new RadarContact()).setName("Davy de Pavy").addBlip(new RadarBlip(rand.nextFloat()*200-100,rand.nextFloat()*200-100)));
-        addContact((new RadarContact()).setName("Nancy de Pancy").addBlip(new RadarBlip(rand.nextFloat()*200-100,rand.nextFloat()*200-100)));
-        addContact((new RadarContact()).setName("Sigfried Bracke").addBlip(new RadarBlip(rand.nextFloat()*200-100,rand.nextFloat()*200-100)));
+        /**
+         * temporary stuff to generate some random blips for testing
+         */
+        final double LAT = 51.072478;
+        final double LON = 3.709913;
+        final double LATRANGE = 0.003;
+        final double LONRANGE = 0.002;
+        class VanbeverBlip extends RadarBlip{
+            VanbeverBlip(){
+                super();
+                Random rnd = new Random();
+                setLatitude(LAT+LATRANGE*(rnd.nextDouble()-0.5));
+                setLongitude(LON+LONRANGE*(rnd.nextDouble()-0.5));
+                setTime(SystemClock.currentThreadTimeMillis());
+            }
+        }
+        // some random contacts for testing
+        addContact((new RadarContact()).setName("Dieter").addBlip(new VanbeverBlip()));            // some dummy contacts
+        addContact((new RadarContact()).setName("Seb").addBlip(new VanbeverBlip()));
+        addContact((new RadarContact()).setName("Merel").addBlip(new VanbeverBlip()));
+        addContact((new RadarContact()).setName("Alex").addBlip(new VanbeverBlip()));
+        addContact((new RadarContact()).setName("Nancy de Pancy").addBlip(new VanbeverBlip()));
+        addContact((new RadarContact()).setName("Sigfried Bracke").addBlip(new VanbeverBlip()));
 
-        selfContact = (new RadarContact()).setName("self");
+        selfContact = (new RadarContact()).setName("self").addBlip(new VanbeverBlip());
     }
 
     public static RadarDatabase getInstance(){
@@ -55,7 +71,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         for(RadarContact contact : allContacts){
             clone.add(new RadarContact(contact));
         }
-        return (Collection<RadarContact>) clone;
+        return clone;
     }
 
     @Override

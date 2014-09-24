@@ -1,6 +1,5 @@
 package com.pollytronics.festivalradar;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,12 +12,8 @@ import android.widget.ListView;
 import com.pollytronics.festivalradar.lib.RadarContact;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 
 public class ManageContactsRadarActivity extends RadarActivity {
@@ -42,7 +37,7 @@ public class ManageContactsRadarActivity extends RadarActivity {
             public void onClick(View view) {
                 String name = editTextAddContactName.getText().toString();
                 if(name.length()==0) name = "empty";
-                getRadarDatabase().addContact((new RadarContact()).setName(name));
+                getRadarDatabase().addContact((new RadarContact()).setName(name).addBlip(getRadarDatabase().getSelfContact().getLastBlip()));   //ugly temporary shit
                 updateContactListView();
             }
         });

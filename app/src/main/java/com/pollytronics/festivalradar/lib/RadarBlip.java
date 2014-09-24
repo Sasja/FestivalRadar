@@ -1,54 +1,59 @@
 package com.pollytronics.festivalradar.lib;
 
+import android.location.Location;
+
 import java.util.Random;
 
 /**
  * Created by pollywog on 9/22/14.
  * yup
  */
-public class RadarBlip {
-    private double x,y;
-    private long t;
+public class RadarBlip extends Location{
+
+
+    private static String TAG = "RadarBlip";
+
+    private static String PROVIDER = "RadarBlip";
 
     public RadarBlip(){
-        this.x = 0.0;
-        this.y = 0.0;
-        this.t = 0;
+        super(PROVIDER);
+        setLatitude(0);
+        setLongitude(0);
+        setTime(0);
     }
 
     public RadarBlip(RadarBlip blip) {
-        this.x = blip.x;
-        this.y = blip.y;
-        this.t = blip.t;
+        super(blip);
     }
 
-    public RadarBlip(double x, double y) {
-        this.x = x;
-        this.y = y;
-        this.t = System.currentTimeMillis();
+    public RadarBlip(double latitude, double longitude) {
+        super(PROVIDER);
+        setLatitude(latitude);
+        setLongitude(longitude);
     }
 
+    @Override
     public String toString() {
-        if(t!=0) {
-            return String.format("x=%.2f y=%.2f", x, y);
+        if(getTime()!=0) {
+            return String.format("%.3f lat %.3f lon", getLatitude(), getLongitude());
         } else {
             return "no data";
         }
     }
 
     public boolean after(RadarBlip blip) {
-        return (this.t > blip.t);
+        return (this.getTime() > blip.getTime());
     }
 
-    public RadarBlip brownian(double distance){
+    public RadarBlip brownian(double degrees){
         Random r = new Random();
-        this.x += (r.nextDouble()-.5)*distance;
-        this.y += (r.nextDouble()-.5)*distance;
+        setLatitude(getLatitude()+(r.nextDouble()-.5)*degrees);
+        setLongitude(getLongitude()+(r.nextDouble()-.5)*degrees);
         return this;
     }
 
     public RadarBlip reClock(){
-        this.t = System.currentTimeMillis();
+        setTime(System.currentTimeMillis());
         return this;
     }
 }

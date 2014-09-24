@@ -60,7 +60,7 @@ public class LocalisationSubService extends AbstractSubService {
         public void run() {
             try{
                 RadarContact selfContact = getRadarDatabase().getSelfContact();
-                selfContact.addBlip(selfContact.getLastBlip().brownian(2.0).reClock());
+                selfContact.addBlip(selfContact.getLastBlip().brownian(0.2).reClock());
                 getRadarDatabase().updateSelfContact(selfContact);
                 getRadarService().notifyNewData();
                 getMainHandler().postDelayed(localiseLoop,updateTime_ms);

@@ -4,8 +4,8 @@ import android.util.Log;
 
 /**
  * Created by pollywog on 9/20/14.
- * Example SubService that counts and sends a string to the listening activity each second
- * it also provides a sayYo method to the RadarService, so it can say "YO!!!" to any RadarActivity that might be listening (registered).
+ * Example SubService that provides a sayYo method to the RadarService,
+ * so it can say "YO!!!" to any RadarActivity that might be listening (=that is registered).
  */
 public class TestSubService extends AbstractSubService {
 
@@ -18,18 +18,17 @@ public class TestSubService extends AbstractSubService {
     @Override
     public void onCreate() {
         Log.i(TAG,"onCreate");
-        getMainHandler().post(testLoop);
     }
 
     @Override
     public void onDestroy() {
         Log.i(TAG,"onDestroy");
-        getMainHandler().removeCallbacks(testLoop);
     }
 
     @Override
     protected void onRegister() {
         Log.i(TAG,"onRegister");
+        getRadarService().sendStringToRa("well hello there, mr activity!\n");
     }
 
     @Override
@@ -44,24 +43,12 @@ public class TestSubService extends AbstractSubService {
 
     //-----
 
-    private int cnt = 0;
-    private final Runnable testLoop = new Runnable() {
-        @Override
-        public void run() {
-            try{
-                getRadarService().sendStringToRa(Integer.toString(cnt++) + " ");
-                getMainHandler().postDelayed(testLoop,1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
     /**
-     * yooooooooooo motherfucker! just a test-method.
+     * yooooooooooo motherfucker! just a test-method to show how to send a message to any listening activity from a subservice.
+     * that message is then handled (or discarded) by its print() method.
      */
     public void sayYo() {
         Log.i(TAG,"YO!!!");
-        getRadarService().sendStringToRa("\nYO\n");
+        getRadarService().sendStringToRa("YO\n");
     }
 }

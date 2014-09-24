@@ -5,8 +5,6 @@ import android.util.Log;
 import com.pollytronics.festivalradar.lib.RadarBlip;
 import com.pollytronics.festivalradar.lib.RadarContact;
 
-import java.util.Random;
-
 /**
  * Created by pollywog on 9/23/14.
  */
@@ -15,11 +13,8 @@ public class LocalisationSubService extends AbstractSubService {
     private final String TAG = "LocalisationSubService";
     private int updateTime_ms;
 
-    RadarBlip lastBlip;
-
     public LocalisationSubService(RadarService rs) {
         super(rs);
-        lastBlip = new RadarBlip();
     }
 
     @Override
@@ -69,9 +64,4 @@ public class LocalisationSubService extends AbstractSubService {
             }
         }
     };
-
-
-    public RadarBlip getLastBlip(){
-        return new RadarBlip(lastBlip);
-    }
 }

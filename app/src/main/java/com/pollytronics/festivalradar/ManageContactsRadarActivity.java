@@ -55,16 +55,12 @@ public class ManageContactsRadarActivity extends RadarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * set up the listView with data from the Database
+     */
     private void updateContactListView(){
         ArrayList<String> stringArray = new ArrayList<String>();
         ArrayList<RadarContact> contacts = new ArrayList<RadarContact>(getRadarDatabase().getAllContacts());
@@ -80,6 +76,9 @@ public class ManageContactsRadarActivity extends RadarActivity {
         listView.setAdapter(adapter);
     }
 
+    /**
+     * gets called by service when it has updated the database with new info
+     */
     @Override
     public void notifyDatabaseUpdate() {
         super.notifyDatabaseUpdate();

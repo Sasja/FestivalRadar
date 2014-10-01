@@ -26,7 +26,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     private Set<RadarContact> allContacts = new HashSet<RadarContact>();
     private RadarContact selfContact;
 
-    private RadarDatabase(){
+    private RadarDatabase(Context context){
         /**
          * temporary stuff to generate some random blips for testing
          */
@@ -103,7 +103,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
                 if(id==c.getID()) ok = false;
             }
         } while(!ok);
-        allContacts.add(new RadarContact(contact, id));
+        allContacts.add(new RadarContact(contact).setID(id));
     }
 
     @Override

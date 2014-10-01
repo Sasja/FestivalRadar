@@ -1,14 +1,14 @@
 package com.pollytronics.festivalradar;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-
+/**
+ * RadarActivity for debugging purposes
+ * shows received calls
+ */
 public class DebugRadarActivity extends RadarActivity {
 
     private final String TAG = "DebugRadarActivity";

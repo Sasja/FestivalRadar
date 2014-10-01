@@ -1,7 +1,5 @@
 package com.pollytronics.festivalradar;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,7 +10,10 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-
+/**
+ * Main app activity, it should give an overview of the situation and provide a simple GUI to
+ * the most likely actions a user would want to perform
+ */
 public class MainRadarActivity extends RadarActivity {
 
     private static final String TAG = "MainRadarActivity";

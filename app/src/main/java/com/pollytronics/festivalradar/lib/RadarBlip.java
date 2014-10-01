@@ -6,10 +6,9 @@ import java.util.Random;
 
 /**
  * Created by pollywog on 9/22/14.
- * yup
+ * extension of the Location class for use within radar app
  */
 public class RadarBlip extends Location{
-
 
     private static String TAG = "RadarBlip";
 
@@ -39,6 +38,12 @@ public class RadarBlip extends Location{
         return (this.getTime() > blip.getTime());
     }
 
+    /**
+     * moves the location randomly over more or less n degrees
+     * for testing only, it adapts the object and returns itself
+     * @param degrees amount of degrees to move
+     * @return itself
+     */
     public RadarBlip brownian(double degrees){
         Random r = new Random();
         setLatitude(getLatitude()+(r.nextDouble()-.5)*degrees);
@@ -46,6 +51,10 @@ public class RadarBlip extends Location{
         return this;
     }
 
+    /**
+     * set time to current system clock and return self
+     * @return itself
+     */
     public RadarBlip reClock(){
         setTime(System.currentTimeMillis());
         return this;

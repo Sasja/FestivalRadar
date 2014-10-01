@@ -8,6 +8,8 @@ import com.pollytronics.festivalradar.lib.RadarContact;
 import java.util.Collection;
 
 /**
+ * Mock Cloud SubService that periodically gets all contacts and randomly updates their last blip a bit
+ * for testing purposes only
  * Created by pollywog on 9/23/14.
  */
 public class CloudSubService extends AbstractSubService {
@@ -64,6 +66,9 @@ public class CloudSubService extends AbstractSubService {
         }
     };
 
+    /**
+     * mock method to update locations of all contacts a meter or so
+     */
     public void updateAllContactsInDatabase(){
         Collection<RadarContact> contacts = getRadarDatabase().getAllContacts();
         for(RadarContact c : contacts){

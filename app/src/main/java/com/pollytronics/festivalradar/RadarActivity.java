@@ -11,9 +11,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 /**
  * Base class for all Activities
@@ -29,8 +26,8 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
     private ServiceConnection rsConn;
 
     /**
-     * check if RadarService is running and instance is obtained, check before calling RadarService methods!
-     * @return true if up and running, safe to call its methods
+     * check if RadarService is running and instance is obtained.
+     * @return true if up and running
      */
     protected boolean isBoundToService() {
         return rsBound;
@@ -39,7 +36,7 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
     /**
      * get instance of running service, it only returns the interface meant for activities to prevent RadarActivity subclasses to call
      * methods for ie SubServices and such
-     * @return interface to instance of RadarService
+     * @return interface to instance of RadarService, if no bound service is running, it will return a spoof interface to nothing
      */
     protected RadarService_interface4RadarActivity getBoundRadarService() {
         if(rsBound){
@@ -70,7 +67,7 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = (RadarDatabase_Interface4RadarActivity) RadarDatabase.getInstance();
+        db = (RadarDatabase_Interface4RadarActivity) RadarDatabase.getInstance(this);
     }
 
     /**
@@ -180,8 +177,6 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
 
     /**
      * menu items that need to appear in all derived activities get added here
-     * @param menu
-     * @return
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -192,8 +187,6 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
 
     /**
      * menu items that need to appear in all derived activities get handled here
-     * @param item
-     * @return
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -221,8 +214,6 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
      * code snipppet from http://stackoverflow.com/questions/600207/how-to-check-if-a-service-is-running-in-android
      * checks if a Service is running
      * TODO: might have better solution
-     * @param serviceClass
-     * @return
      */
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -236,7 +227,6 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
 
     /**
      * override this method to handle incoming text messages from the service
-     * @param text
      */
     @Override
     public void print(String text) {

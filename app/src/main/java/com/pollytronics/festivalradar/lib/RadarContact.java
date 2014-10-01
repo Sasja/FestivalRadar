@@ -25,11 +25,6 @@ public class RadarContact {
         this.lastBlip = new RadarBlip(contact.lastBlip);
     }
 
-    public RadarContact(RadarContact contact, long id) {
-        this(contact);
-        this.ID = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -54,5 +49,10 @@ public class RadarContact {
 
     public long getID() {
         return ID;
+    }
+
+    public RadarContact setID(long ID) {
+        this.ID = ID;
+        return this;
     }
 }

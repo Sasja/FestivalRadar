@@ -5,6 +5,8 @@ import android.util.Log;
 import com.pollytronics.festivalradar.lib.RadarContact;
 
 /**
+ * Mock SubService to spoof own location lookup
+ * it periodically updates the self-contact in the database
  * Created by pollywog on 9/23/14.
  */
 public class LocalisationSubService extends AbstractSubService {

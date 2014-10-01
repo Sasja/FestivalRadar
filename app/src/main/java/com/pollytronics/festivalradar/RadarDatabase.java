@@ -19,6 +19,7 @@ import java.util.Set;
  */
 public class RadarDatabase implements RadarDatabase_Interface4RadarService, RadarDatabase_Interface4RadarActivity {
 
+    private static final String TAG="RadarDatabase";
     private static RadarDatabase instance=null;
 
     private Set<RadarContact> allContacts = new HashSet<RadarContact>();
@@ -52,9 +53,9 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         selfContact = (new RadarContact()).setName("self").addBlip(new VanbeverBlip());
     }
 
-    public static RadarDatabase getInstance(){
+    public static RadarDatabase getInstance(Context context){
         if(instance==null){
-            instance = new RadarDatabase();
+            instance = new RadarDatabase(context);
         }
         return instance;
     }
@@ -63,7 +64,6 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
 
     /**
      * return an Iterable of contacts
-     * @return
      */
     @Override
     public Collection<RadarContact> getAllContacts() {

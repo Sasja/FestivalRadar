@@ -9,9 +9,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.RadarBlip;
-import com.pollytronics.festivalradar.lib.RadarContact;
-
 /**
  * The RadarService class manages the connection to RadarActivity and derived classes
  * it creates a few helper classes derived from the AbstractSubService class to implement its features and to delegate calls to
@@ -48,7 +45,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      */
     @Override
     public void onCreate() {
-        db = (RadarDatabase_Interface4RadarService) RadarDatabase.getInstance();
+        db = (RadarDatabase_Interface4RadarService) RadarDatabase.getInstance(this);
         Log.i(TAG, "onCreate, initialising sub services");
         test.onCreate();
         localisationSubService.onCreate();
@@ -97,10 +94,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      * gets called each time when an activity calls startService
      * launches a sticky notification pointing back to MainRadarActivity for SDK >= HONEYCOMB
      * TODO: implement for lower SDKs
-     * @param intent
-     * @param flags
-     * @param startId
-     * @return
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -131,7 +124,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
 
     /**
      * gets called when activity wants to bind, it sends the binder back
-     * @param intent
      * @return throwaway instance of RadarBinder class
      */
     @Override
@@ -143,7 +135,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      * gets called from RadarActivity to pass and save its instance in the RadarService
      * will only remember the last calling activity
      * it will call onRegister methods on SubServices
-     * @param ra
      */
     public void registerActivity(RadarActivity_Interface4RadarService ra){
         Log.i(TAG,"registering activity");
@@ -157,7 +148,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      * forget a certain RadarActivity instance.
      * If the one calling doesn't match the current one, do nothing
      * will call onUnregister methods on SubServices
-     * @param ra
      */
     public void unregisterActivity(RadarActivity_Interface4RadarService ra){
         if (this.ra == ra) {
@@ -173,7 +163,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     /**
      * send text to a registered activity if any
      * called from within RadarServices and SubServices
-     * @param text
      */
     @Override
     public void sendStringToRa(String text){

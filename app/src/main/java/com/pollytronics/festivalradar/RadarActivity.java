@@ -44,11 +44,6 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
         } else {
             return new RadarService_interface4RadarActivity() {
                 @Override
-                public void sayYo() {
-                    Log.i(TAG, "called sayYo() while not connected to service");
-                }
-
-                @Override
                 public void notifyNewSettings() {
                     Log.i(TAG, "called notifyNewSettings() while not connected to service");
                 }

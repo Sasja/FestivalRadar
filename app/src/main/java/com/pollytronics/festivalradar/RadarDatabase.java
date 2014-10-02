@@ -13,6 +13,9 @@ import java.util.Set;
 
 /**
  * Created by pollywog on 9/22/14.
+ *
+ * This is a Mock Class
+ *
  * This class should provide methods to store and retrieve data on...
  * A) contacts and metadata
  * B) location data

@@ -92,7 +92,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     @Override
     public void updateContact(RadarContact contact) {
         removeContact(contact);
-        addContact(contact);
+        allContacts.add(new RadarContact(contact));
     }
 
     @Override

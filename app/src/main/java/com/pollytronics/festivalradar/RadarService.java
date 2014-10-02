@@ -36,7 +36,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     create an instance of each helper class here, and add calls in onCreate, onDestroy, onRegister and onUnregister
      */
 
-    private TestSubService test = new TestSubService(this);
     private LocalisationSubService localisationSubService = new LocalisationSubService(this);
     private CloudSubService cloudSubService = new CloudSubService(this);
 
@@ -47,7 +46,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     public void onCreate() {
         db = (RadarDatabase_Interface4RadarService) RadarDatabase.getInstance(this);
         Log.i(TAG, "onCreate, initialising sub services");
-        test.onCreate();
         localisationSubService.onCreate();
         cloudSubService.onCreate();
     }
@@ -58,7 +56,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     @Override
     public void onDestroy() {
         Log.i(TAG, "onDestroy, terminating sub services");
-        test.onDestroy();
         localisationSubService.onDestroy();
         cloudSubService.onDestroy();
     }
@@ -68,7 +65,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      */
     public void onRegister() {
         Log.i(TAG,"onRegister, calling subservice methods");
-        test.onRegister();
         localisationSubService.onRegister();
         cloudSubService.onRegister();
     }
@@ -78,14 +74,12 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      */
     public void onUnregister() {
         Log.i(TAG,"onRegister, calling subservice methods");
-        test.onUnregister();
         localisationSubService.onUnregister();
         cloudSubService.onUnregister();
     }
 
     @Override
     public void notifyNewSettings() {
-        test.onNewSettings();
         localisationSubService.onNewSettings();
         cloudSubService.onNewSettings();
     }
@@ -180,8 +174,4 @@ public class RadarService extends Service implements RadarService_Interface4SubS
 
     //------------ Method implementations/delegations for RadarActivityInterface
 
-    @Override
-    public void sayYo() {
-        test.sayYo();
-    }
 }

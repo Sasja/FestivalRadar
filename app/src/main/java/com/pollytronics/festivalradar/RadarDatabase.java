@@ -26,6 +26,7 @@ import java.util.Random;
  * TODO: onUpgrade() and onDowngrade just discards all data at the moment
  * TODO: make method updateContacts(Collection<RadarContact> contacts) and use it from within CloudSubService
  * TODO: check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
+ * TODO: is it okay to do all this database stuff sync?
  */
 public class RadarDatabase implements RadarDatabase_Interface4RadarService, RadarDatabase_Interface4RadarActivity {
 

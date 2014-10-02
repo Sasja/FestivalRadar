@@ -46,6 +46,11 @@ public class MainRadarActivity extends RadarActivity {
 
         radarView = (RadarView) findViewById(R.id.radar_view);
         radarView.setBearing(0);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         feedDataToRadarView();
     }
 

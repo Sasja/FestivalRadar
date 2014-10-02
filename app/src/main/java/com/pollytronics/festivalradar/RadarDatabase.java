@@ -24,15 +24,13 @@ import java.util.Random;
  * it is used by and has an interface for the RadarService and for RadarActivities
  *
  * TODO: onUpgrade() and onDowngrade just discards all data at the moment
- * TODO: pull selfContact into database also
  * TODO: make method updateContacts(Collection<RadarContact> contacts) and use it from within CloudSubService
+ * TODO: check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
  */
 public class RadarDatabase implements RadarDatabase_Interface4RadarService, RadarDatabase_Interface4RadarActivity {
 
     private static final String TAG="RadarDatabase";
     private static RadarDatabase instance=null;
-
-    private RadarContact selfContact;
 
     private RadarDbHelper radarDbHelper;
 
@@ -42,6 +40,8 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         public static final String COLUMN_NAME_LAST_LON="lastLongitude";
         public static final String COLUMN_NAME_LAST_LAT="lastLatitude";
         public static final String COLUMN_NAME_LAST_TIME="lastTime";
+
+        public static final String SELF_CONTACT_NAME_VALUE="SELF_CONTACT";
     }
 
     private class RadarDbHelper extends SQLiteOpenHelper{
@@ -61,11 +61,19 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
                     ContactEntry.COLUMN_NAME_LAST_LAT + " DOUBLE, " +
                     ContactEntry.COLUMN_NAME_LAST_LON + " DOUBLE, " +
                     ContactEntry.COLUMN_NAME_LAST_TIME + " LONG )");
+
+
+            ContentValues values = new ContentValues();
+            values.put(ContactEntry.COLUMN_NAME_NAME, ContactEntry.SELF_CONTACT_NAME_VALUE);
+            values.put(ContactEntry.COLUMN_NAME_LAST_LAT, 0.0);
+            values.put(ContactEntry.COLUMN_NAME_LAST_LON, 0.0);
+            values.put(ContactEntry.COLUMN_NAME_LAST_TIME, 0.0);
+            db.insertOrThrow(ContactEntry.TABLE_NAME, null, values);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int i, int i2) {
-            Log.i(TAG,"onUpgrade()");
+            Log.i(TAG,"onUpgrade() discard all data");
             //simply discard all data and start over
             db.execSQL("DROP TABLE IF EXISTS " + ContactEntry.TABLE_NAME);
             onCreate(db);
@@ -73,7 +81,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
 
         @Override
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.i(TAG,"onDowngrade()");
+            Log.i(TAG,"onDowngrade() discard all data");
             onUpgrade(db, oldVersion, newVersion);
         }
     }
@@ -81,24 +89,6 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     private RadarDatabase(Context context){
         radarDbHelper = new RadarDbHelper(context);
         Log.i(TAG,"initialised radarDbHelper");
-
-//        /**
-//         * temporary stuff to generate some random blips for testing
-//         */
-        final double LAT = 51.072478;
-        final double LON = 3.709913;
-        final double LATRANGE = 0.003;
-        final double LONRANGE = 0.002;
-        class VanbeverBlip extends RadarBlip{
-            VanbeverBlip(){
-                super();
-                Random rnd = new Random();
-                setLatitude(LAT+LATRANGE*(rnd.nextDouble()-0.5));
-                setLongitude(LON+LONRANGE*(rnd.nextDouble()-0.5));
-                setTime(SystemClock.currentThreadTimeMillis());
-            }
-        }
-        selfContact = (new RadarContact()).setName("self").addBlip(new VanbeverBlip());
     }
 
     public static RadarDatabase getInstance(Context context){
@@ -125,10 +115,12 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
                 ContactEntry.COLUMN_NAME_LAST_TIME
         };
         String sortOrder = ContactEntry.COLUMN_NAME_NAME + " DESC";
+        String selection = ContactEntry.COLUMN_NAME_NAME + "<>" + "'" + ContactEntry.SELF_CONTACT_NAME_VALUE + "'";
         Cursor c = db.query(
                 ContactEntry.TABLE_NAME,
                 projection,
-                null, null, null, null,
+                selection,
+                null, null, null,
                 sortOrder);
         for(int i = 0; i < c.getCount();i++){
             c.moveToPosition(i);
@@ -151,54 +143,111 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
 
     @Override
     public void removeContact(RadarContact contact) {
-        SQLiteDatabase db = radarDbHelper.getWritableDatabase();
-        String selection = ContactEntry._ID + "=" + Long.toString(contact.getID());
-        int n = db.delete(ContactEntry.TABLE_NAME, selection, null);
-        Log.i(TAG, "removed " + Integer.toString(n) + " contacts from database");
-        db.close();
+        if(contact.getName() != ContactEntry.SELF_CONTACT_NAME_VALUE) {
+            SQLiteDatabase db = radarDbHelper.getWritableDatabase();
+            String selection = ContactEntry._ID + "=" + Long.toString(contact.getID());
+            int n = db.delete(ContactEntry.TABLE_NAME, selection, null);
+            Log.i(TAG, "removed " + Integer.toString(n) + " contacts from database");
+            db.close();
+        } else Log.i(TAG, "DO NOT USE THIS METHOD FOR THE SELF_CONTACT");
     }
 
     @Override
     public void updateContact(RadarContact contact) {               //TODO: this updates one contact at a time, should not be used over all contacts
-        SQLiteDatabase db = radarDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(ContactEntry.COLUMN_NAME_NAME,contact.getName());
-        values.put(ContactEntry.COLUMN_NAME_LAST_LAT,contact.getLastBlip().getLatitude());
-        values.put(ContactEntry.COLUMN_NAME_LAST_LON,contact.getLastBlip().getLongitude());
-        values.put(ContactEntry.COLUMN_NAME_LAST_TIME,contact.getLastBlip().getTime());
-        String selection = ContactEntry._ID + "=" + Long.toString(contact.getID());
-        int n = db.update(
-                ContactEntry.TABLE_NAME,
-                values,
-                selection, null
-        );
-        Log.i(TAG,"updated " + Integer.toString(n) + " contacts, better not use this for looping over all contacts");
-        db.close();
+        if(contact.getName() != ContactEntry.SELF_CONTACT_NAME_VALUE) {
+            SQLiteDatabase db = radarDbHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(ContactEntry.COLUMN_NAME_NAME, contact.getName());
+            values.put(ContactEntry.COLUMN_NAME_LAST_LAT, contact.getLastBlip().getLatitude());
+            values.put(ContactEntry.COLUMN_NAME_LAST_LON, contact.getLastBlip().getLongitude());
+            values.put(ContactEntry.COLUMN_NAME_LAST_TIME, contact.getLastBlip().getTime());
+            String selection = ContactEntry._ID + "=" + Long.toString(contact.getID());
+            int n = db.update(
+                    ContactEntry.TABLE_NAME,
+                    values,
+                    selection, null
+            );
+            Log.i(TAG, "updated " + Integer.toString(n) + " contacts, better not use this for looping over all contacts");
+            db.close();
+        } else Log.i(TAG, "DO NOT USE THIS METHOD FOR THE SELF_CONTACT");
     }
 
     @Override
     public void addContact(RadarContact contact) {
-        SQLiteDatabase db = radarDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(ContactEntry.COLUMN_NAME_NAME,contact.getName());
-        values.put(ContactEntry.COLUMN_NAME_LAST_LAT,contact.getLastBlip().getLatitude());
-        values.put(ContactEntry.COLUMN_NAME_LAST_LON,contact.getLastBlip().getLongitude());
-        values.put(ContactEntry.COLUMN_NAME_LAST_TIME,contact.getLastBlip().getTime());
-        long newRowId;
-        newRowId = db.insertOrThrow(ContactEntry.TABLE_NAME, null, values);
-        Log.i(TAG, "inserted new contact in database in row_id "+ Long.toString(newRowId));
-        db.close();
+        if(contact.getName() != ContactEntry.SELF_CONTACT_NAME_VALUE) {
+            SQLiteDatabase db = radarDbHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(ContactEntry.COLUMN_NAME_NAME, contact.getName());
+            values.put(ContactEntry.COLUMN_NAME_LAST_LAT, contact.getLastBlip().getLatitude());
+            values.put(ContactEntry.COLUMN_NAME_LAST_LON, contact.getLastBlip().getLongitude());
+            values.put(ContactEntry.COLUMN_NAME_LAST_TIME, contact.getLastBlip().getTime());
+            long newRowId;
+            newRowId = db.insertOrThrow(ContactEntry.TABLE_NAME, null, values);
+            Log.i(TAG, "inserted new contact in database in row_id " + Long.toString(newRowId));
+            db.close();
+        } else Log.i(TAG, "DO NOT USE THIS METHOD FOR THE SELF_CONTACT");
     }
 
     @Override
     public RadarContact getSelfContact() {
-        return new RadarContact(selfContact);
+        RadarContact selfContact = new RadarContact();
+        SQLiteDatabase db = radarDbHelper.getReadableDatabase();
+        String[] projection = {
+                ContactEntry._ID,
+                ContactEntry.COLUMN_NAME_NAME,
+                ContactEntry.COLUMN_NAME_LAST_LAT,
+                ContactEntry.COLUMN_NAME_LAST_LON,
+                ContactEntry.COLUMN_NAME_LAST_TIME
+        };
+        String selection = ContactEntry.COLUMN_NAME_NAME + "=" + "'" + ContactEntry.SELF_CONTACT_NAME_VALUE + "'";
+        Cursor c = db.query(
+                ContactEntry.TABLE_NAME,
+                projection,
+                selection,
+                null, null, null, null
+        );
+        if (c.getCount() == 1){
+            c.moveToFirst();
+            long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry._ID));
+            String name = c.getString(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_NAME));
+            double lastLat = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LAT));
+            double lastLon = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LON));
+            long lastTime = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_TIME));
+            RadarBlip blip = new RadarBlip();
+            blip.setLatitude(lastLat);
+            blip.setLongitude(lastLon);
+            blip.setTime(lastTime);
+            selfContact.setID(id).setName(name).addBlip(blip);
+        } else {
+            Log.i(TAG, "DID NOT FIND SELF_CONTACT! (or found more than one)");
+            selfContact = null;
+        }
+        c.close();
+        db.close();
+        return selfContact;
     }
 
     @Override
     public void updateSelfContact(RadarContact newSelfContact) {
-        selfContact = new RadarContact(newSelfContact);
+        SQLiteDatabase db = radarDbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(ContactEntry.COLUMN_NAME_NAME, ContactEntry.SELF_CONTACT_NAME_VALUE);
+        values.put(ContactEntry.COLUMN_NAME_LAST_LAT, newSelfContact.getLastBlip().getLatitude());
+        values.put(ContactEntry.COLUMN_NAME_LAST_LON, newSelfContact.getLastBlip().getLongitude());
+        values.put(ContactEntry.COLUMN_NAME_LAST_TIME, newSelfContact.getLastBlip().getTime());
+        String selection = ContactEntry.COLUMN_NAME_NAME + "=" + "'" + ContactEntry.SELF_CONTACT_NAME_VALUE + "'";
+        int n = db.update(
+                ContactEntry.TABLE_NAME,
+                values,
+                selection,
+                null
+        );
+        if (n == 1) {
+            Log.i(TAG,"updated self-contact");
+        } else {
+            Log.i(TAG, "AMOUNT OF SELF CONTACTS UPDATED = " + Integer.toString(n));
+        }
+        db.close();
     }
-
 
 }

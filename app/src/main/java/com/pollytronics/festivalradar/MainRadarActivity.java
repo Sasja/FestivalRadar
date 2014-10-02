@@ -10,6 +10,12 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.pollytronics.festivalradar.lib.RadarBlip;
+import com.pollytronics.festivalradar.lib.RadarContact;
+import com.pollytronics.festivalradar.lib.RadarView;
+
+import java.util.Collection;
+
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
@@ -17,8 +23,10 @@ import android.widget.ToggleButton;
 public class MainRadarActivity extends RadarActivity {
 
     private static final String TAG = "MainRadarActivity";
+
     TextView logText;
     ToggleButton toggleService;
+    RadarView radarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +55,10 @@ public class MainRadarActivity extends RadarActivity {
                 }
             }
         });
+
+        radarView = (RadarView) findViewById(R.id.radar_view);
+        radarView.setBearing(0);
+        feedDataToRadarView();
     }
 
     @Override
@@ -78,5 +90,22 @@ public class MainRadarActivity extends RadarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void notifyDatabaseUpdate() {
+        super.notifyDatabaseUpdate();
+        feedDataToRadarView();
+    }
+
+    private void feedDataToRadarView(){
+        RadarBlip centerLocation = getRadarDatabase().getSelfContact().getLastBlip();
+        radarView.setCenterLocation(centerLocation);
+        radarView.removeAllContacts();
+        Collection<RadarContact> contacts = getRadarDatabase().getAllContacts();
+        for(RadarContact c:contacts){
+            radarView.addContact(c);
+        }
+        radarView.invalidate();
     }
 }

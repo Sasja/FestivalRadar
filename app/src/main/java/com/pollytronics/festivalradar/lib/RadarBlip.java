@@ -16,8 +16,10 @@ public class RadarBlip extends Location{
 
     public RadarBlip(){
         super(PROVIDER);
-        setLatitude(0);
-        setLongitude(0);
+        final double LAT = 51.072478;   //initialise there to facilitate testing, shouldn't matter
+        final double LON = 3.709913;
+        setLatitude(LAT);
+        setLongitude(LON);
         setTime(0);
     }
 

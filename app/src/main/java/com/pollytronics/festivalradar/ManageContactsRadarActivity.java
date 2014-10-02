@@ -1,19 +1,23 @@
 package com.pollytronics.festivalradar;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.pollytronics.festivalradar.lib.RadarContact;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.zip.Inflater;
 
 
 public class ManageContactsRadarActivity extends RadarActivity {
@@ -62,18 +66,46 @@ public class ManageContactsRadarActivity extends RadarActivity {
      * set up the listView with data from the Database
      */
     private void updateContactListView(){
-        ArrayList<String> stringArray = new ArrayList<String>();
+        //ArrayList<String> stringArray = new ArrayList<String>();
         ArrayList<RadarContact> contacts = new ArrayList<RadarContact>(getRadarDatabase().getAllContacts());
         contacts.add(getRadarDatabase().getSelfContact());
         Collections.sort(contacts, new Comparator<RadarContact>() {
             @Override
             public int compare(RadarContact radarContact1, RadarContact radarContact2) {
-                return radarContact1.getName().compareTo(radarContact2.getName());
+                int result = radarContact1.getName().toUpperCase().compareTo(radarContact2.getName().toUpperCase());
+                if (result == 0) {
+                    result = ((Long)radarContact1.getID()).compareTo(radarContact2.getID());
+                }
+                return result;
             }
         });
-        for(RadarContact c:contacts) stringArray.add(c.getName()+" ("+c.getLastBlip().toString()+")");
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.manage_contacs_list_item, stringArray);
-        listView.setAdapter(adapter);
+        //for(RadarContact c:contacts) stringArray.add(c.getName()+" ("+c.getLastBlip().toString()+")");
+        ArrayAdapter<RadarContact> adapter = (ArrayAdapter<RadarContact>) listView.getAdapter();
+        if(adapter==null) {
+            adapter = new ArrayAdapter<RadarContact>(this, R.layout.manage_contacs_list_item, contacts) {
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    //View view = super.getView(position, convertView, parent);
+                    RadarContact contact = getItem(position);
+                    View view;
+                    if (convertView == null) {
+                        view = LayoutInflater.from(ManageContactsRadarActivity.this).inflate(R.layout.manage_contacs_list_item, null);
+                    } else {
+                        view = convertView;
+                    }
+                    TextView tv_name = (TextView) view.findViewById(R.id.textview_contact_name);
+                    tv_name.setText(contact.getName());
+                    TextView tv_extra = (TextView) view.findViewById(R.id.textview_contact_extra);
+                    tv_extra.setText(contact.getLastBlip().toString());
+                    return view;
+                }
+            };
+            listView.setAdapter(adapter);
+        } else {
+            //just clear everything and rebuild it
+            adapter.clear();
+            for(RadarContact c : contacts) adapter.add(c);
+        }
     }
 
     /**

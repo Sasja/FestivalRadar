@@ -24,7 +24,6 @@ public class MainRadarActivity extends RadarActivity {
 
     private static final String TAG = "MainRadarActivity";
 
-    TextView logText;
     ToggleButton toggleService;
     RadarView radarView;
 
@@ -32,17 +31,6 @@ public class MainRadarActivity extends RadarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.radaractivity_main);
-
-        logText = (TextView) findViewById(R.id.text_view);
-
-        final Button sayYoButton = (Button) findViewById(R.id.say_yo);
-        sayYoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(TAG, "calling rs.sayYo()");
-                getBoundRadarService().sayYo();
-            }
-        });
 
         toggleService = (ToggleButton) findViewById(R.id.toggle_service);
         toggleService.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -69,11 +57,6 @@ public class MainRadarActivity extends RadarActivity {
     @Override
     protected void onRadarServiceConnected(){
         toggleService.setChecked(true);
-    }
-
-    @Override
-    public void print(String text) {
-        logText.append(text);
     }
 
     @Override

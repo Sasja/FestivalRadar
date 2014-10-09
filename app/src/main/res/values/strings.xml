@@ -31,6 +31,5 @@
     <string name="settings_button_setid">set ID</string>
     <string name="edittext_add_contact_name_hint">Name</string>
     <string name="edittext_add_contact_id_hint">ID</string>
-    <string name="edittext_setid_hint">choose new ID</string>
 
 </resources>

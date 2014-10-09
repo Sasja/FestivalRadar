@@ -72,7 +72,7 @@ public class SettingsRadarActivity extends RadarActivity {
             }
         });
 
-        setIdEditText.setText(Long.toString(getRadarDatabase().getSelfContact().getID()));
+        setIdEditText.setHint(Long.toString(getRadarDatabase().getSelfContact().getID()));
 
         setIdButton.setOnClickListener(new View.OnClickListener() {
             @Override

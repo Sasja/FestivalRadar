@@ -106,7 +106,7 @@ public class ManageContactsRadarActivity extends RadarActivity {
                         view = convertView;
                     }
                     TextView tv_name = (TextView) view.findViewById(R.id.textview_contact_name);
-                    tv_name.setText(contact.getName());
+                    tv_name.setText(contact.getName() + " (" + Long.toString(contact.getID()) + ")");
                     TextView tv_extra = (TextView) view.findViewById(R.id.textview_contact_extra);
                     tv_extra.setText(contact.getLastBlip().toString());
                     return view;

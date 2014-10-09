@@ -4,7 +4,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SeekBar;
+
+import com.pollytronics.festivalradar.lib.RadarContact;
 
 
 public class SettingsRadarActivity extends RadarActivity {
@@ -13,6 +18,9 @@ public class SettingsRadarActivity extends RadarActivity {
 
     private SeekBar localisationSeekBar;
     private SeekBar cloudSeekBar;
+    private EditText setIdEditText;
+    private Button setIdButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +31,8 @@ public class SettingsRadarActivity extends RadarActivity {
         localisationSeekBar.setProgress(getRadarPreferences().getLocalisationUpdateTime_percent());
         cloudSeekBar = (SeekBar) findViewById(R.id.seekbar_cloud_update_rate);
         cloudSeekBar.setProgress(getRadarPreferences().getCloudUpdateTime_percent());
+        setIdEditText = (EditText) findViewById(R.id.edittext_setid);
+        setIdButton = (Button) findViewById(R.id.button_setid);
 
         localisationSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -59,6 +69,24 @@ public class SettingsRadarActivity extends RadarActivity {
                 getRadarPreferences().setCloudUpdateRate_percent(seekBar.getProgress());
                 Log.i(TAG, "setting Cloud update rate to " + Integer.toString(seekBar.getProgress()));
                 getBoundRadarService().notifyNewSettings();
+            }
+        });
+
+        setIdEditText.setText(Long.toString(getRadarDatabase().getSelfContact().getID()));
+
+        setIdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Long id;
+                try {
+                    id = Long.decode(setIdEditText.getText().toString());
+                } catch (NumberFormatException e) {
+                    Log.i(TAG, "thats not a number, cant set this ID");
+                    return;
+                }
+                RadarContact selfContact = getRadarDatabase().getSelfContact();
+                selfContact.setID(id);
+                getRadarDatabase().updateSelfContact(selfContact);
             }
         });
     }

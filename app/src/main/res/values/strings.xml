@@ -28,5 +28,6 @@
     <string name="action_debug">Debug</string>
     <string name="settings_localisation_update_rate">Localisation Update Rate</string>
     <string name="settings_cloud_update_rate">Network Connection Rate</string>
+    <string name="settings_button_setid">set ID</string>
 
 </resources>

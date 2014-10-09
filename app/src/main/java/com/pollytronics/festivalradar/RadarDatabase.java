@@ -35,8 +35,8 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
          */
         final double LAT = 51.072478;
         final double LON = 3.709913;
-        final double LATRANGE = 0.003;
-        final double LONRANGE = 0.002;
+        final double LATRANGE = 0.0015;
+        final double LONRANGE = 0.001;
         class VanbeverBlip extends RadarBlip{
             VanbeverBlip(){
                 super();
@@ -47,12 +47,11 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
             }
         }
         // some random contacts for testing
-        addContact((new RadarContact()).setName("Dieter").addBlip(new VanbeverBlip()));            // some dummy contacts
-        addContact((new RadarContact()).setName("Seb").addBlip(new VanbeverBlip()));
-        addContact((new RadarContact()).setName("Merel").addBlip(new VanbeverBlip()));
-        addContact((new RadarContact()).setName("Alex").addBlip(new VanbeverBlip()));
-        addContact((new RadarContact()).setName("Nancy de Pancy").addBlip(new VanbeverBlip()));
-        addContact((new RadarContact()).setName("Sigfried Bracke").addBlip(new VanbeverBlip()));
+        addContactWithId((new RadarContact()).setName("Dieter").setID(100).addBlip(new VanbeverBlip()));            // some dummy contacts
+        addContactWithId((new RadarContact()).setName("Seb").setID(101).addBlip(new VanbeverBlip()));
+        addContactWithId((new RadarContact()).setName("Alex").setID(102).addBlip(new VanbeverBlip()));
+        addContactWithId((new RadarContact()).setName("Merel").setID(103).addBlip(new VanbeverBlip()));
+        addContactWithId((new RadarContact()).setName("Sigfried Bracke").setID(104).addBlip(new VanbeverBlip()));
 
         selfContact = (new RadarContact()).setName("self").addBlip(new VanbeverBlip());
     }
@@ -79,6 +78,15 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     }
 
     @Override
+    public Collection<Long> getAllContactIds() {
+        Collection<Long> ret = new HashSet<Long>();
+        for(RadarContact contact : allContacts){
+            ret.add(contact.getID());
+        }
+        return ret;
+    }
+
+    @Override
     public void removeContact(RadarContact contact) {
         Collection<RadarContact> toRemove = new HashSet<RadarContact>();
         for(RadarContact c:allContacts){
@@ -101,12 +109,16 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         boolean ok;
         do {
             ok = true;
-            id = (new Random()).nextLong();
+            id = (new Random()).nextInt();
             for(RadarContact c:allContacts){
                 if(id==c.getID()) ok = false;
             }
         } while(!ok);
         allContacts.add(new RadarContact(contact).setID(id));
+    }
+
+    public void addContactWithId(RadarContact contact) {
+        allContacts.add(new RadarContact(contact));
     }
 
     @Override
@@ -119,5 +131,11 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         selfContact = new RadarContact(newSelfContact);
     }
 
-
+    @Override
+    public RadarContact getContact(Long id) {
+        for(RadarContact c : allContacts){
+            if(id==c.getID()) return new RadarContact(c);
+        }
+        return null;
+    }
 }

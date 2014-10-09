@@ -41,6 +41,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         public static final String COLUMN_NAME_LAST_LON="lastLongitude";
         public static final String COLUMN_NAME_LAST_LAT="lastLatitude";
         public static final String COLUMN_NAME_LAST_TIME="lastTime";
+        public static final String COLUMN_NAME_GLOBAL_ID="globalId";
 
         public static final String SELF_CONTACT_NAME_VALUE="SELF_CONTACT";
     }
@@ -58,6 +59,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
             Log.i(TAG, "onCreate()");
             db.execSQL("CREATE TABLE " + ContactEntry.TABLE_NAME + " ( " +
                     ContactEntry._ID + " INTEGER PRIMARY KEY," +
+                    ContactEntry.COLUMN_NAME_GLOBAL_ID + " LONG, " +
                     ContactEntry.COLUMN_NAME_NAME + " TEXT, " +
                     ContactEntry.COLUMN_NAME_LAST_LAT + " DOUBLE, " +
                     ContactEntry.COLUMN_NAME_LAST_LON + " DOUBLE, " +
@@ -65,6 +67,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
 
 
             ContentValues values = new ContentValues();
+            values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, 0);
             values.put(ContactEntry.COLUMN_NAME_NAME, ContactEntry.SELF_CONTACT_NAME_VALUE);
             values.put(ContactEntry.COLUMN_NAME_LAST_LAT, 0.0);
             values.put(ContactEntry.COLUMN_NAME_LAST_LON, 0.0);
@@ -109,7 +112,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         Collection<RadarContact> contacts = new HashSet<RadarContact>();
         SQLiteDatabase db = radarDbHelper.getReadableDatabase();
         String[] projection = {
-                ContactEntry._ID,
+                ContactEntry.COLUMN_NAME_GLOBAL_ID,
                 ContactEntry.COLUMN_NAME_NAME,
                 ContactEntry.COLUMN_NAME_LAST_LAT,
                 ContactEntry.COLUMN_NAME_LAST_LON,
@@ -125,7 +128,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
                 sortOrder);
         for(int i = 0; i < c.getCount();i++){
             c.moveToPosition(i);
-            long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry._ID));
+            long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_GLOBAL_ID));
             String name = c.getString(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_NAME));
             double lastLat = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LAT));
             double lastLon = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LON));
@@ -143,10 +146,69 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     }
 
     @Override
+    public Collection<Long> getAllContactIds() {
+        Collection<Long> contactIds = new HashSet<Long>();
+        SQLiteDatabase db = radarDbHelper.getReadableDatabase();
+        String[] projection = {
+                ContactEntry.COLUMN_NAME_GLOBAL_ID,
+        };
+        String selection = ContactEntry.COLUMN_NAME_NAME + "<>" + "'" + ContactEntry.SELF_CONTACT_NAME_VALUE + "'";
+        Cursor c = db.query(
+                ContactEntry.TABLE_NAME,
+                projection,
+                selection,
+                null, null, null, null);
+        for(int i = 0; i < c.getCount();i++){
+            c.moveToPosition(i);
+            Long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_GLOBAL_ID));
+            contactIds.add(id);
+        }
+        c.close();
+        db.close();
+        return contactIds;
+    }
+
+    @Override
+    public RadarContact getContact(Long id) {
+        RadarContact contact;
+        SQLiteDatabase db = radarDbHelper.getReadableDatabase();
+        String[] projection = {
+                ContactEntry.COLUMN_NAME_GLOBAL_ID,
+                ContactEntry.COLUMN_NAME_NAME,
+                ContactEntry.COLUMN_NAME_LAST_LAT,
+                ContactEntry.COLUMN_NAME_LAST_LON,
+                ContactEntry.COLUMN_NAME_LAST_TIME
+        };
+        String selection = ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + "'" + Long.toString(id) + "'";
+        Cursor c = db.query(
+                ContactEntry.TABLE_NAME,
+                projection,
+                selection,
+                null, null, null, null);
+        if(c.getCount() > 0) {
+            c.moveToPosition(0);
+            String name = c.getString(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_NAME));
+            double lastLat = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LAT));
+            double lastLon = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LON));
+            long lastTime = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_TIME));
+            RadarBlip blip = new RadarBlip();
+            blip.setLatitude(lastLat);
+            blip.setLongitude(lastLon);
+            blip.setTime(lastTime);
+            contact = new RadarContact().setID(id).setName(name).addBlip(blip);
+        } else {
+            contact = null;
+        }
+        c.close();
+        db.close();
+        return contact;
+    }
+
+    @Override
     public void removeContact(RadarContact contact) {
         if(contact.getName() != ContactEntry.SELF_CONTACT_NAME_VALUE) {
             SQLiteDatabase db = radarDbHelper.getWritableDatabase();
-            String selection = ContactEntry._ID + "=" + Long.toString(contact.getID());
+            String selection = ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + Long.toString(contact.getID());
             int n = db.delete(ContactEntry.TABLE_NAME, selection, null);
             Log.i(TAG, "removed " + Integer.toString(n) + " contacts from database");
             db.close();
@@ -162,7 +224,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
             values.put(ContactEntry.COLUMN_NAME_LAST_LAT, contact.getLastBlip().getLatitude());
             values.put(ContactEntry.COLUMN_NAME_LAST_LON, contact.getLastBlip().getLongitude());
             values.put(ContactEntry.COLUMN_NAME_LAST_TIME, contact.getLastBlip().getTime());
-            String selection = ContactEntry._ID + "=" + Long.toString(contact.getID());
+            String selection = ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + Long.toString(contact.getID());
             int n = db.update(
                     ContactEntry.TABLE_NAME,
                     values,
@@ -174,10 +236,11 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     }
 
     @Override
-    public void addContact(RadarContact contact) {
+    public void addContactWithId(RadarContact contact) {
         if(contact.getName() != ContactEntry.SELF_CONTACT_NAME_VALUE) {
             SQLiteDatabase db = radarDbHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
+            values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, contact.getID());
             values.put(ContactEntry.COLUMN_NAME_NAME, contact.getName());
             values.put(ContactEntry.COLUMN_NAME_LAST_LAT, contact.getLastBlip().getLatitude());
             values.put(ContactEntry.COLUMN_NAME_LAST_LON, contact.getLastBlip().getLongitude());
@@ -190,11 +253,19 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     }
 
     @Override
+    public void addContact(RadarContact contact) {      //TODO:clean this shit up, this method should not exist
+        int id = new Random().nextInt(1000)+666;
+        contact.setID(id);
+        Log.i(TAG,"CREATING RANDOM ID FOR NEW CONTACT, THIS SHOULDNT HAPPEN... but it did! :D");
+        addContactWithId(contact);
+    }
+
+    @Override
     public RadarContact getSelfContact() {
         RadarContact selfContact = new RadarContact();
         SQLiteDatabase db = radarDbHelper.getReadableDatabase();
         String[] projection = {
-                ContactEntry._ID,
+                ContactEntry.COLUMN_NAME_GLOBAL_ID,
                 ContactEntry.COLUMN_NAME_NAME,
                 ContactEntry.COLUMN_NAME_LAST_LAT,
                 ContactEntry.COLUMN_NAME_LAST_LON,
@@ -209,7 +280,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         );
         if (c.getCount() == 1){
             c.moveToFirst();
-            long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry._ID));
+            long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_GLOBAL_ID));
             String name = c.getString(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_NAME));
             double lastLat = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LAT));
             double lastLon = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LON));
@@ -232,6 +303,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     public void updateSelfContact(RadarContact newSelfContact) {
         SQLiteDatabase db = radarDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, newSelfContact.getID());
         values.put(ContactEntry.COLUMN_NAME_NAME, ContactEntry.SELF_CONTACT_NAME_VALUE);
         values.put(ContactEntry.COLUMN_NAME_LAST_LAT, newSelfContact.getLastBlip().getLatitude());
         values.put(ContactEntry.COLUMN_NAME_LAST_LON, newSelfContact.getLastBlip().getLongitude());
@@ -250,5 +322,4 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         }
         db.close();
     }
-
 }

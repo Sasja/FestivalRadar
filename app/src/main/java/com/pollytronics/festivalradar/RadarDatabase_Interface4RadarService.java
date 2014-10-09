@@ -11,9 +11,13 @@ public interface RadarDatabase_Interface4RadarService {
 
     public Collection<RadarContact> getAllContacts();
 
+    public Collection<Long> getAllContactIds();
+
     public void updateContact(RadarContact contact);
 
     public RadarContact getSelfContact();
 
     public void updateSelfContact(RadarContact newSelfContact);
+
+    public RadarContact getContact(Long id);
 }

@@ -220,6 +220,7 @@ public class CloudSubService extends AbstractSubService {
                 contact.addBlip(blip);
                 getRadarDatabase().updateContact(contact);
             }
+            getRadarService().notifyNewData();
 
         }
     }

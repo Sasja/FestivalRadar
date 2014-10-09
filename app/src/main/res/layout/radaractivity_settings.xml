@@ -37,7 +37,8 @@
         android:orientation="horizontal">
         <EditText
             android:id="@+id/edittext_setid"
-            android:inputType="number"
+            android:inputType="numberDecimal"
+            android:hint="@string/edittext_setid_hint"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content" />

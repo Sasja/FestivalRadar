@@ -18,12 +18,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <EditText
-            android:id="@+id/edittext_add_contact_name"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/edittext_add_contact_name"
+                android:hint="@string/edittext_add_contact_name_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:id="@+id/edittext_add_contact_id"
+                android:inputType="numberDecimal"
+                android:hint="@string/edittext_add_contact_id_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            </LinearLayout>
         <Button
             android:id="@+id/button_add_contact"
             android:text="@string/button_add_contact"

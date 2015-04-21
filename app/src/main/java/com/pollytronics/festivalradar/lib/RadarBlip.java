@@ -23,6 +23,10 @@ public class RadarBlip extends Location{
         setTime(0);
     }
 
+    public RadarBlip(Location location) {
+        super(location);
+    }
+
     public RadarBlip(RadarBlip blip) {
         super(blip);
     }

@@ -22,7 +22,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     private final static String TAG = "RadarService";
     private RadarBinder radarBinder = new RadarBinder();
     private RadarActivity_Interface4RadarService ra;
-
     private RadarDatabase_Interface4RadarService db;
     private Boolean raRegistered = false;
 

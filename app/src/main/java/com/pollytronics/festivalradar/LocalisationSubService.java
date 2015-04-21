@@ -57,6 +57,7 @@ public class LocalisationSubService extends AbstractSubService {
             try{
                 RadarContact selfContact = getRadarDatabase().getSelfContact();
                 selfContact.addBlip(selfContact.getLastBlip().brownian(0.00001).reClock());
+                Log.i(TAG ,"spoofed new position in LocalisationSubService "+selfContact.getLastBlip().toString());
                 getRadarDatabase().updateSelfContact(selfContact);
                 getRadarService().notifyNewData();
                 getMainHandler().postDelayed(localiseLoop,updateTime_ms);

@@ -17,10 +17,12 @@ import com.pollytronics.festivalradar.lib.RadarContact;
  * it periodically updates the self-contact in the database
  * Created by pollywog on 9/23/14.
  */
-public class LocalisationSubService extends AbstractSubService implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class LocalisationSubService extends AbstractSubService implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        com.google.android.gms.location.LocationListener {
 
     private final String TAG = "LocalisationSubService";
-    private int updateTime_ms;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
@@ -41,9 +43,11 @@ public class LocalisationSubService extends AbstractSubService implements Google
     protected void createLocationRequest() {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         mLocationRequest = new LocationRequest();
+        int updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();
         mLocationRequest.setInterval(updateTime_ms);
+        Log.i(TAG, "location request created with update time = " + Integer.toString(updateTime_ms));
         mLocationRequest.setFastestInterval(2500);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
     }
 
     @Override
@@ -52,8 +56,6 @@ public class LocalisationSubService extends AbstractSubService implements Google
         buildGoogleApiClient();
         createLocationRequest();
         mGoogleApiClient.connect();
-        updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();
-        getMainHandler().post(localiseLoop);
     }
 
     @Override
@@ -61,7 +63,6 @@ public class LocalisationSubService extends AbstractSubService implements Google
         Log.i(TAG,"onDestroy");
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         mGoogleApiClient.disconnect();
-        getMainHandler().removeCallbacks(localiseLoop);
     }
 
     @Override
@@ -76,45 +77,23 @@ public class LocalisationSubService extends AbstractSubService implements Google
 
     @Override
     protected void onNewSettings() {
-        mLocationRequest.setInterval(updateTime_ms);            // TODO this wont work yet, updating this variable does not tell android anything
-        getMainHandler().removeCallbacks(localiseLoop);         // TODO remove this looping thing, im using google service events instead.
-        updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();
+        int updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();
+        mLocationRequest.setInterval(updateTime_ms);
         Log.i(TAG, "set updateTime to (ms) "+Integer.toString(updateTime_ms));
-        getMainHandler().post(localiseLoop);
+        if(mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            Log.i(TAG, "and re-requested Location Updates with new update rate settings.");
+        }
     }
 
     //-------------------------------------------------
-
-    private final Runnable localiseLoop = new Runnable() {
-        @Override
-        public void run() {
-            try{
-//                RadarContact selfContact = getRadarDatabase().getSelfContact();
-//                if (mGoogleApiClient.isConnected()) {
-//                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//                    Log.i(TAG, "wow, got an actual location from google!! :" + mLastLocation.toString());
-//                    selfContact.addBlip(new RadarBlip(mLastLocation));
-//                } else {
-//                    Log.i(TAG, "Not connected to google location services so no location availabe!");
-//                }
-////                selfContact.addBlip(selfContact.getLastBlip().brownian(0.00001).reClock());
-////                Log.i(TAG ,"spoofed new position in LocalisationSubService "+selfContact.getLastBlip().toString());
-//                getRadarDatabase().updateSelfContact(selfContact);
-//                getRadarService().notifyNewData();
-                getMainHandler().postDelayed(localiseLoop,updateTime_ms);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
 
     private void addBlipFromLocation(Location location) {
         RadarContact selfContact = getRadarDatabase().getSelfContact();
         selfContact.addBlip(new RadarBlip(location));
         getRadarDatabase().updateSelfContact(selfContact);
         getRadarService().notifyNewData();
-
     }
 
     @Override
@@ -133,7 +112,7 @@ public class LocalisationSubService extends AbstractSubService implements Google
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.i(TAG, "even worse! Connection to google location services failed!: "+connectionResult.toString());
+        Log.i(TAG, "Connection to google location services failed!: "+connectionResult.toString());
     }
 
     @Override

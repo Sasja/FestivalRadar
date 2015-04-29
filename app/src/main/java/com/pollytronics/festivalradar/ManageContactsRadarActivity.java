@@ -1,5 +1,6 @@
 package com.pollytronics.festivalradar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,8 +26,6 @@ public class ManageContactsRadarActivity extends RadarActivity {
     private static final String TAG = "ManageContactRadarAct";
 
     private ListView listView;
-    private EditText editTextAddContactName;
-    private EditText editTextAddContactId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,30 +40,6 @@ public class ManageContactsRadarActivity extends RadarActivity {
                 return true;
             }
         });
-        editTextAddContactName = (EditText) findViewById(R.id.edittext_add_contact_name);
-        editTextAddContactId = (EditText) findViewById(R.id.edittext_add_contact_id);
-
-        Button addContactButton = (Button) findViewById(R.id.button_add_contact);
-        addContactButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String name = editTextAddContactName.getText().toString();
-                if(name.length()==0) name = "empty";
-                RadarContact newContact = (new RadarContact()).setName(name).addBlip(getRadarDatabase().getSelfContact().getLastBlip());    // make up some blip, TODO: make some sense here, think about contacts without blips
-                Long id;
-                try {
-                    id = Long.decode(editTextAddContactId.getText().toString());
-                    newContact.setID(id);
-                    getRadarDatabase().addContactWithId(newContact);
-                } catch (NumberFormatException e) {
-                    Log.i(TAG, "thats not a valid id, lets get a random one...");
-                    getRadarDatabase().addContact(newContact);
-                }
-                //getRadarDatabase().addContact((new RadarContact()).setName(name).addBlip(getRadarDatabase().getSelfContact().getLastBlip()));   //ugly temporary shit
-                updateContactListView();
-            }
-        });
-
         updateContactListView();
     }
 
@@ -79,6 +53,14 @@ public class ManageContactsRadarActivity extends RadarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_add_contact_by_username) {
+            startActivity(new Intent(this, AddContactByUsernameRadarActivity.class));
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

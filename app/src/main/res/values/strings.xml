@@ -31,5 +31,9 @@
     <string name="settings_button_setid">set ID</string>
     <string name="edittext_add_contact_name_hint">Name</string>
     <string name="edittext_add_contact_id_hint">ID</string>
+    <string name="title_activity_add_contact_by_username">AddContactByUsernameActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_add_contact_by_username">add by name</string>
 
 </resources>

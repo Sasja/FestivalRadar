@@ -2,4 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.pollytronics.festivalradar.ManageContactsRadarActivity" >
+    <item
+        android:id="@+id/action_add_contact_by_username"
+        android:title="@string/action_add_contact_by_username"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
 </menu>

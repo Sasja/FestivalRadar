@@ -15,7 +15,6 @@ import android.view.MenuItem;
 /**
  * Base class for all Activities
  * This class is only responsible for managing the connection to the RadarService
- * global ActivityBar menu items (for all activities) can also be set up here
  */
 public class RadarActivity extends ActionBarActivity implements RadarActivity_Interface4RadarService {
 

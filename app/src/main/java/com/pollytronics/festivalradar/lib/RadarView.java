@@ -47,16 +47,25 @@ public class RadarView extends View {
         int width = MeasureSpec.getSize(getWidth());     // works, but how?
         int height = MeasureSpec.getSize(getHeight());
 
-        canvas.rotate(-(float)bearing, (float)width/2, (float)height/2); //dont forget to restore!
-
         Paint paint = new Paint();
 
         paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.rgb(0,0,0));
+        paint.setStrokeWidth(1);
+        canvas.drawRect(1, 1, width, height, paint);
+
+        canvas.rotate(-(float)bearing, (float)width/2, (float)height/2); //dont forget to restore!
+
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
+        paint.setColor(Color.rgb(200,100,100));
+        canvas.drawLine(width/2, -width/2, width/2, height/2,paint);
         paint.setStrokeWidth(3);
         paint.setColor(Color.rgb(200,200,200));
-        canvas.drawLine(width/2, 0, width/2, height-1,paint);
-        canvas.drawLine(0, height/2, width-1, height/2, paint);
-        for(int r = 50; r < Math.sqrt(width*width+height*height)/2; r += 50) {
+        canvas.drawLine(width/2, height/2, width/2, height-1+width/2,paint);
+        canvas.drawLine(-height/2, height/2, width-1+height/2, height/2, paint);
+        int radiusStep = width/8;
+        for(int r = radiusStep; r < Math.sqrt(width*width+height*height)/2; r += radiusStep) {
             canvas.drawCircle(width/2, height/2, r, paint);
         }
 
@@ -69,13 +78,8 @@ public class RadarView extends View {
             canvas.drawCircle((float)(width/2 + dLat/0.00001), (float)(height/2 - dLon/0.00001), 6, paint);
         }
 
+        canvas.restore(); // don't draw after restore, as it does something with border offset or something
 
-        canvas.restore();
-
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.rgb(0,0,0));
-        paint.setStrokeWidth(1);
-        canvas.drawRect(0, 0, width-1, height-1, paint);
     }
 
     private void init(){

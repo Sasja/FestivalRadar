@@ -47,7 +47,7 @@ public class RadarView extends View {
         int width = MeasureSpec.getSize(getWidth());     // works, but how?
         int height = MeasureSpec.getSize(getHeight());
 
-        canvas.rotate((float)bearing, (float)width/2, (float)height/2); //dont forget to restore!
+        canvas.rotate(-(float)bearing, (float)width/2, (float)height/2); //dont forget to restore!
 
         Paint paint = new Paint();
 
@@ -64,8 +64,8 @@ public class RadarView extends View {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.argb(150,0,0,250));
         for(RadarContact c:contacts.values()) {
-            double dLat = c.getLastBlip().getLatitude() - centerLocation.getLatitude();
-            double dLon = c.getLastBlip().getLongitude() - centerLocation.getLongitude();
+            double dLat = c.getLastBlip().getLongitude() - centerLocation.getLongitude();
+            double dLon = c.getLastBlip().getLatitude() - centerLocation.getLatitude();
             canvas.drawCircle((float)(width/2 + dLat/0.00001), (float)(height/2 - dLon/0.00001), 6, paint);
         }
 

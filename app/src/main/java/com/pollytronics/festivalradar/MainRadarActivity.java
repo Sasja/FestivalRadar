@@ -26,8 +26,7 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
     private static final String TAG = "MainRadarActivity";
 
     private SensorManager mSensorManager;
-    private Sensor mMagnetometer;
-    private Sensor mAccelerometer;          // TODO: do i need this shit?
+    private Sensor mOrientation;
 
     ToggleButton toggleService;
     RadarView radarView;
@@ -53,15 +52,13 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
         radarView = (RadarView) findViewById(R.id.radar_view);
         radarView.setBearing(0);
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -119,7 +116,7 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
         radarView.invalidate();
     }
 
-//                              This implementation blows, TODO: figure out sensor magnetic sensor callibration
+//                              this is the approach described online, can't get it to work properly yet...
 //    float[] mGravity;
 //    float[] mGeomagnetic;
 //    @Override
@@ -142,14 +139,17 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
 //            }
 //        }
 //    }
+
     @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {      //TODO: implement something that actually works.
-        if(sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+    public void onSensorChanged(SensorEvent sensorEvent) {      //TODO: figure out a working alternative for depreciated ORIENTATION sensor
+        if(sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
             double x,y,z;
             x = sensorEvent.values[0];
             y = sensorEvent.values[1];
             z = sensorEvent.values[2];
-            Log.i(TAG, "bearing reset to : " + Double.toString(x) + " " + Double.toString(y) + " " +Double.toString(z));
+            //Log.i(TAG, "received sensor values : " + Double.toString(x) + " " + Double.toString(y) + " " +Double.toString(z));
+            radarView.setBearing(x);
+            radarView.invalidate();
         }
     }
 

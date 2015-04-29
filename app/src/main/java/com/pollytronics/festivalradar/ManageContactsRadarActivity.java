@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +23,7 @@ import java.util.Comparator;
 
 public class ManageContactsRadarActivity extends RadarActivity {
 
-    private static final String TAG = "ManageContactRadarActivity";
+    private static final String TAG = "ManageContactRadarAct";
 
     private ListView listView;
     private EditText editTextAddContactName;
@@ -34,6 +35,13 @@ public class ManageContactsRadarActivity extends RadarActivity {
         setContentView(R.layout.radaractivity_manage_contacts);
 
         listView = (ListView) findViewById(R.id.listview_manage_contacts);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Log.i(TAG, "onItemlongClick postion=" + position + " id=" + id);
+                return true;
+            }
+        });
         editTextAddContactName = (EditText) findViewById(R.id.edittext_add_contact_name);
         editTextAddContactId = (EditText) findViewById(R.id.edittext_add_contact_id);
 

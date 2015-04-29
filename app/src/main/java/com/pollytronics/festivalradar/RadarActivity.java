@@ -225,7 +225,7 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
      */
     @Override
     public void print(String text) {
-        Log.i(TAG,".onPrint() " + text);
+        Log.i(TAG,"print() " + text);
     }
 
     @Override

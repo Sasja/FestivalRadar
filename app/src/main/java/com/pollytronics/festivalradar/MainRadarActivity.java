@@ -92,10 +92,6 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_main_dummy) {
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -143,10 +139,8 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {      //TODO: figure out a working alternative for depreciated ORIENTATION sensor
         if(sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-            double x,y,z;
+            double x;
             x = sensorEvent.values[0];
-            y = sensorEvent.values[1];
-            z = sensorEvent.values[2];
             //Log.i(TAG, "received sensor values : " + Double.toString(x) + " " + Double.toString(y) + " " +Double.toString(z));
             radarView.setBearing(x);
             radarView.invalidate();

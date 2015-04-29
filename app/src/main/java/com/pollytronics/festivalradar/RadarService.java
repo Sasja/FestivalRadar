@@ -154,7 +154,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
 
     //------------- Method implementations for SubserviceInterface
 
-    /**
+     /**
      * send text to a registered activity if any
      * called from within RadarServices and SubServices
      */

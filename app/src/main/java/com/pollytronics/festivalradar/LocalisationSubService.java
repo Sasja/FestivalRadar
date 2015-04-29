@@ -47,7 +47,7 @@ public class LocalisationSubService extends AbstractSubService implements
         mLocationRequest.setInterval(updateTime_ms);
         Log.i(TAG, "location request created with update time = " + Integer.toString(updateTime_ms));
         mLocationRequest.setFastestInterval(2500);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     @Override

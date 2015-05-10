@@ -37,11 +37,12 @@ public class AddContactByUsernameRadarActivity extends RadarActivity {
                     id = Long.decode(editTextAddContactId.getText().toString());
                     newContact.setID(id);
                     getRadarDatabase().addContactWithId(newContact);
+                    editTextAddContactId.setText("");
+                    editTextAddContactName.setText("");
                 } catch (NumberFormatException e) {
                     Log.i(TAG, "thats not a valid id, lets get a random one...");
                     getRadarDatabase().addContact(newContact);
                 }
-                //getRadarDatabase().addContact((new RadarContact()).setName(name).addBlip(getRadarDatabase().getSelfContact().getLastBlip()));   //ugly temporary shit
             }
         });
     }

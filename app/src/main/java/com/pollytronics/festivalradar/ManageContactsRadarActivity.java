@@ -1,7 +1,12 @@
 package com.pollytronics.festivalradar;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +29,8 @@ import java.util.Comparator;
 public class ManageContactsRadarActivity extends RadarActivity {
 
     private static final String TAG = "ManageContactRadarAct";
+    private DialogFragment mDialog;
+    private RadarContact clickedContact;
 
     private ListView listView;
 
@@ -37,10 +44,52 @@ public class ManageContactsRadarActivity extends RadarActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Log.i(TAG, "onItemClick i=" + position + " id=" + id);
+                mDialog = new ContactActionDialogFragment();
+                clickedContact = (RadarContact)adapterView.getAdapter().getItem(position);
+                mDialog.show(getSupportFragmentManager(), "ContactActionDialog");
                 return;
             }
         });
         updateContactListView();
+    }
+
+    public static class ContactActionDialogFragment extends DialogFragment {
+
+        ManageContactsRadarActivity mRadarActivity;
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            mRadarActivity = (ManageContactsRadarActivity) activity;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new AlertDialog.Builder(getActivity())
+                    .setMessage("delete this contact?")
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mRadarActivity.onDeny();
+                        }
+                    })
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mRadarActivity.onDelete();
+                        }
+                    })
+                    .create();
+        }
+    }
+
+    public void onDelete(){
+        Log.i(TAG, "deleting selected radar contact");
+        getRadarDatabase().removeContact(clickedContact);
+        notifyDatabaseUpdate();         // TODO: this shouldn't be called here but happen autamatically
+    }
+    public void onDeny(){
+        Log.i(TAG, "canceled deleting radar contact");
     }
 
     @Override
@@ -118,4 +167,5 @@ public class ManageContactsRadarActivity extends RadarActivity {
         super.notifyDatabaseUpdate();
         updateContactListView();
     }
+
 }

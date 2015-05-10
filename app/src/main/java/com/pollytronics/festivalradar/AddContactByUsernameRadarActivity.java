@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.pollytronics.festivalradar.lib.RadarContact;
 
@@ -39,9 +40,12 @@ public class AddContactByUsernameRadarActivity extends RadarActivity {
                     getRadarDatabase().addContactWithId(newContact);
                     editTextAddContactId.setText("");
                     editTextAddContactName.setText("");
+                    Toast toast = Toast.makeText(getApplicationContext(), "new user added", Toast.LENGTH_SHORT);
+                    toast.show();
                 } catch (NumberFormatException e) {
-                    Log.i(TAG, "thats not a valid id, lets get a random one...");
-                    getRadarDatabase().addContact(newContact);
+                    Log.i(TAG, "invalid id input...");
+                    Toast toast = Toast.makeText(getApplicationContext(), "invalid id value", Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             }
         });

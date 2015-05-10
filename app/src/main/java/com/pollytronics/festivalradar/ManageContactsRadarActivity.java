@@ -33,11 +33,11 @@ public class ManageContactsRadarActivity extends RadarActivity {
         setContentView(R.layout.radaractivity_manage_contacts);
 
         listView = (ListView) findViewById(R.id.listview_manage_contacts);
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Log.i(TAG, "onItemlongClick postion=" + position + " id=" + id);
-                return true;
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Log.i(TAG, "onItemClick i=" + position + " id=" + id);
+                return;
             }
         });
         updateContactListView();

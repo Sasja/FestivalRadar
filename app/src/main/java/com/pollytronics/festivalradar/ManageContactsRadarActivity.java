@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -47,7 +46,6 @@ public class ManageContactsRadarActivity extends RadarActivity {
                 mDialog = new ContactActionDialogFragment();
                 clickedContact = (RadarContact)adapterView.getAdapter().getItem(position);
                 mDialog.show(getSupportFragmentManager(), "ContactActionDialog");
-                return;
             }
         });
         updateContactListView();
@@ -117,8 +115,7 @@ public class ManageContactsRadarActivity extends RadarActivity {
      * set up the listView with data from the Database
      */
     private void updateContactListView(){
-        //ArrayList<String> stringArray = new ArrayList<String>();
-        ArrayList<RadarContact> contacts = new ArrayList<RadarContact>(getRadarDatabase().getAllContacts());
+        ArrayList<RadarContact> contacts = new ArrayList<>(getRadarDatabase().getAllContacts());
         contacts.add(getRadarDatabase().getSelfContact());
         Collections.sort(contacts, new Comparator<RadarContact>() {
             @Override
@@ -130,13 +127,11 @@ public class ManageContactsRadarActivity extends RadarActivity {
                 return result;
             }
         });
-        //for(RadarContact c:contacts) stringArray.add(c.getName()+" ("+c.getLastBlip().toString()+")");
         ArrayAdapter<RadarContact> adapter = (ArrayAdapter<RadarContact>) listView.getAdapter();
         if(adapter==null) {
             adapter = new ArrayAdapter<RadarContact>(this, R.layout.manage_contacs_list_item, contacts) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
-                    //View view = super.getView(position, convertView, parent);
                     RadarContact contact = getItem(position);
                     View view;
                     if (convertView == null) {

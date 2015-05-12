@@ -29,9 +29,7 @@ abstract public class AbstractSubService {
         this.rs = rs;
     }
 
-    protected RadarService_Interface4SubService getRadarService() {
-        return (RadarService_Interface4SubService) rs;
-    }
+    protected RadarService_Interface4SubService getRadarService() { return rs; }
 
     protected RadarDatabase_Interface4RadarService getRadarDatabase() { return rs.getRadarDataBase(); }
 

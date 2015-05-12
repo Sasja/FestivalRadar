@@ -13,9 +13,9 @@ import com.pollytronics.festivalradar.lib.RadarBlip;
 import com.pollytronics.festivalradar.lib.RadarContact;
 
 /**
- * Mock SubService to spoof own location lookup
- * it periodically updates the self-contact in the database
- * Created by pollywog on 9/23/14.
+ * Localisation subservice
+ * requests location updates from the google play services on creation
+ * and pushes them to the database
  */
 public class LocalisationSubService extends AbstractSubService implements
         GoogleApiClient.ConnectionCallbacks,

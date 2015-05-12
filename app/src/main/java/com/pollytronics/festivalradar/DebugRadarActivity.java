@@ -24,7 +24,6 @@ public class DebugRadarActivity extends RadarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.radaractivity_debug);
-
         debugTextView = (TextView) findViewById(R.id.textview_debug);
     }
 
@@ -41,16 +40,9 @@ public class DebugRadarActivity extends RadarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void print(String text) {
-//        super.print(text);
-//        debugTextView.append(text+"\n");
-//    }
-
     @Override
     public void notifyDatabaseUpdate() {
         super.notifyDatabaseUpdate();
-        //debugTextView.append("notifyDataBaseUpdate()\n");
     }
 
     @Override
@@ -65,17 +57,15 @@ public class DebugRadarActivity extends RadarActivity {
     @Override
     protected void onRadarServiceDisconnected() {
         super.onRadarServiceDisconnected();
-        //debugTextView.append("onRadarServiceDisconnected()\n");
     }
 
     @Override
     protected void onRadarServiceConnected() {
         super.onRadarServiceConnected();
-        //debugTextView.append("onRadarServiceConnected()\n");
     }
 
     ArrayList<String> getLogCat() {
-        ArrayList<String> logCatLog = new ArrayList<String>();
+        ArrayList<String> logCatLog = new ArrayList<>();
         try {
             Process logCatProcess = Runtime.getRuntime().exec("logcat -d");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(logCatProcess.getInputStream()));

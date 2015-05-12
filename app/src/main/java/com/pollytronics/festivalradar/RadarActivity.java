@@ -15,6 +15,7 @@ import android.view.MenuItem;
 /**
  * Base class for all Activities
  * This class is only responsible for managing the connection to the RadarService
+ * TODO: use the action bar API (api level 11) instead of this shit (i raised minSdkVersion from 9 to 15 on 12/5/2015)
  */
 public class RadarActivity extends ActionBarActivity implements RadarActivity_Interface4RadarService {
 
@@ -39,7 +40,7 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
      */
     protected RadarService_interface4RadarActivity getBoundRadarService() {
         if(rsBound){
-            return (RadarService_interface4RadarActivity) rs;
+            return rs;
         } else {
             return new RadarService_interface4RadarActivity() {
                 @Override
@@ -61,7 +62,7 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = (RadarDatabase_Interface4RadarActivity) RadarDatabase.getInstance(this);
+        db = RadarDatabase.getInstance(this);
     }
 
     /**
@@ -99,7 +100,7 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
     protected void unBindRadarService(){
         if (rsBound) {
             Log.i(TAG,"calling unregisterActivity() and unBindService()");
-            rs.unregisterActivity((RadarActivity_Interface4RadarService) RadarActivity.this);
+            rs.unregisterActivity(RadarActivity.this);
             rsBound = false;
             unbindService(rsConn);
         }
@@ -132,7 +133,7 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
                 RadarService.RadarBinder radarBinder = (RadarService.RadarBinder) iBinder;
                 rs = radarBinder.getRadarService();
                 Log.i(TAG, "now registering Activity at Service");
-                rs.registerActivity((RadarActivity_Interface4RadarService) RadarActivity.this);
+                rs.registerActivity(RadarActivity.this);
                 rsBound = true;
                 RadarActivity.this.onRadarServiceConnected();
             }

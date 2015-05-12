@@ -16,23 +16,21 @@ public class SettingsRadarActivity extends RadarActivity {
 
     private static final String TAG = "SettingsRadarActivity";
 
-    private SeekBar localisationSeekBar;
-    private SeekBar cloudSeekBar;
     private EditText setIdEditText;
-    private Button setIdButton;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.radaractivity_settings);
 
-        localisationSeekBar = (SeekBar) findViewById(R.id.seekbar_localisation_update_rate);
+        SeekBar localisationSeekBar = (SeekBar) findViewById(R.id.seekbar_localisation_update_rate);
         localisationSeekBar.setProgress(getRadarPreferences().getLocalisationUpdateTime_percent());
-        cloudSeekBar = (SeekBar) findViewById(R.id.seekbar_cloud_update_rate);
+        SeekBar cloudSeekBar = (SeekBar) findViewById(R.id.seekbar_cloud_update_rate);
         cloudSeekBar.setProgress(getRadarPreferences().getCloudUpdateTime_percent());
         setIdEditText = (EditText) findViewById(R.id.edittext_setid);
-        setIdButton = (Button) findViewById(R.id.button_setid);
+        Button setIdButton = (Button) findViewById(R.id.button_setid);
 
         localisationSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -102,10 +100,6 @@ public class SettingsRadarActivity extends RadarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
         return super.onOptionsItemSelected(item);
     }
 }

@@ -28,6 +28,7 @@ import java.util.Collection;
  * periodically pulls and pushes data from server and updates the local database
  *
  * TODO: use HttpUrlConnection instead of the apache lib, it should improve battery drain i've read somewhere (>=Gingerbread...)
+ * TODO: also the apache lib is depreciated
  *
  * Created by pollywog on 9/23/14.
  */
@@ -167,7 +168,7 @@ public class CloudSubService extends AbstractSubService {
 
         @Override
         protected String doInBackground(Void... voids) {
-            Log.i(TAG,"PULL: will do request with JSONdata=" + queryString);
+            Log.i(TAG, "PULL: will do request with JSONdata=" + queryString);
             HttpClient httpClient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost("http://festivalradar.duckdns.org:8080/webservice/getBlips");
             try {
@@ -187,9 +188,9 @@ public class CloudSubService extends AbstractSubService {
 
         @Override
         protected void onPostExecute(String response) {
-            Log.i(TAG, "PullAllContactsTask.onPostExecute() with response="+response);
-            Long id,time;
-            double lat,lon;
+            Log.i(TAG, "PullAllContactsTask.onPostExecute() with response=" + response);
+            Long id, time;
+            double lat, lon;
             JSONArray newBlips;
             JSONObject blipJSON;
             RadarBlip blip = new RadarBlip();
@@ -202,7 +203,7 @@ public class CloudSubService extends AbstractSubService {
                 e.printStackTrace();
                 return;
             }
-            for(int i=0; i<newBlips.length();i++) {
+            for (int i = 0; i < newBlips.length(); i++) {
                 try {
                     blipJSON = newBlips.getJSONObject(i);
                     id = blipJSON.getLong("userId");
@@ -224,6 +225,4 @@ public class CloudSubService extends AbstractSubService {
 
         }
     }
-
-
 }

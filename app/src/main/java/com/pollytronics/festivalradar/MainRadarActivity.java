@@ -42,8 +42,10 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(toggleService.isChecked()) {
+                    Log.i(TAG, "RadarService button enabled");
                     startAndBindRadarService();
                 } else {
+                    Log.i(TAG, "RadarService button disabled");
                     unbindAndStopRadarService();
                 }
             }
@@ -141,14 +143,11 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
         if(sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
             double x;
             x = sensorEvent.values[0];
-            //Log.i(TAG, "received sensor values : " + Double.toString(x) + " " + Double.toString(y) + " " +Double.toString(z));
             radarView.setBearing(x);
             radarView.invalidate();
         }
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
-    }
+    public void onAccuracyChanged(Sensor sensor, int i) {}
 }

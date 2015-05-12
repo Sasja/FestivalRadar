@@ -16,6 +16,7 @@ import android.util.Log;
  * This class forms a layer between SubService classes and RadarActivities:
  *      - This class delegates calls from activities to the right helper classes (SubServices)
  *      - This class provide methods to the SubServices to reach the Activities.
+ * TODO: checking for api levels below HONEYCOMB is not sensible anymore as minSdkVersion is increased to 15 now
  */
 public class RadarService extends Service implements RadarService_Interface4SubService, RadarService_interface4RadarActivity {
 
@@ -44,7 +45,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      */
     @Override
     public void onCreate() {
-        db = (RadarDatabase_Interface4RadarService) RadarDatabase.getInstance(this);
+        db = RadarDatabase.getInstance(this);
         Log.i(TAG, "onCreate, initialising sub services");
         localisationSubService.onCreate();
         cloudSubService.onCreate();
@@ -174,7 +175,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
 
     @Override
     public Context getContext() {
-        return (Context) this;
+        return this;
     }
 
     //------------ Method implementations/delegations for RadarActivityInterface

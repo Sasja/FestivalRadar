@@ -20,6 +20,7 @@ import java.util.Collection;
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
+ * TODO: replace toggle buttons with Switches (api 11 and is way more recognizable)
  */
 public class MainRadarActivity extends RadarActivity implements SensorEventListener {
 

@@ -21,17 +21,15 @@ import java.util.Collection;
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
  * TODO: replace toggle buttons with Switches (api 11 and is way more recognizable)
+ * TODO: figure out how to make sure TYPE_ROTATION_VECTOR sensor uses magnetics so it is usable for a compas
  */
 public class MainRadarActivity extends RadarActivity implements SensorEventListener {
 
     private static final String TAG = "MainRadarActivity";
-
-    private SensorManager mSensorManager;
-    private Sensor mOrientation;
-
     ToggleButton toggleService;
     RadarView radarView;
-
+    private SensorManager mSensorManager;
+    private Sensor mRotation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +53,13 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
         radarView = (RadarView) findViewById(R.id.radar_view);
         radarView.setBearing(0);
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        mOrientation = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mOrientation, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_UI);    // TODO: figure out if this doesnt eat to much battery
     }
 
     @Override
@@ -140,14 +138,29 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
 //    }
 
     @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {      //TODO: figure out a working alternative for depreciated ORIENTATION sensor
-        if(sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if(sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            //Log.i(TAG, "sensor event received! : " + sensorEvent.toString());
+            float[] rotMat = new float[16];         // TODO: is it ok to do this within this often called method?
+            float[] orient = new float[3];
+            SensorManager.getRotationMatrixFromVector(rotMat, sensorEvent.values);
+            SensorManager.getOrientation(rotMat, orient);
             double x;
-            x = sensorEvent.values[0];
-            radarView.setBearing(x);
+            x = orient[0];
+            radarView.setBearing(x*180.0/3.1415);
             radarView.invalidate();
         }
     }
+
+//    @Override
+//    public void onSensorChanged(SensorEvent sensorEvent) {
+//        if(sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
+//            double x;
+//            x = sensorEvent.values[0];
+//            radarView.setBearing(x);
+//            radarView.invalidate();
+//        }
+//    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {}

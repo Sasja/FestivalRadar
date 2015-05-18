@@ -11,6 +11,10 @@ import android.widget.SeekBar;
 
 import com.pollytronics.festivalradar.lib.RadarContact;
 
+/**
+ * TODO: the location update does not do a thing anymore as the update rate is set once in the google play service at the moment
+ */
+
 
 public class SettingsRadarActivity extends RadarActivity {
 

@@ -20,7 +20,6 @@ import java.util.Collection;
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
- * TODO: figure out how to make sure TYPE_ROTATION_VECTOR sensor uses magnetics so it is usable for a compas
  */
 public class MainRadarActivity extends RadarActivity implements SensorEventListener {
 
@@ -58,7 +57,7 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
     @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_UI);    // TODO: figure out if this doesnt eat to much battery
+        mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_FASTEST);  // motoG reports 7mA batt drain for this sensor
     }
 
     @Override
@@ -140,7 +139,7 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
     public void onSensorChanged(SensorEvent sensorEvent) {
         if(sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
             //Log.i(TAG, "sensor event received! : " + sensorEvent.toString());
-            float[] rotMat = new float[16];         // TODO: is it ok to do this within this often called method?
+            float[] rotMat = new float[16];
             float[] orient = new float[3];
             SensorManager.getRotationMatrixFromVector(rotMat, sensorEvent.values);
             SensorManager.getOrientation(rotMat, orient);

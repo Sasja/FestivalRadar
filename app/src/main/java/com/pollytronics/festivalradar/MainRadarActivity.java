@@ -20,6 +20,8 @@ import java.util.Collection;
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
+ * TODO: check and handle unavailable rotation sensor!
+ * TODO: don't ask for max rate, but request something reasonable
  */
 public class MainRadarActivity extends RadarActivity implements SensorEventListener {
 
@@ -113,6 +115,7 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
+        // You're not supposed to do to much work  in this callback but this is reasonable
         if(sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
             //Log.i(TAG, "sensor event received! : " + sensorEvent.toString());
             float[] rotMat = new float[16];

@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
-import android.widget.ToggleButton;
+import android.widget.Switch;
 
 import com.pollytronics.festivalradar.lib.RadarBlip;
 import com.pollytronics.festivalradar.lib.RadarContact;
@@ -20,13 +20,12 @@ import java.util.Collection;
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
- * TODO: replace toggle buttons with Switches (api 11 and is way more recognizable)
  * TODO: figure out how to make sure TYPE_ROTATION_VECTOR sensor uses magnetics so it is usable for a compas
  */
 public class MainRadarActivity extends RadarActivity implements SensorEventListener {
 
     private static final String TAG = "MainRadarActivity";
-    ToggleButton toggleService;
+    Switch toggleService;
     RadarView radarView;
     private SensorManager mSensorManager;
     private Sensor mRotation;
@@ -36,7 +35,7 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.radaractivity_main);
 
-        toggleService = (ToggleButton) findViewById(R.id.toggle_service);
+        toggleService = (Switch) findViewById(R.id.toggle_service);
         toggleService.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

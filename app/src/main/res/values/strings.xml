@@ -5,11 +5,8 @@
     <string name="text_view">Message from service:\n</string>
     <string name="title_activity_main_radar">MainRadarActivity</string>
     <string name="action_main_dummy">some main act action</string>
-    <string name="toggle_button_caption">RadarService: </string>
     <string name="service_notification_title">Festival Radar</string>
     <string name="service_notification_text">Service is running, go to the radar to disable</string>
-    <string name="toggle_service_texton">Running</string>
-    <string name="toggle_service_textoff">Stopped</string>
     <string name="button_yo">Say Yo</string>
     <string name="title_activity_about_radar">AboutRadarActivity</string>
     <string name="action_settings">Settings</string>

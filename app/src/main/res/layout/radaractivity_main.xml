@@ -2,12 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
     tools:context="com.pollytronics.festivalradar.MainRadarActivity">
 
     <com.pollytronics.festivalradar.lib.RadarView
@@ -20,14 +20,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <TextView
-            android:text="@string/toggle_button_caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ToggleButton
+        <Switch
             android:id="@+id/toggle_service"
-            android:textOn="@string/toggle_service_texton"
-            android:textOff="@string/toggle_service_textoff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

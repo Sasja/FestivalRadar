@@ -57,7 +57,7 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
     @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_FASTEST);  // motoG reports 7mA batt drain for this sensor
+        mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_FASTEST);  // motoG reports 7mA batt drain for mRotation.getPower()
     }
 
     @Override
@@ -111,30 +111,6 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
         radarView.invalidate();
     }
 
-//                              this is the approach described online, can't get it to work properly yet...
-//    float[] mGravity;
-//    float[] mGeomagnetic;
-//    @Override
-//    public void onSensorChanged(SensorEvent sensorEvent) {
-//        Log.i(TAG, "sensor event received! : " + sensorEvent.toString());
-//        if(sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-//            mGravity = sensorEvent.values;
-//        else if(sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-//            mGeomagnetic = sensorEvent.values;
-//        if(mGravity != null && mGeomagnetic != null) {
-//            float R[] = new float[9];
-//            float I[] = new float[9];
-//            boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
-//            if(success) {
-//                float orientation[] = new float[3];
-//                SensorManager.getOrientation(R, orientation);
-//                radarView.setBearing(orientation[0]*180/3.1415);
-//                radarView.invalidate();
-//                Log.i(TAG, "bearing reset to : " + Double.toString(orientation[0]));
-//            }
-//        }
-//    }
-
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if(sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
@@ -149,16 +125,6 @@ public class MainRadarActivity extends RadarActivity implements SensorEventListe
             radarView.invalidate();
         }
     }
-
-//    @Override
-//    public void onSensorChanged(SensorEvent sensorEvent) {
-//        if(sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-//            double x;
-//            x = sensorEvent.values[0];
-//            radarView.setBearing(x);
-//            radarView.invalidate();
-//        }
-//    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {}

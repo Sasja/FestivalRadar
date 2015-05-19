@@ -13,7 +13,6 @@ import java.util.Map;
 /**
  * Created by pollywog on 10/2/14.
  * TODO: figure out how canvas.getWidth() and such is supposed to work
- * TODO: make onDraw use bearing value
  * TODO: make it prettier
  */
 public class RadarView extends View {

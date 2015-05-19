@@ -8,10 +8,11 @@ import java.util.Random;
  * Created by pollywog on 9/22/14.
  * extension of the Location class for use within radar app
  */
+
 public class RadarBlip extends Location{
 
     private static String TAG = "RadarBlip";
-
+    @SuppressWarnings("FieldCanBeLocal")
     private static String PROVIDER = "RadarBlip";
 
     public RadarBlip(){

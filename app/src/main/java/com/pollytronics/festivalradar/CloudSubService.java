@@ -37,6 +37,32 @@ public class CloudSubService extends AbstractSubService {
     private final String TAG = "CloudSubService";
     private int updateTime_ms;
     private boolean cleaningUp = false;     //a flag so the network pull loop will stop posting itself
+    private final Runnable cloudLoop = new Runnable() {
+        @Override
+        public void run() {
+            try{
+                ConnectivityManager connMgr = (ConnectivityManager) getRadarService().getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    new PushSelfContactTask().execute();
+                    new PullAllContactsTask() {
+                        @Override
+                        protected void onPostExecute(String response) {
+                            super.onPostExecute(response);
+                            getMainHandler().removeCallbacks(cloudLoop);    //make sure we dont have 2 loops
+                            if(!cleaningUp) getMainHandler().postDelayed(cloudLoop,updateTime_ms);
+                        }
+                    }.execute();
+                } else {
+                    Log.i(TAG,"Cannot connect to server: no network");
+                    getMainHandler().removeCallbacks(cloudLoop);    //make sure we dont have 2 loops
+                    if(!cleaningUp) getMainHandler().postDelayed(cloudLoop,updateTime_ms);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     public CloudSubService(RadarService rs) {
         super(rs);
@@ -75,33 +101,6 @@ public class CloudSubService extends AbstractSubService {
         getMainHandler().post(cloudLoop);
     }
 
-    private final Runnable cloudLoop = new Runnable() {
-        @Override
-        public void run() {
-            try{
-                ConnectivityManager connMgr = (ConnectivityManager) getRadarService().getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                if (networkInfo != null && networkInfo.isConnected()) {
-                    new PushSelfContactTask().execute();
-                    new PullAllContactsTask() {
-                        @Override
-                        protected void onPostExecute(String response) {
-                            super.onPostExecute(response);
-                            getMainHandler().removeCallbacks(cloudLoop);    //make sure we dont have 2 loops
-                            if(!cleaningUp) getMainHandler().postDelayed(cloudLoop,updateTime_ms);
-                        }
-                    }.execute();
-                } else {
-                    Log.i(TAG,"Cannot connect to server: no network");
-                    getMainHandler().removeCallbacks(cloudLoop);    //make sure we dont have 2 loops
-                    if(!cleaningUp) getMainHandler().postDelayed(cloudLoop,updateTime_ms);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
     private class PushSelfContactTask extends AsyncTask<Void, Void, String> {
         String queryString = "";
 
@@ -127,7 +126,7 @@ public class CloudSubService extends AbstractSubService {
         protected String doInBackground(Void... voids) {
             Log.i(TAG,"PUSH: will do request with JSONdata="+queryString);
             HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost("http://festivalradar.duckdns.org:8080/webservice/setMyBlip");
+            HttpPost httpPost = new HttpPost("http://festivalradarservice.herokuapp.com/webservice/setMyBlip");     // TODO: domain should be defined elsewhere and not repeated
             try {
                 httpPost.setEntity(new StringEntity(queryString));
             } catch (UnsupportedEncodingException e) {
@@ -170,7 +169,7 @@ public class CloudSubService extends AbstractSubService {
         protected String doInBackground(Void... voids) {
             Log.i(TAG, "PULL: will do request with JSONdata=" + queryString);
             HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost("http://festivalradar.duckdns.org:8080/webservice/getBlips");
+            HttpPost httpPost = new HttpPost("http://festivalradarservice.herokuapp.com/webservice/getBlips");
             try {
                 httpPost.setEntity(new StringEntity(queryString));
             } catch (UnsupportedEncodingException e) {

@@ -28,6 +28,7 @@ import java.util.Collection;
  * periodically pulls and pushes data from server and updates the local database
  *
  * TODO: use HttpUrlConnection instead of the apache lib, it should improve battery drain i've read somewhere (>=Gingerbread...)
+ * TODO: disable keepalive connection (which is standard i believe) to minimize load on server
  * TODO: also the apache lib is depreciated
  *
  * Created by pollywog on 9/23/14.

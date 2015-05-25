@@ -36,6 +36,7 @@ public class RadarActivity_Main extends RadarActivity implements SensorEventList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.radaractivity_main);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);        //TODO: try not to do these things dynamically but in xml
 
         toggleService = (Switch) findViewById(R.id.toggle_service);
         toggleService.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

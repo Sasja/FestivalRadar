@@ -38,5 +38,6 @@
     <string name="dialog_delete_contact">delete this contact?</string>
     <string name="dialog_confirm">yes</string>
     <string name="dialog_deny">no</string>
+    <string name="title_activity_radar_activity__groups">RadarActivity_Groups</string>
 
 </resources>

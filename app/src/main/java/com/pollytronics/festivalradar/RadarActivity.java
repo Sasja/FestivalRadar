@@ -90,7 +90,7 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
             Log.i(TAG,"yup found it running, lets bind to it");
             bindService(new Intent(RadarActivity.this, RadarService.class), rsConn, 0);
         } else {
-            Log.i(TAG,"seems its not running");
+            Log.i(TAG, "seems its not running");
         }
     }
 
@@ -200,6 +200,9 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
             return true;
         } else if (id == R.id.action_debug) {
             startActivity(new Intent(this, RadarActivity_Debug.class));
+            return true;
+        } else if (id == R.id.action_groups) {
+            startActivity(new Intent(this, RadarActivity_Groups.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

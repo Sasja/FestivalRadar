@@ -21,7 +21,7 @@ public class RadarActivity_AddContactByUsername extends RadarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_contact_by_username);
+        setContentView(R.layout.radaractivity_add_contact_by_username);
 
         editTextAddContactName = (EditText) findViewById(R.id.edittext_add_contact_name);
         editTextAddContactId = (EditText) findViewById(R.id.edittext_add_contact_id);

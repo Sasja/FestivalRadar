@@ -86,10 +86,10 @@ public class RadarActivity_Groups extends RadarActivity {
             Fragment fragment;
             switch(position) {
                 case 0:
-                    fragment = new GroupsFragment_myGroups();
+                    fragment = new GroupsFragment_nearbyGroups();
                     break;
                 case 1:
-                    fragment = new GroupsFragment_nearbyGroups();
+                    fragment = new GroupsFragment_myGroups();
                     break;
                 case 2:
                     fragment = new GroupsFragment_privateGroups();
@@ -108,11 +108,11 @@ public class RadarActivity_Groups extends RadarActivity {
         public CharSequence getPageTitle(int position) {
             switch(position) {
                 case 0:
-                    return "my groups";
+                    return getString(R.string.groups_tab_nearby);
                 case 1:
-                    return "nearby";
+                    return getString(R.string.groups_tab_mygroups);
                 case 2:
-                    return "private";
+                    return getString(R.string.groups_tab_private);
                 default:
                     return "dummy";
             }

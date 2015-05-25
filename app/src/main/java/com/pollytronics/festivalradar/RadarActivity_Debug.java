@@ -13,6 +13,7 @@ import java.util.ArrayList;
 /**
  * RadarActivity for debugging purposes
  * shows received calls
+ * TODO: have a look at the SlidingsTabBasic demo for some ideas for logging
  */
 public class RadarActivity_Debug extends RadarActivity {
 

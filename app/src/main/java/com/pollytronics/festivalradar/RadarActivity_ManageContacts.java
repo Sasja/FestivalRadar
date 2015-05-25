@@ -147,7 +147,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return new AlertDialog.Builder(getActivity())
-                    .setMessage("delete this contact?")
+                    .setMessage(getString(R.string.dialog_delete_contact))
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

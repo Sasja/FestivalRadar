@@ -26,6 +26,7 @@ public class RadarActivity_Groups extends RadarActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(1);   // start in the middle
     }
 
     @Override

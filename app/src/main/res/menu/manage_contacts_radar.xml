@@ -4,7 +4,8 @@
     tools:context="com.pollytronics.festivalradar.RadarActivity_ManageContacts" >
     <item
         android:id="@+id/action_add_contact_by_username"
+        android:icon="@drawable/ic_action_add_person"
         android:orderInCategory="100"
         android:title="@string/action_add_contact_by_username"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>

@@ -33,9 +33,9 @@ import java.util.Collection;
  *
  * Created by pollywog on 9/23/14.
  */
-public class CloudSubService extends AbstractSubService {
+public class SubService_Cloud extends SubService {
 
-    private final String TAG = "CloudSubService";
+    private final String TAG = "SubService_Cloud";
     private int updateTime_ms;
     private boolean cleaningUp = false;     //a flag so the network pull loop will stop posting itself
     private final Runnable cloudLoop = new Runnable() {
@@ -65,7 +65,7 @@ public class CloudSubService extends AbstractSubService {
         }
     };
 
-    public CloudSubService(RadarService rs) {
+    public SubService_Cloud(RadarService rs) {
         super(rs);
     }
 

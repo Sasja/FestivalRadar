@@ -5,9 +5,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class AboutRadarActivity extends RadarActivity {
+public class RadarActivity_About extends RadarActivity {
 
-    private static final String TAG = "AboutRadarActivity";
+    private static final String TAG = "RadarActivity_About";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

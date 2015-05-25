@@ -14,9 +14,9 @@ import java.util.ArrayList;
  * RadarActivity for debugging purposes
  * shows received calls
  */
-public class DebugRadarActivity extends RadarActivity {
+public class RadarActivity_Debug extends RadarActivity {
 
-    private final String TAG = "DebugRadarActivity";
+    private final String TAG = "RadarActivity_Debug";
 
     TextView debugTextView;
 

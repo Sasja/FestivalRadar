@@ -24,9 +24,9 @@ import java.util.Collection;
  * TODO: don't ask for max rate of sensor, but request something reasonable
  * idee: de zon en of maan erbij zetten als het compas disabled is
  */
-public class MainRadarActivity extends RadarActivity implements SensorEventListener {
+public class RadarActivity_Main extends RadarActivity implements SensorEventListener {
 
-    private static final String TAG = "MainRadarActivity";
+    private static final String TAG = "RadarActivity_Main";
     Switch toggleService;
     RadarView radarView;
     private SensorManager mSensorManager;

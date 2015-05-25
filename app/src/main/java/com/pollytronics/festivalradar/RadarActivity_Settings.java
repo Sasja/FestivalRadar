@@ -16,9 +16,9 @@ import com.pollytronics.festivalradar.lib.RadarContact;
  */
 
 
-public class SettingsRadarActivity extends RadarActivity {
+public class RadarActivity_Settings extends RadarActivity {
 
-    private static final String TAG = "SettingsRadarActivity";
+    private static final String TAG = "RadarActivity_Settings";
 
     private EditText setIdEditText;
 

@@ -190,16 +190,16 @@ public class RadarActivity extends ActionBarActivity implements RadarActivity_In
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsRadarActivity.class));
+            startActivity(new Intent(this, RadarActivity_Settings.class));
             return true;
         } else if (id == R.id.action_about){
-            startActivity(new Intent(this, AboutRadarActivity.class));
+            startActivity(new Intent(this, RadarActivity_About.class));
             return true;
         } else if (id == R.id.action_manage_contacts) {
-            startActivity(new Intent(this, ManageContactsRadarActivity.class));
+            startActivity(new Intent(this, RadarActivity_ManageContacts.class));
             return true;
         } else if (id == R.id.action_debug) {
-            startActivity(new Intent(this, DebugRadarActivity.class));
+            startActivity(new Intent(this, RadarActivity_Debug.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

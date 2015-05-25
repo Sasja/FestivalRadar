@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
-public class ManageContactsRadarActivity extends RadarActivity {
+public class RadarActivity_ManageContacts extends RadarActivity {
 
     private static final String TAG = "ManageContactRadarAct";
     private DialogFragment mDialog;
@@ -51,41 +51,12 @@ public class ManageContactsRadarActivity extends RadarActivity {
         updateContactListView();
     }
 
-    public static class ContactActionDialogFragment extends DialogFragment {
-
-        ManageContactsRadarActivity mRadarActivity;
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            mRadarActivity = (ManageContactsRadarActivity) activity;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new AlertDialog.Builder(getActivity())
-                    .setMessage("delete this contact?")
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mRadarActivity.onDeny();
-                        }
-                    })
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mRadarActivity.onDelete();
-                        }
-                    })
-                    .create();
-        }
-    }
-
     public void onDelete(){
         Log.i(TAG, "deleting selected radar contact");
         getRadarDatabase().removeContact(clickedContact);
         notifyDatabaseUpdate();         // TODO: this shouldn't be called here but happen autamatically
     }
+
     public void onDeny(){
         Log.i(TAG, "canceled deleting radar contact");
     }
@@ -105,7 +76,7 @@ public class ManageContactsRadarActivity extends RadarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_add_contact_by_username) {
-            startActivity(new Intent(this, AddContactByUsernameRadarActivity.class));
+            startActivity(new Intent(this, RadarActivity_AddContactByUsername.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -135,7 +106,7 @@ public class ManageContactsRadarActivity extends RadarActivity {
                     RadarContact contact = getItem(position);
                     View view;
                     if (convertView == null) {
-                        view = LayoutInflater.from(ManageContactsRadarActivity.this).inflate(R.layout.manage_contacs_list_item, null);
+                        view = LayoutInflater.from(RadarActivity_ManageContacts.this).inflate(R.layout.manage_contacs_list_item, null);
                     } else {
                         view = convertView;
                     }
@@ -154,13 +125,43 @@ public class ManageContactsRadarActivity extends RadarActivity {
         }
     }
 
-    /**
+   /**
      * gets called by service when it has updated the database with new info
      */
     @Override
     public void notifyDatabaseUpdate() {
         super.notifyDatabaseUpdate();
         updateContactListView();
+    }
+
+    public static class ContactActionDialogFragment extends DialogFragment {
+
+        RadarActivity_ManageContacts mRadarActivity;
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            mRadarActivity = (RadarActivity_ManageContacts) activity;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new AlertDialog.Builder(getActivity())
+                    .setMessage("delete this contact?")
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mRadarActivity.onDeny();
+                        }
+                    })
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mRadarActivity.onDelete();
+                        }
+                    })
+                    .create();
+        }
     }
 
 }

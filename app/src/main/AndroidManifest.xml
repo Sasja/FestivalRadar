@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainRadarActivity"
+            android:name=".RadarActivity_Main"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" >
@@ -29,46 +29,46 @@
         </service>
 
         <activity
-            android:name=".AboutRadarActivity"
+            android:name=".RadarActivity_About"
             android:label="@string/title_activity_about_radar"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainRadarActivity" >
+            android:parentActivityName=".RadarActivity_Main" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.pollytronics.festivalradar.MainRadarActivity" />
+                android:value=".RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".SettingsRadarActivity"
+            android:name=".RadarActivity_Settings"
             android:label="@string/title_activity_settings_radar"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainRadarActivity" >
+            android:parentActivityName=".RadarActivity_Main" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.pollytronics.festivalradar.MainRadarActivity" />
+                android:value=".RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".ManageContactsRadarActivity"
+            android:name=".RadarActivity_ManageContacts"
             android:label="@string/title_activity_manage_contacts_radar"
-            android:parentActivityName=".MainRadarActivity" >
+            android:parentActivityName=".RadarActivity_Main" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.pollytronics.festivalradar.MainRadarActivity" />
+                android:value=".RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".DebugRadarActivity"
+            android:name=".RadarActivity_Debug"
             android:label="@string/title_activity_debug_radar"
-            android:parentActivityName=".MainRadarActivity" >
+            android:parentActivityName=".RadarActivity_Main" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.pollytronics.festivalradar.MainRadarActivity" />
+                android:value=".RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".AddContactByUsernameRadarActivity"
+            android:name=".RadarActivity_AddContactByUsername"
             android:label="@string/title_activity_add_contact_by_username"
-            android:parentActivityName=".ManageContactsRadarActivity" >
+            android:parentActivityName=".RadarActivity_ManageContacts" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.pollytronics.festivalradar.ManageContactsRadarActivity" />
+                android:value=".RadarActivity_ManageContacts" />
         </activity>
     </application>
 

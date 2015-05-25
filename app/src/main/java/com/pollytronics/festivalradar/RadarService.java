@@ -12,7 +12,7 @@ import android.util.Log;
 
 /**
  * The RadarService class manages the connection to RadarActivity and derived classes
- * it creates a few helper classes derived from the AbstractSubService class to implement its features and to delegate calls to
+ * it creates a few helper classes derived from the SubService class to implement its features and to delegate calls to
  * This class forms a layer between SubService classes and RadarActivities:
  *      - This class delegates calls from activities to the right helper classes (SubServices)
  *      - This class provide methods to the SubServices to reach the Activities.
@@ -25,6 +25,12 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     private RadarActivity_Interface4RadarService ra;
     private RadarDatabase_Interface4RadarService db;
     private Boolean raRegistered = false;
+    private SubService_Localisation subServiceLocalisation = new SubService_Localisation(this);
+    private SubService_Cloud subServiceCloud = new SubService_Cloud(this);
+
+    /*
+    create an instance of each helper class here, and add calls in onCreate, onDestroy, onRegister and onUnregister
+     */
 
     public RadarService() {
     }
@@ -33,13 +39,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
         return db;
     }
 
-    /*
-    create an instance of each helper class here, and add calls in onCreate, onDestroy, onRegister and onUnregister
-     */
-
-    private LocalisationSubService localisationSubService = new LocalisationSubService(this);
-    private CloudSubService cloudSubService = new CloudSubService(this);
-
     /**
      * calls onCreate methods of all subServices
      */
@@ -47,8 +46,8 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     public void onCreate() {
         db = RadarDatabase.getInstance(this);
         Log.i(TAG, "onCreate, initialising sub services");
-        localisationSubService.onCreate();
-        cloudSubService.onCreate();
+        subServiceLocalisation.onCreate();
+        subServiceCloud.onCreate();
     }
 
     /**
@@ -57,8 +56,8 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     @Override
     public void onDestroy() {
         Log.i(TAG, "onDestroy, terminating sub services");
-        localisationSubService.onDestroy();
-        cloudSubService.onDestroy();
+        subServiceLocalisation.onDestroy();
+        subServiceCloud.onDestroy();
     }
 
     /**
@@ -66,8 +65,8 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      */
     public void onRegister() {
         Log.i(TAG,"onRegister, calling subservice methods");
-        localisationSubService.onRegister();
-        cloudSubService.onRegister();
+        subServiceLocalisation.onRegister();
+        subServiceCloud.onRegister();
     }
 
     /**
@@ -75,19 +74,19 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      */
     public void onUnregister() {
         Log.i(TAG,"onRegister, calling subservice methods");
-        localisationSubService.onUnregister();
-        cloudSubService.onUnregister();
+        subServiceLocalisation.onUnregister();
+        subServiceCloud.onUnregister();
     }
 
     @Override
     public void notifyNewSettings() {
-        localisationSubService.onNewSettings();
-        cloudSubService.onNewSettings();
+        subServiceLocalisation.onNewSettings();
+        subServiceCloud.onNewSettings();
     }
 
     /**
      * gets called each time when an activity calls startService
-     * launches a sticky notification pointing back to MainRadarActivity for SDK >= HONEYCOMB
+     * launches a sticky notification pointing back to RadarActivity_Main for SDK >= HONEYCOMB
      * TODO: implement for lower SDKs
      */
     @Override
@@ -95,7 +94,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
         Log.i(TAG, "onStartCommand");
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
         {
-            Intent notificationIntent = new Intent(this, MainRadarActivity.class);
+            Intent notificationIntent = new Intent(this, RadarActivity_Main.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
             Notification notification = new Notification.Builder(this)
                     .setSmallIcon(R.drawable.ic_launcher)
@@ -106,15 +105,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
             startForeground(1, notification);
         }
         return Service.START_STICKY;
-    }
-
-    /**
-     * throwaway class for activity and services getting each others instances
-     */
-    public class RadarBinder extends Binder {
-        RadarService getRadarService(){
-            return RadarService.this;
-        }
     }
 
     /**
@@ -153,8 +143,6 @@ public class RadarService extends Service implements RadarService_Interface4SubS
         }
     }
 
-    //------------- Method implementations for SubserviceInterface
-
      /**
      * send text to a registered activity if any
      * called from within RadarServices and SubServices
@@ -166,6 +154,8 @@ public class RadarService extends Service implements RadarService_Interface4SubS
         }
     }
 
+    //------------- Method implementations for SubserviceInterface
+
     @Override
     public void notifyNewData() {
         if(raRegistered){
@@ -176,6 +166,15 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     @Override
     public Context getContext() {
         return this;
+    }
+
+    /**
+     * throwaway class for activity and services getting each others instances
+     */
+    public class RadarBinder extends Binder {
+        RadarService getRadarService(){
+            return RadarService.this;
+        }
     }
 
     //------------ Method implementations/delegations for RadarActivityInterface

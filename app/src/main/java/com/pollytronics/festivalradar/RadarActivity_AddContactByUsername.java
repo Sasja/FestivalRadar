@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.pollytronics.festivalradar.lib.RadarContact;
 
 
-public class AddContactByUsernameRadarActivity extends RadarActivity {
+public class RadarActivity_AddContactByUsername extends RadarActivity {
 
     private final String TAG = "AddContactByUsername";
     private EditText editTextAddContactName;

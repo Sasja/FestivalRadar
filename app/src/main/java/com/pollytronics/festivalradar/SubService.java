@@ -19,13 +19,17 @@ import android.os.Looper;
  *
  * a few methods need to be overridden to handle some events.
  */
-abstract public class AbstractSubService {
+abstract public class SubService {
 
-    private final String TAG = "override this AbstractSubService TAG";
+    private final String TAG = "override this SubService TAG";
 
     private RadarService rs;
+    /**
+     * this gets a handler for the main thread, use it to post Runnables to the main thread
+     */
+    private Handler handler = new Handler(Looper.getMainLooper());
 
-    public AbstractSubService(RadarService rs){
+    public SubService(RadarService rs){
         this.rs = rs;
     }
 
@@ -35,10 +39,6 @@ abstract public class AbstractSubService {
 
     protected RadarPreferences getRadarPreferences() {return RadarPreferences.getInstance(rs.getApplicationContext());}
 
-    /**
-     * this gets a handler for the main thread, use it to post Runnables to the main thread
-     */
-    private Handler handler = new Handler(Looper.getMainLooper());
     protected Handler getMainHandler(){
         return handler;
     }

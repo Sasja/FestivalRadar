@@ -17,17 +17,17 @@ import com.pollytronics.festivalradar.lib.RadarContact;
  * requests location updates from the google play services on creation
  * and pushes them to the database
  */
-public class LocalisationSubService extends AbstractSubService implements
+public class SubService_Localisation extends SubService implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         com.google.android.gms.location.LocationListener {
 
-    private final String TAG = "LocalisationSubService";
+    private final String TAG = "SubService_Localisation";
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
 
-    public LocalisationSubService(RadarService rs) {
+    public SubService_Localisation(RadarService rs) {
         super(rs);
     }
 

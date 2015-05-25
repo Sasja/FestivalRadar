@@ -24,7 +24,7 @@ import java.util.Random;
  * it is used by and has an interface for the RadarService and for RadarActivities
  *
  * TODO: onUpgrade() and onDowngrade just discards all data at the moment
- * TODO: make method updateContacts(Collection<RadarContact> contacts) and use it from within CloudSubService
+ * TODO: make method updateContacts(Collection<RadarContact> contacts) and use it from within SubService_Cloud
  * TODO: check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
  * TODO: is it okay to do all this database stuff sync?
  */
@@ -34,61 +34,6 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     private static RadarDatabase instance=null;
 
     private RadarDbHelper radarDbHelper;
-
-    private static abstract class ContactEntry implements BaseColumns {
-        public static final String TABLE_NAME = "contacts";
-        public static final String COLUMN_NAME_NAME="name";
-        public static final String COLUMN_NAME_LAST_LON="lastLongitude";
-        public static final String COLUMN_NAME_LAST_LAT="lastLatitude";
-        public static final String COLUMN_NAME_LAST_TIME="lastTime";
-        public static final String COLUMN_NAME_GLOBAL_ID="globalId";
-
-        public static final String SELF_CONTACT_NAME_VALUE="SELF_CONTACT";
-    }
-
-    private class RadarDbHelper extends SQLiteOpenHelper{
-        public static final String DATABASE_NAME = "FestivalRadarContacts.db";
-        public static final int DATABASE_VERSION = 1;
-
-        public RadarDbHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            Log.i(TAG, "onCreate()");
-            db.execSQL("CREATE TABLE " + ContactEntry.TABLE_NAME + " ( " +
-                    ContactEntry._ID + " INTEGER PRIMARY KEY," +
-                    ContactEntry.COLUMN_NAME_GLOBAL_ID + " LONG, " +
-                    ContactEntry.COLUMN_NAME_NAME + " TEXT, " +
-                    ContactEntry.COLUMN_NAME_LAST_LAT + " DOUBLE, " +
-                    ContactEntry.COLUMN_NAME_LAST_LON + " DOUBLE, " +
-                    ContactEntry.COLUMN_NAME_LAST_TIME + " LONG )");
-
-
-            ContentValues values = new ContentValues();
-            values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, 0);
-            values.put(ContactEntry.COLUMN_NAME_NAME, ContactEntry.SELF_CONTACT_NAME_VALUE);
-            values.put(ContactEntry.COLUMN_NAME_LAST_LAT, 0.0);
-            values.put(ContactEntry.COLUMN_NAME_LAST_LON, 0.0);
-            values.put(ContactEntry.COLUMN_NAME_LAST_TIME, 0.0);
-            db.insertOrThrow(ContactEntry.TABLE_NAME, null, values);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int i, int i2) {
-            Log.i(TAG,"onUpgrade() discard all data");
-            //simply discard all data and start over
-            db.execSQL("DROP TABLE IF EXISTS " + ContactEntry.TABLE_NAME);
-            onCreate(db);
-        }
-
-        @Override
-        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.i(TAG,"onDowngrade() discard all data");
-            onUpgrade(db, oldVersion, newVersion);
-        }
-    }
 
     private RadarDatabase(Context context){
         radarDbHelper = new RadarDbHelper(context);
@@ -101,8 +46,6 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         }
         return instance;
     }
-
-    //-------------------------------
 
     /**
      * return an Iterable of contacts
@@ -167,6 +110,8 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
         db.close();
         return contactIds;
     }
+
+    //-------------------------------
 
     @Override
     public RadarContact getContact(Long id) {
@@ -316,10 +261,65 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
                 null
         );
         if (n == 1) {
-            Log.i(TAG,"updated self-contact");
+            Log.i(TAG, "updated self-contact");
         } else {
             Log.i(TAG, "AMOUNT OF SELF CONTACTS UPDATED = " + Integer.toString(n));
         }
         db.close();
+    }
+
+    private static abstract class ContactEntry implements BaseColumns {
+        public static final String TABLE_NAME = "contacts";
+        public static final String COLUMN_NAME_NAME="name";
+        public static final String COLUMN_NAME_LAST_LON="lastLongitude";
+        public static final String COLUMN_NAME_LAST_LAT="lastLatitude";
+        public static final String COLUMN_NAME_LAST_TIME="lastTime";
+        public static final String COLUMN_NAME_GLOBAL_ID="globalId";
+
+        public static final String SELF_CONTACT_NAME_VALUE="SELF_CONTACT";
+    }
+
+    private class RadarDbHelper extends SQLiteOpenHelper{
+        public static final String DATABASE_NAME = "FestivalRadarContacts.db";
+        public static final int DATABASE_VERSION = 1;
+
+        public RadarDbHelper(Context context) {
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            Log.i(TAG, "onCreate()");
+            db.execSQL("CREATE TABLE " + ContactEntry.TABLE_NAME + " ( " +
+                    ContactEntry._ID + " INTEGER PRIMARY KEY," +
+                    ContactEntry.COLUMN_NAME_GLOBAL_ID + " LONG, " +
+                    ContactEntry.COLUMN_NAME_NAME + " TEXT, " +
+                    ContactEntry.COLUMN_NAME_LAST_LAT + " DOUBLE, " +
+                    ContactEntry.COLUMN_NAME_LAST_LON + " DOUBLE, " +
+                    ContactEntry.COLUMN_NAME_LAST_TIME + " LONG )");
+
+
+            ContentValues values = new ContentValues();
+            values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, 0);
+            values.put(ContactEntry.COLUMN_NAME_NAME, ContactEntry.SELF_CONTACT_NAME_VALUE);
+            values.put(ContactEntry.COLUMN_NAME_LAST_LAT, 0.0);
+            values.put(ContactEntry.COLUMN_NAME_LAST_LON, 0.0);
+            values.put(ContactEntry.COLUMN_NAME_LAST_TIME, 0.0);
+            db.insertOrThrow(ContactEntry.TABLE_NAME, null, values);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int i, int i2) {
+            Log.i(TAG,"onUpgrade() discard all data");
+            //simply discard all data and start over
+            db.execSQL("DROP TABLE IF EXISTS " + ContactEntry.TABLE_NAME);
+            onCreate(db);
+        }
+
+        @Override
+        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            Log.i(TAG,"onDowngrade() discard all data");
+            onUpgrade(db, oldVersion, newVersion);
+        }
     }
 }

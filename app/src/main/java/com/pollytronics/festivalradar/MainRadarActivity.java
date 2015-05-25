@@ -20,8 +20,9 @@ import java.util.Collection;
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
- * TODO: check and handle unavailable rotation sensor!
- * TODO: don't ask for max rate, but request something reasonable
+ * TODO: check and handle unavailable rotation_vector sensor!
+ * TODO: don't ask for max rate of sensor, but request something reasonable
+ * idee: de zon en of maan erbij zetten als het compas disabled is
  */
 public class MainRadarActivity extends RadarActivity implements SensorEventListener {
 

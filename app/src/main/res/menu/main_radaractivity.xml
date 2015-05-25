@@ -3,21 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.pollytronics.festivalradar.MainRadarActivity" >
     <item android:id="@+id/action_manage_contacts"
+        android:icon="@drawable/ic_action_person"
+        android:orderInCategory="100"
         android:title="@string/action_manage_contacts"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+        android:icon="@drawable/ic_action_settings"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        android:title="@string/action_settings"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_about"
-        android:title="@string/action_about"
         android:orderInCategory="100"
+        android:title="@string/action_about"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_debug"
-        android:title="@string/action_debug"
         android:orderInCategory="100"
+        android:title="@string/action_debug"
         app:showAsAction="never" />
 </menu>

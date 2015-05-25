@@ -1,20 +1,31 @@
 package com.pollytronics.festivalradar;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.pollytronics.festivalradar.R;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class RadarActivity_Groups extends RadarActivity {
 
     private final String TAG = "RadarActivity_Groups";
 
+    SectionsPagerAdapter mSectionsPagerAdapter;
+    ViewPager mViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.radaractivity_groups);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
     }
 
     @Override
@@ -26,16 +37,85 @@ public class RadarActivity_Groups extends RadarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        return super.onOptionsItemSelected(item);
+    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    public static class GroupsFragment extends Fragment {
+        public GroupsFragment() {}
+
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.groupsfragment_dummy, container, false);
+            return rootView;
+        }
+    }
+
+    public static class GroupsFragment_myGroups extends GroupsFragment {
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.groupsfragment_mygroups, container, false);
+            return rootView;
+        }
+    }
+
+    public static class GroupsFragment_nearbyGroups extends GroupsFragment {
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.groupsfragment_nearbygroups, container, false);
+            return rootView;
+        }
+    }
+
+    public static class GroupsFragment_privateGroups extends GroupsFragment {
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.groupsfragment_privategroups, container, false);
+            return rootView;
+        }
+    }
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        public SectionsPagerAdapter(FragmentManager fm) {super(fm);}
+
+        @Override
+        public Fragment getItem(int position) {
+            Fragment fragment;
+            switch(position) {
+                case 0:
+                    fragment = new GroupsFragment_myGroups();
+                    break;
+                case 1:
+                    fragment = new GroupsFragment_nearbyGroups();
+                    break;
+                case 2:
+                    fragment = new GroupsFragment_privateGroups();
+                    break;
+                default:
+                    fragment = new GroupsFragment();
+                    break;
+            }
+            return fragment;
         }
 
-        return super.onOptionsItemSelected(item);
+        @Override
+        public int getCount() {return 3;}
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch(position) {
+                case 0:
+                    return "my groups";
+                case 1:
+                    return "nearby";
+                case 2:
+                    return "private";
+                default:
+                    return "dummy";
+            }
+        }
     }
 }

@@ -7,7 +7,6 @@
     <string name="action_main_dummy">some main act action</string>
     <string name="service_notification_title">Festival Radar</string>
     <string name="service_notification_text">Service is running, go to the radar to disable</string>
-    <string name="button_yo">Say Yo</string>
     <string name="title_activity_about_radar">AboutRadarActivity</string>
     <string name="action_settings">Settings</string>
     <string name="text_about">        About\n

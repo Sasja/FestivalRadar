@@ -27,7 +27,7 @@ import java.util.Collection;
  *
  * periodically pulls and pushes data from server and updates the local database
  *
- * TODO: migrate to version 2 (SubService_Cloud_2)
+ * TODO: migrate to version 2 (SubService_Cloud_2) i deprecate this :P
  *
  * Created by pollywog on 9/23/14.
  */

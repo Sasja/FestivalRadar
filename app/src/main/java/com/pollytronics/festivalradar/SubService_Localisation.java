@@ -16,6 +16,7 @@ import com.pollytronics.festivalradar.lib.RadarContact;
  * Localisation subservice
  * requests location updates from the google play services on creation
  * and pushes them to the database
+ * TODO: App crashes when location is disabled
  */
 public class SubService_Localisation extends SubService implements
         GoogleApiClient.ConnectionCallbacks,

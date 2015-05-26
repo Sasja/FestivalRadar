@@ -23,19 +23,17 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 
 /**
- * Cloud SubService
+ * Cloud SubService 1
  *
  * periodically pulls and pushes data from server and updates the local database
  *
- * TODO: use HttpUrlConnection instead of the apache lib, it should improve battery drain i've read somewhere (>=Gingerbread...)
- * TODO: disable keepalive connection (which is standard i believe) to minimize load on server
- * TODO: also the apache lib is depreciated
+ * TODO: migrate to version 2 (SubService_Cloud_2)
  *
  * Created by pollywog on 9/23/14.
  */
-public class SubService_Cloud extends SubService {
+public class SubService_Cloud_1 extends SubService {
 
-    private final String TAG = "SubService_Cloud";
+    private final String TAG = "SubService_Cloud_1";
     private int updateTime_ms;
     private boolean cleaningUp = false;     //a flag so the network pull loop will stop posting itself
     private final Runnable cloudLoop = new Runnable() {
@@ -65,7 +63,7 @@ public class SubService_Cloud extends SubService {
         }
     };
 
-    public SubService_Cloud(RadarService rs) {
+    public SubService_Cloud_1(RadarService rs) {
         super(rs);
     }
 

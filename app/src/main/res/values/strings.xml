@@ -9,9 +9,10 @@
     <string name="title_activity_about_radar">About</string>
     <string name="action_settings">Settings</string>
     <string name="text_about">
-        Festival (version 1.0.2.a)\nspecial release for awesome alphatesters like you!\n
-        \npick your unique id number in settings, then add other peoples id's in contacts, and give them a name if you want, then switch on the radar and say goodby to your battery and privacy (for now).
-        \nLet me know whenever something doesn't work or just tell me what you like or dislike and what features you would like to see in the future.
+        Festival (version 1.0.2.a)
+        \nspecial release for awesome alphatesters like you!\n
+        \npick your unique id number in settings, then add other peoples id\'s in contacts, and give them a name if you want, then switch on the radar and say goodby to your battery and privacy (for now).
+        \nLet me know whenever something doesn\'t work or just tell me what you like or dislike and what features you would like to see in the future.
         \n
         \n thanks for testing!
         \n alexander.steen.gent@gmail.com</string>

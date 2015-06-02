@@ -37,9 +37,10 @@ public class RadarContact {
     public RadarBlip getLastBlip() { return lastBlip; }
 
     public RadarContact addBlip(RadarBlip blip) {
-        if(lastBlip==null || blip.after(lastBlip)){
-            lastBlip = new RadarBlip(blip);
-        }
+        //if(lastBlip==null || blip.after(lastBlip)){
+        //    lastBlip = new RadarBlip(blip);
+        //}
+        lastBlip = new RadarBlip(blip);
         return this;
     }
 

@@ -26,7 +26,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     private RadarDatabase_Interface4RadarService db;
     private Boolean raRegistered = false;
     private SubService_Localisation subServiceLocalisation = new SubService_Localisation(this);
-    private SubService_Cloud_1 subServiceCloud = new SubService_Cloud_1(this);  // TODO: migrate to version 2 of subservice
+    private SubService_Cloud_2 subServiceCloud = new SubService_Cloud_2(this);  // TODO: migrate to version 2 of subservice
 
     /*
     create an instance of each helper class here, and add calls in onCreate, onDestroy, onRegister and onUnregister

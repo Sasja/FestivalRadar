@@ -9,6 +9,7 @@ import android.util.Log;
 import com.pollytronics.festivalradar.lib.RadarBlip;
 import com.pollytronics.festivalradar.lib.RadarContact;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -26,11 +26,9 @@ import java.net.URL;
  *
  * periodically pulls and pushes data from server and updates the local database
  *
- * TODO: this supersedes Cloud Subservice 1
- * TODO: use HttpUrlConnection instead of the apache lib, it should improve battery drain i've read somewhere (>=Gingerbread (api 9-10)...)
  * TODO: minimize tcp connection lifetime to minimize load on server
- * TODO: also the apache lib is depreciated
  * TODO: further develop the APICall classes for the different calls
+ * TODO: figure out how time is to be stored in backend db and into local phone-db, now its broken but not used
  * http://developer.android.com/training/basics/network-ops/connecting.html
  *
  * Created by pollywog on 26/5/2015.
@@ -122,7 +120,7 @@ public class SubService_Cloud_2 extends SubService {
         }
     }
 
-    private String myHttpPost(String myurl, String data) throws IOException {   // TODO: study this code, the api returns a Error 415 Unsupported media type, this is not how a proper post is done
+    private String myHttpPost(String myurl, String jsondata) throws IOException {   // TODO: study this code, the api returns a Error 415 Unsupported media type, this is not how a proper post is done
         InputStream is = null;
         OutputStream os = null;
         URL url = new URL(myurl);
@@ -133,10 +131,11 @@ public class SubService_Cloud_2 extends SubService {
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
             Log.i(TAG, "POST " + myurl);
-            Log.i(TAG, "BODY = " + data);
+            Log.i(TAG, "BODY = " + jsondata);
             os = conn.getOutputStream();
-            writeToOutputStream(os, data);
+            writeToOutputStream(os, jsondata);
             conn.connect();
             int response = conn.getResponseCode();
             Log.i(TAG, "HTTP RESPONSE CODE: " + response);
@@ -165,12 +164,15 @@ public class SubService_Cloud_2 extends SubService {
         return total.toString();
     }
 
-    /** helper method to write string into a output stream
+    /** helper method to write string into an output stream
      * TODO: study this code
+     * http://stackoverflow.com/questions/9623158/curl-and-httpurlconnection-post-json-data
      */
     private void writeToOutputStream(OutputStream os, String data) throws IOException {
-        OutputStreamWriter writer = new OutputStreamWriter(os);
-        writer.write(data, 0, data.length());
+        //OutputStreamWriter writer = new OutputStreamWriter(os);
+        byte[] test = data.getBytes("UTF-8");
+        os.write(test);
+        //writer.write(data, 0, data.length());
     }
 
     /**
@@ -181,6 +183,7 @@ public class SubService_Cloud_2 extends SubService {
      */
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
         private APICallSetMyBlip setMyBlip = new APICallSetMyBlip();
+        private APICallGetBlips getBlips = new APICallGetBlips();
         /**
          * Gathers all the data needed to perform the api calls
          */
@@ -188,21 +191,24 @@ public class SubService_Cloud_2 extends SubService {
         protected void onPreExecute() {
             Log.i(TAG, "gathering the data i need to send to webservice");
             setMyBlip.collectData();
+            getBlips.collectData();
         }
 
         /**
          * does the http requests to the api in background, results should be stored in member fields for onPostExecute to work on.
          * answers may be parsed here in order to construct and do new calls. Do not call collectData() or handleResults() here,
-         * the other APICall methods should be safe to call from this other thread.
+         * the other APICall methods should be safe to call from this background thread.
          */
         @Override
         protected String doInBackground(Void... params) {
-            Log.i(TAG, "doing the httprequests to the webservice");
+            Log.i(TAG, "calling api");
             try {
                 setMyBlip.parseContent(myHttpPost(setMyBlip.getApiQueryString(), setMyBlip.getApiBodyString()));
+                getBlips.parseContent(myHttpGet(getBlips.getApiQueryString()));
             } catch (IOException e) {
                 Log.i(TAG, "IOException: unable to complete all API requests");
-                setMyBlip.flagFailed();
+                setMyBlip.setFailedFlag();
+                getBlips.setFailedFlag();
                 return "IOExcepion: unable to complete all API requests";
             }
             return null;
@@ -213,11 +219,12 @@ public class SubService_Cloud_2 extends SubService {
          */
         @Override
         protected void onPostExecute(String s) {
-            if (setMyBlip.hasFailed()) {
-                Log.i(TAG, "the api call has failed, not calling doTheWork()");
+            if (setMyBlip.hasFailed() || getBlips.hasFailed()) {
+                Log.i(TAG, "the api call has failed, not calling doTheWork() methods for the calls");
             } else {
-                Log.i(TAG, "parsing and using the response of the webservice");
+                Log.i(TAG, "parsing and using the responses of the webservice");
                 setMyBlip.doTheWork();
+                getBlips.doTheWork();
             }
         }
     }
@@ -226,7 +233,7 @@ public class SubService_Cloud_2 extends SubService {
      * APICall object implement REST API Calls, separating the work in:
      * 1) collecting all the data needed for the call
      * 2) setting extra parameters manually
-     * 3) constructing the queryString
+     * 3) constructing the query url/headers/body
      * 4) parsing a response into member fields
      * 5) using the results
      *
@@ -234,31 +241,31 @@ public class SubService_Cloud_2 extends SubService {
      * TODO: check the error handling of this thing
      */
     abstract private class APICall {
-        protected final String baseUrl = "http://festivalradarservice.herokuapp.com/webservice/";
+        protected final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
+        //protected final String baseUrl = "http://192.168.0.5:8080/api/v1/";
         private boolean failed = false;
 
-        public void flagFailed() { failed = true; }
+        public void setFailedFlag() { failed = true; }
         public boolean hasFailed() { return failed; }
         public abstract void collectData();
         public abstract String getApiQueryString();
-        public abstract void parseContent(String content);
         public abstract void doTheWork();
     }
 
     private class APICallSetMyBlip extends APICall {
-        protected final String apiMethodName = "setMyBlip";
-        String contentString = "";
+        protected final String apiResourceName = "blips";
         private JSONObject selfBlipJSON = new JSONObject();
+        private long selfId = 0;
 
         @Override
         public void collectData(){
             Log.i(TAG, "collecting data for APICallSetMyBlip");
             RadarContact selfContact = getRadarDatabase().getSelfContact();
+            selfId = selfContact.getID();
             RadarBlip selfBlip = selfContact.getLastBlip();
             try {
                 selfBlipJSON.put("lat", selfBlip.getLatitude());
                 selfBlipJSON.put("lon", selfBlip.getLongitude());
-                selfBlipJSON.put("time", selfBlip.getTime());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -266,24 +273,74 @@ public class SubService_Cloud_2 extends SubService {
 
         @Override
         public String getApiQueryString() {
-            return baseUrl+apiMethodName;    // TODO: remove
+            return baseUrl+apiResourceName+"?userid="+selfId;
         }
+
+        @Override
+        public void doTheWork() {}
 
         public String getApiBodyString(){
             return selfBlipJSON.toString();
         }
 
-        @Override
         public void parseContent(String content) {
-            Log.i(TAG, "parsing the content retrieved from API");
-            Log.i(TAG, "content retrieved = "+content);
-            contentString = content;
+            Log.i(TAG, "api reply = "+content);
+        }
+    }
+
+    private class APICallGetBlips extends APICall {
+        protected final String apiResourceName = "blips";
+        private JSONArray blips;
+        private long selfId = 0;
+
+        @Override
+        public void collectData() {
+            selfId = getRadarDatabase().getSelfContact().getID();
+        }
+
+        @Override
+        public String getApiQueryString() {
+            return baseUrl+apiResourceName+"?userid="+selfId;
+        }
+
+        public void parseContent(String content) {
+            try {
+                JSONObject jsonObject = new JSONObject(content);
+                blips = jsonObject.getJSONArray("blips");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void doTheWork() {
-            Log.i(TAG, "doing the work to process the information from the api call");
-            Log.i(TAG, contentString);
+            JSONObject blipJSON;
+            Long id, time;
+            double lat, lon;
+            RadarBlip blip = new RadarBlip();
+            RadarContact contact;
+            for (int i = 0; i < blips.length(); i++) {
+                try {
+                    blipJSON = blips.getJSONObject(i);
+                    id = blipJSON.getLong("userid");
+                    lat = blipJSON.getDouble("lat");
+                    lon = blipJSON.getDouble("lon");
+                    time = blipJSON.getLong("time");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+                blip.setLatitude(lat);
+                blip.setLongitude(lon);
+                blip.setTime(time);
+                contact = getRadarDatabase().getContact(id);
+                if(contact != null) {   // check if contact is known locally on phone
+                    contact.addBlip(blip);
+                    getRadarDatabase().updateContact(contact);
+                }
+            }
+            getRadarService().notifyNewData();
         }
     }
+
 }

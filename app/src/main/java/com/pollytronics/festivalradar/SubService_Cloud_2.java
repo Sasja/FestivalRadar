@@ -6,12 +6,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.RadarBlip;
-import com.pollytronics.festivalradar.lib.RadarContact;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.pollytronics.festivalradar.lib.api.ApiCallGetBlips;
+import com.pollytronics.festivalradar.lib.api.ApiCallSetMyBlip;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -182,16 +178,18 @@ public class SubService_Cloud_2 extends SubService {
      * http://developer.android.com/reference/android/os/AsyncTask.html (See Memory observability)
      */
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
-        private APICallSetMyBlip setMyBlip = new APICallSetMyBlip();
-        private APICallGetBlips getBlips = new APICallGetBlips();
+//        private APICallSetMyBlip setMyBlip = new APICallSetMyBlip();
+//        private APICallGetBlips getBlips = new APICallGetBlips();
+        private ApiCallSetMyBlip setMyBlip = new ApiCallSetMyBlip();
+        private ApiCallGetBlips getBlips = new ApiCallGetBlips();
         /**
          * Gathers all the data needed to perform the api calls
          */
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering the data i need to send to webservice");
-            setMyBlip.collectData();
-            getBlips.collectData();
+            setMyBlip.collectData(getRadarDatabase());
+            getBlips.collectData(getRadarDatabase());
         }
 
         /**
@@ -223,124 +221,9 @@ public class SubService_Cloud_2 extends SubService {
                 Log.i(TAG, "the api call has failed, not calling doTheWork() methods for the calls");
             } else {
                 Log.i(TAG, "parsing and using the responses of the webservice");
-                setMyBlip.doTheWork();
-                getBlips.doTheWork();
+                setMyBlip.doTheWork(getRadarDatabase());
+                getBlips.doTheWork(getRadarDatabase());
             }
         }
     }
-
-    /**
-     * APICall object implement REST API Calls, separating the work in:
-     * 1) collecting all the data needed for the call
-     * 2) setting extra parameters manually
-     * 3) constructing the query url/headers/body
-     * 4) parsing a response into member fields
-     * 5) using the results
-     *
-     * only 1 and 5 should access data outside the object itself as all others might be called on another thread
-     * TODO: check the error handling of this thing
-     */
-    abstract private class APICall {
-        protected final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
-        //protected final String baseUrl = "http://192.168.0.5:8080/api/v1/";
-        private boolean failed = false;
-
-        public void setFailedFlag() { failed = true; }
-        public boolean hasFailed() { return failed; }
-        public abstract void collectData();
-        public abstract String getApiQueryString();
-        public abstract void doTheWork();
-    }
-
-    private class APICallSetMyBlip extends APICall {
-        protected final String apiResourceName = "blips";
-        private JSONObject selfBlipJSON = new JSONObject();
-        private long selfId = 0;
-
-        @Override
-        public void collectData(){
-            Log.i(TAG, "collecting data for APICallSetMyBlip");
-            RadarContact selfContact = getRadarDatabase().getSelfContact();
-            selfId = selfContact.getID();
-            RadarBlip selfBlip = selfContact.getLastBlip();
-            try {
-                selfBlipJSON.put("lat", selfBlip.getLatitude());
-                selfBlipJSON.put("lon", selfBlip.getLongitude());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public String getApiQueryString() {
-            return baseUrl+apiResourceName+"?userid="+selfId;
-        }
-
-        @Override
-        public void doTheWork() {}
-
-        public String getApiBodyString(){
-            return selfBlipJSON.toString();
-        }
-
-        public void parseContent(String content) {
-            Log.i(TAG, "api reply = "+content);
-        }
-    }
-
-    private class APICallGetBlips extends APICall {
-        protected final String apiResourceName = "blips";
-        private JSONArray blips;
-        private long selfId = 0;
-
-        @Override
-        public void collectData() {
-            selfId = getRadarDatabase().getSelfContact().getID();
-        }
-
-        @Override
-        public String getApiQueryString() {
-            return baseUrl+apiResourceName+"?userid="+selfId;
-        }
-
-        public void parseContent(String content) {
-            try {
-                JSONObject jsonObject = new JSONObject(content);
-                blips = jsonObject.getJSONArray("blips");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void doTheWork() {
-            JSONObject blipJSON;
-            Long id, time;
-            double lat, lon;
-            RadarBlip blip = new RadarBlip();
-            RadarContact contact;
-            for (int i = 0; i < blips.length(); i++) {
-                try {
-                    blipJSON = blips.getJSONObject(i);
-                    id = blipJSON.getLong("userid");
-                    lat = blipJSON.getDouble("lat");
-                    lon = blipJSON.getDouble("lon");
-                    time = blipJSON.getLong("time");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-                blip.setLatitude(lat);
-                blip.setLongitude(lon);
-                blip.setTime(time);
-                contact = getRadarDatabase().getContact(id);
-                if(contact != null) {   // check if contact is known locally on phone
-                    contact.addBlip(blip);
-                    getRadarDatabase().updateContact(contact);
-                }
-            }
-            getRadarService().notifyNewData();
-        }
-    }
-
 }

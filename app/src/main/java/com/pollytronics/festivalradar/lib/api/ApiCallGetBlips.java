@@ -12,7 +12,7 @@ import org.json.JSONObject;
  * Created by pollywog on 6/3/15.
  */
 public class ApiCallGetBlips extends RadarApiCall {
-    protected final String TAG = "RadarApiCall:ApiCallGetBlips";
+    protected final String TAG = "ApiCallGetBlips";
     protected final String apiResourceName = "blips";
     private JSONArray blips;
     private long selfId = 0;

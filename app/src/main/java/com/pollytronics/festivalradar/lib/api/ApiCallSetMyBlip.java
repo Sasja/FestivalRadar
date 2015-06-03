@@ -13,7 +13,7 @@ import org.json.JSONObject;
  * Created by pollywog on 6/3/15.
  */
 public class ApiCallSetMyBlip extends RadarApiCall {
-    protected final String TAG = "RadarApiCall:ApiCallSetMyBlip";
+    protected final String TAG = "ApiCallSetMyBlip";
     protected final String apiResourceName = "blips";
     private JSONObject selfBlipJSON = new JSONObject();
     private long selfId = 0;

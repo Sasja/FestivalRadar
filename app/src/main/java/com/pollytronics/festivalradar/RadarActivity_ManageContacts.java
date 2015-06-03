@@ -25,6 +25,10 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
+/**
+ * TODO: when starting this activiy, your local contact list should be compared with the online version in order to detect new contacts and removed ones and such,
+ * TODO:    figure out how to integrate this web action properly
+ */
 public class RadarActivity_ManageContacts extends RadarActivity {
 
     private static final String TAG = "ManageContactRadarAct";

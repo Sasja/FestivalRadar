@@ -9,6 +9,8 @@ import com.pollytronics.festivalradar.lib.RadarContact;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 /**
  * Created by pollywog on 6/3/15.
  */
@@ -32,18 +34,23 @@ public class ApiCallSetMyBlip extends RadarApiCall {
         }
     }
     @Override
-    public String getApiQueryString() {
+    protected String getApiQueryString() {
         return baseUrl+apiResourceName+"?userid="+selfId;
     }
 
     @Override
     public void doTheWork(RadarDatabase_Interface4RadarService db) {}
 
-    public String getApiBodyString(){
+    private String getApiBodyString(){
         return selfBlipJSON.toString();
     }
 
-    public void parseContent(String content) {
+    private void parseContent(String content) {
         Log.i(TAG, "api reply = "+content);
+    }
+
+    @Override
+    public void callAndParse() throws IOException {
+        parseContent(myHttpPost(getApiQueryString(),getApiBodyString()));
     }
 }

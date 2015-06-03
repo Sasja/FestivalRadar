@@ -9,13 +9,7 @@ import android.util.Log;
 import com.pollytronics.festivalradar.lib.api.ApiCallGetBlips;
 import com.pollytronics.festivalradar.lib.api.ApiCallSetMyBlip;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * Cloud SubService 2
@@ -93,83 +87,7 @@ public class SubService_Cloud_2 extends SubService {
         getMainHandler().post(cloudLoop);
     }
 
-    private String myHttpGet(String myurl) throws IOException {   // TODO: study this code
-        InputStream is = null;
-        URL url = new URL(myurl);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        try {
-            conn.setReadTimeout(1000);
-            conn.setConnectTimeout(10000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            Log.i(TAG, "GET " + myurl);
-            conn.connect();
-            int response = conn.getResponseCode();
-            Log.i(TAG, "HTTP RESPONSE CODE: " + response);
-            if(response!=200) throw new IOException();
-            is = conn.getInputStream();
-            String contentString = readInputStream(is);
-            return contentString;
-        } finally {
-            if (is != null) is.close();
-            conn.disconnect();
-        }
-    }
 
-    private String myHttpPost(String myurl, String jsondata) throws IOException {   // TODO: study this code, the api returns a Error 415 Unsupported media type, this is not how a proper post is done
-        InputStream is = null;
-        OutputStream os = null;
-        URL url = new URL(myurl);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        try {
-            conn.setReadTimeout(1000);
-            conn.setConnectTimeout(10000);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type", "application/json");
-            Log.i(TAG, "POST " + myurl);
-            Log.i(TAG, "BODY = " + jsondata);
-            os = conn.getOutputStream();
-            writeToOutputStream(os, jsondata);
-            conn.connect();
-            int response = conn.getResponseCode();
-            Log.i(TAG, "HTTP RESPONSE CODE: " + response);
-            if(response!=200) throw new IOException();
-            is = conn.getInputStream();
-            String contentString = readInputStream(is);
-            return contentString;
-        } finally {
-            if (is != null) is.close();
-            conn.disconnect();
-        }
-    }
-
-    /**
-     * helper method to convert input stream to string
-     * http://stackoverflow.com/questions/2492076/android-reading-from-an-input-stream-efficiently
-     * TODO: study this code, it might remove all newlines
-     */
-    private String readInputStream(InputStream is) throws IOException {
-        BufferedReader r = new BufferedReader(new InputStreamReader(is));
-        StringBuilder total = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            total.append(line);
-        }
-        return total.toString();
-    }
-
-    /** helper method to write string into an output stream
-     * TODO: study this code
-     * http://stackoverflow.com/questions/9623158/curl-and-httpurlconnection-post-json-data
-     */
-    private void writeToOutputStream(OutputStream os, String data) throws IOException {
-        //OutputStreamWriter writer = new OutputStreamWriter(os);
-        byte[] test = data.getBytes("UTF-8");
-        os.write(test);
-        //writer.write(data, 0, data.length());
-    }
 
     /**
      * This class is used to bundle all the interactions that happen with the api into one AsyncTask
@@ -178,8 +96,6 @@ public class SubService_Cloud_2 extends SubService {
      * http://developer.android.com/reference/android/os/AsyncTask.html (See Memory observability)
      */
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
-//        private APICallSetMyBlip setMyBlip = new APICallSetMyBlip();
-//        private APICallGetBlips getBlips = new APICallGetBlips();
         private ApiCallSetMyBlip setMyBlip = new ApiCallSetMyBlip();
         private ApiCallGetBlips getBlips = new ApiCallGetBlips();
         /**
@@ -201,8 +117,8 @@ public class SubService_Cloud_2 extends SubService {
         protected String doInBackground(Void... params) {
             Log.i(TAG, "calling api");
             try {
-                setMyBlip.parseContent(myHttpPost(setMyBlip.getApiQueryString(), setMyBlip.getApiBodyString()));
-                getBlips.parseContent(myHttpGet(getBlips.getApiQueryString()));
+                setMyBlip.callAndParse();
+                getBlips.callAndParse();
             } catch (IOException e) {
                 Log.i(TAG, "IOException: unable to complete all API requests");
                 setMyBlip.setFailedFlag();
@@ -223,6 +139,7 @@ public class SubService_Cloud_2 extends SubService {
                 Log.i(TAG, "parsing and using the responses of the webservice");
                 setMyBlip.doTheWork(getRadarDatabase());
                 getBlips.doTheWork(getRadarDatabase());
+                getRadarService().notifyNewData();
             }
         }
     }

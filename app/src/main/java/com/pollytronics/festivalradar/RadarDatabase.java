@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.SystemClock;
 import android.provider.BaseColumns;
 import android.util.Log;
 
@@ -24,7 +23,7 @@ import java.util.Random;
  * it is used by and has an interface for the RadarService and for RadarActivities
  *
  * TODO: onUpgrade() and onDowngrade just discards all data at the moment
- * TODO: make method updateContacts(Collection<RadarContact> contacts) and use it from within SubService_Cloud_1
+ * TODO: make method updateContacts(Collection<RadarContact> contacts) and use it from within SubService_Cloud_2
  * TODO: check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
  * TODO: is it okay to do all this database stuff sync?
  */

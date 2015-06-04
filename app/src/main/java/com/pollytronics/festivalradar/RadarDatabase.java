@@ -305,7 +305,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
 
 
             ContentValues values = new ContentValues();
-            long selfId = (new Random()).nextLong() % 10000;                                    // TODO: think about some proper account management
+            long selfId = Math.abs((new Random()).nextLong() % 10000);                                    // TODO: think about some proper account management
             values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, selfId);
             values.put(ContactEntry.COLUMN_NAME_NAME, ContactEntry.SELF_CONTACT_NAME_VALUE);
             values.put(ContactEntry.COLUMN_NAME_LAST_LAT, 0.0);

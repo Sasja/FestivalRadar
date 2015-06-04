@@ -141,7 +141,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
             public int compare(RadarContact radarContact1, RadarContact radarContact2) {
                 int result = radarContact1.getName().toUpperCase().compareTo(radarContact2.getName().toUpperCase());
                 if (result == 0) {
-                    result = ((Long)radarContact1.getID()).compareTo(radarContact2.getID());
+                    result = ((Long) radarContact1.getID()).compareTo(radarContact2.getID());
                 }
                 return result;
             }
@@ -196,13 +196,13 @@ public class RadarActivity_ManageContacts extends RadarActivity {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return new AlertDialog.Builder(getActivity())
                     .setMessage(getString(R.string.dialog_delete_contact))
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getString(R.string.dialog_deny), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mRadarActivity.onDeny();
                         }
                     })
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getString(R.string.dialog_confirm), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             mRadarActivity.onDelete();

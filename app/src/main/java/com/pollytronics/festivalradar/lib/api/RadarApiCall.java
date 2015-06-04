@@ -2,8 +2,6 @@ package com.pollytronics.festivalradar.lib.api;
 
 import android.util.Log;
 
-import com.pollytronics.festivalradar.RadarDatabase_Interface4RadarService;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +23,8 @@ import java.net.URL;
  *
  * only 1 and 5 should access data outside the object itself as all others might be called on another thread
  * TODO: check the error handling of this thing
+ * TODO: with the doTheWork method some stuff can be implemented in this class but some
+ * TODO:    could also be implemented in the ASyncTask onPostExecute, bit confusing
  */
 abstract public class RadarApiCall {
     protected final String TAG = "RadarApiCall";
@@ -34,9 +34,7 @@ abstract public class RadarApiCall {
 
     public void setFailedFlag() { failed = true; }
     public boolean hasFailed() { return failed; }
-    public abstract void collectData(RadarDatabase_Interface4RadarService db);
     protected abstract String getApiQueryString();
-    public abstract void doTheWork(RadarDatabase_Interface4RadarService db);
     public abstract void callAndParse() throws IOException;
 
     protected String myHttpGet(String myurl) throws IOException {   // TODO: study this code

@@ -13,6 +13,8 @@ public interface RadarDatabase_Interface4RadarActivity {
 
     public void removeContact(RadarContact contact);
 
+    public void removeContactById(long id);
+
     public void updateContact(RadarContact contact);
 
     public void addContact(RadarContact contact);

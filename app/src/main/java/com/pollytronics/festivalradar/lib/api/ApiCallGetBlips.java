@@ -19,7 +19,6 @@ public class ApiCallGetBlips extends RadarApiCall {
     private JSONArray blips;
     private long selfId = 0;
 
-    @Override
     public void collectData(RadarDatabase_Interface4RadarService db) {
         selfId = db.getSelfContact().getID();
     }
@@ -38,7 +37,6 @@ public class ApiCallGetBlips extends RadarApiCall {
         }
     }
 
-    @Override
     public void doTheWork(RadarDatabase_Interface4RadarService db) {
         JSONObject blipJSON;
         Long id, time;

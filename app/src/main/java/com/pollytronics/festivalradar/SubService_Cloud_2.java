@@ -108,11 +108,6 @@ public class SubService_Cloud_2 extends SubService {
             getBlips.collectData(getRadarDatabase());
         }
 
-        /**
-         * does the http requests to the api in background, results should be stored in member fields for onPostExecute to work on.
-         * answers may be parsed here in order to construct and do new calls. Do not call collectData() or handleResults() here,
-         * the other APICall methods should be safe to call from this background thread.
-         */
         @Override
         protected String doInBackground(Void... params) {
             Log.i(TAG, "calling api");

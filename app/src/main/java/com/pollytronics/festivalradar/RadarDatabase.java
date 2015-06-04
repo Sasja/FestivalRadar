@@ -151,12 +151,17 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     @Override
     public void removeContact(RadarContact contact) {
         if(contact.getName() != ContactEntry.SELF_CONTACT_NAME_VALUE) {
-            SQLiteDatabase db = radarDbHelper.getWritableDatabase();
-            String selection = ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + Long.toString(contact.getID());
-            int n = db.delete(ContactEntry.TABLE_NAME, selection, null);
-            Log.i(TAG, "removed " + Integer.toString(n) + " contacts from database");
-            db.close();
+            removeContactById(contact.getID());
         } else Log.i(TAG, "DO NOT USE THIS METHOD FOR THE SELF_CONTACT");
+    }
+
+    @Override
+    public void removeContactById(long id) {
+        SQLiteDatabase db = radarDbHelper.getWritableDatabase();
+        String selection = ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + Long.toString(id);
+        int n = db.delete(ContactEntry.TABLE_NAME, selection, null);
+        Log.i(TAG, "removed " + Integer.toString(n) + " contacts from database");
+        db.close();
     }
 
     @Override

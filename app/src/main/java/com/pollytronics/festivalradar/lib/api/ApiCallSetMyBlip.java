@@ -20,7 +20,6 @@ public class ApiCallSetMyBlip extends RadarApiCall {
     private JSONObject selfBlipJSON = new JSONObject();
     private long selfId = 0;
 
-    @Override
     public void collectData(RadarDatabase_Interface4RadarService db){
         Log.i(TAG, "collecting data for APICallSetMyBlip");
         RadarContact selfContact = db.getSelfContact();
@@ -38,7 +37,6 @@ public class ApiCallSetMyBlip extends RadarApiCall {
         return baseUrl+apiResourceName+"?userid="+selfId;
     }
 
-    @Override
     public void doTheWork(RadarDatabase_Interface4RadarService db) {}
 
     private String getApiBodyString(){

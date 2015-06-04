@@ -49,5 +49,8 @@
     <string name="manage_private_groups">create or connect to private groups</string>
     <string name="menu_manage_groups_activity">Groups</string>
     <string name="menu_sync_contacts">sync</string>
+    <string name="toast_contacts_synced">contacts synced</string>
+    <string name="toast_contact_removed">contact removed</string>
+    <string name="toast_no_network">no network</string>
 
 </resources>

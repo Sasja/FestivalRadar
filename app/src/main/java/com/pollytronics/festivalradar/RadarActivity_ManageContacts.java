@@ -84,11 +84,11 @@ public class RadarActivity_ManageContacts extends RadarActivity {
             thread.start();
             Log.i(TAG, "deleting selected radar contact (id=" + clickedContact.getID() + ")");
             getRadarDatabase().removeContact(clickedContact);
-            Toast toast = Toast.makeText(getApplicationContext(), "contact removed", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contact_removed), Toast.LENGTH_SHORT);
             toast.show();
             notifyDatabaseUpdate();         // TODO: this shouldn't be called here but happen autamatically
         } else {
-            Toast toast = Toast.makeText(getApplicationContext(), "no connection", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_no_network), Toast.LENGTH_SHORT);
             toast.show();
         }
     }
@@ -122,7 +122,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
                 new SyncToWebserviceTask().execute();
             } else {
                 Log.i(TAG, "cannot sync contact data: no network");
-                Toast toast = Toast.makeText(getApplicationContext(), "no network", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_no_network), Toast.LENGTH_SHORT);
                 toast.show();
             }
             return true;
@@ -313,7 +313,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
                 getRadarDatabase().removeContactById(id);
             }
             notifyDatabaseUpdate();             // TODO: not sure this needs to be called
-            Toast toast = Toast.makeText(getApplicationContext(), "contacs synced", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contacts_synced), Toast.LENGTH_SHORT);
             toast.show();
         }
     }

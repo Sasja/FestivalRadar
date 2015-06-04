@@ -17,7 +17,7 @@ import java.io.IOException;
 public class ApiCallSetMyBlip extends RadarApiCall {
     private final String TAG = "ApiCallSetMyBlip";
     private final String apiResourceName = "blips";
-    private JSONObject selfBlipJSON = new JSONObject();
+    private final JSONObject selfBlipJSON = new JSONObject();
     private long selfId = 0;
 
     public void collectData(RadarDatabase_Interface4RadarService db){

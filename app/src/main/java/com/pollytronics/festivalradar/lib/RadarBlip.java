@@ -11,9 +11,9 @@ import java.util.Random;
 
 public class RadarBlip extends Location{
 
-    private static String TAG = "RadarBlip";
     @SuppressWarnings("FieldCanBeLocal")
-    private static String PROVIDER = "RadarBlip";
+    private static final String PROVIDER = "RadarBlip";
+    private static String TAG = "RadarBlip";
 
     public RadarBlip(){
         super(PROVIDER);

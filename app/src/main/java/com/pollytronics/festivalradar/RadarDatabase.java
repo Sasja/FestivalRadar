@@ -32,7 +32,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
     private static final String TAG="RadarDatabase";
     private static RadarDatabase instance=null;
 
-    private RadarDbHelper radarDbHelper;
+    private final RadarDbHelper radarDbHelper;  // can be final as it is only assigned in the constructor, that allowed apparently
 
     private RadarDatabase(Context context){
         radarDbHelper = new RadarDbHelper(context);

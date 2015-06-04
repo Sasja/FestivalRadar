@@ -234,15 +234,15 @@ public class RadarActivity_ManageContacts extends RadarActivity {
      *      CON && !(ICS || CSM)        delete from CON
      **/
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
-        private ApiCallPostContact postContact = new ApiCallPostContact();
-        private ApiCallGetContactsSeeme apiCallGetContactsSeeme = new ApiCallGetContactsSeeme();
-        private ApiCallGetContactsIsee apiCallGetContactsIsee = new ApiCallGetContactsIsee();
-        private Set<Long> con = new HashSet<Long>();
+        private final ApiCallPostContact postContact = new ApiCallPostContact();
+        private final ApiCallGetContactsSeeme apiCallGetContactsSeeme = new ApiCallGetContactsSeeme();
+        private final ApiCallGetContactsIsee apiCallGetContactsIsee = new ApiCallGetContactsIsee();
+        private final Set<Long> con = new HashSet<Long>();
+        private final Set<Long> toDeleteFromCon = new HashSet<Long>();
+        private final Set<Long> toAddToCon = new HashSet<Long>();
+        private final Set<Long> toPostToCsm = new HashSet<Long>();
         private Set<Long> ics = new HashSet<Long>();
         private Set<Long> csm = new HashSet<Long>();
-        private Set<Long> toDeleteFromCon = new HashSet<Long>();
-        private Set<Long> toAddToCon = new HashSet<Long>();
-        private Set<Long> toPostToCsm = new HashSet<Long>();
 
         @Override
         protected void onPreExecute() {

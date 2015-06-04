@@ -31,8 +31,7 @@
         <activity
             android:name=".RadarActivity_About"
             android:label="@string/title_activity_about_radar"
-            android:launchMode="singleTop"
-            android:parentActivityName=".RadarActivity_Main" >
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_Main" />
@@ -40,40 +39,35 @@
         <activity
             android:name=".RadarActivity_Settings"
             android:label="@string/title_activity_settings_radar"
-            android:launchMode="singleTop"
-            android:parentActivityName=".RadarActivity_Main" >
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_Main" />
         </activity>
         <activity
             android:name=".RadarActivity_ManageContacts"
-            android:label="@string/title_activity_manage_contacts_radar"
-            android:parentActivityName=".RadarActivity_Main" >
+            android:label="@string/title_activity_manage_contacts_radar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_Main" />
         </activity>
         <activity
             android:name=".RadarActivity_Debug"
-            android:label="@string/title_activity_debug_radar"
-            android:parentActivityName=".RadarActivity_Main" >
+            android:label="@string/title_activity_debug_radar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_Main" />
         </activity>
         <activity
             android:name=".RadarActivity_AddContactByUsername"
-            android:label="@string/title_activity_add_contact_by_username"
-            android:parentActivityName=".RadarActivity_ManageContacts" >
+            android:label="@string/title_activity_add_contact_by_username">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_ManageContacts" />
         </activity>
         <activity
             android:name=".RadarActivity_Groups"
-            android:label="@string/title_activity_radar_activity__groups"
-            android:parentActivityName=".RadarActivity_Main" >
+            android:label="@string/title_activity_radar_activity__groups">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.festivalradar.RadarActivity_Main" />

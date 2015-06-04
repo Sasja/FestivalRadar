@@ -50,5 +50,11 @@
     <string name="groups_tab_nearby">NEARBY</string>
     <string name="groups_tab_mygroups">MY GROUPS</string>
     <string name="groups_tab_private">PRIVATE</string>
+    <string name="dummy_text">dummy</string>
+    <string name="manage_group_memberships">manage your group memberships</string>
+    <string name="discover_nearby_groups">discover nearby groups</string>
+    <string name="manage_private_groups">create or connect to private groups</string>
+    <string name="menu_manage_groups_activity">Groups</string>
+    <string name="menu_sync_contacts">sync</string>
 
 </resources>

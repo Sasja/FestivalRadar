@@ -8,6 +8,6 @@
         android:id="@+id/section_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="create or connect to private groups"/>
+        android:text="@string/manage_private_groups"/>
 
 </RelativeLayout>

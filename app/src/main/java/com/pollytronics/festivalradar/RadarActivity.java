@@ -17,7 +17,7 @@ import android.view.MenuItem;
  * This class is only responsible for managing the connection to the RadarService
  * TODO: use the action bar API (api level 11) instead of this shit (i raised minSdkVersion from 9 to 15 on 12/5/2015)
  */
-public class RadarActivity extends ActionBarActivity implements RadarActivity_Interface4RadarService {
+public abstract class RadarActivity extends ActionBarActivity implements RadarActivity_Interface4RadarService {
 
     private static final String TAG = "RadarActivity";
     private RadarService rs;        //needs access to more methods than just the interface, for handshaking,

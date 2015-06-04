@@ -10,7 +10,7 @@
     <item android:id="@+id/action_groups"
         android:icon="@drawable/ic_action_group"
         android:orderInCategory="100"
-        android:title="Groups"
+        android:title="@string/menu_manage_groups_activity"
         app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_settings"
         android:icon="@drawable/ic_action_settings"

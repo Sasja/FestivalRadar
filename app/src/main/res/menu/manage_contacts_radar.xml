@@ -12,6 +12,6 @@
         android:id="@+id/action_sync_contacts"
         android:icon="@drawable/ic_action_refresh"
         android:orderInCategory="100"
-        android:title="sync"
+        android:title="@string/menu_sync_contacts"
         app:showAsAction="ifRoom" />
 </menu>

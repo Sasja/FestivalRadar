@@ -64,7 +64,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     /**
      * calls onRegister methods of all subservices
      */
-    public void onRegister() {
+    private void onRegister() {
         Log.i(TAG,"onRegister, calling subservice methods");
         subServiceLocalisation.onRegister();
         subServiceCloud.onRegister();
@@ -73,7 +73,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     /**
      * calls onUnregister methods of all subservices
      */
-    public void onUnregister() {
+    private void onUnregister() {
         Log.i(TAG,"onRegister, calling subservice methods");
         subServiceLocalisation.onUnregister();
         subServiceCloud.onUnregister();

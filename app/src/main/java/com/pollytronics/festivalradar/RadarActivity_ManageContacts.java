@@ -63,7 +63,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
         updateContactListView();
     }
 
-    public void onDelete(){
+    private void onDelete(){
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()){
@@ -93,7 +93,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
         }
     }
 
-    public void onDeny(){
+    private void onDeny(){
         Log.i(TAG, "canceled deleting radar contact");
     }
 

@@ -38,7 +38,7 @@ public abstract class RadarActivity extends ActionBarActivity implements RadarAc
      * methods for ie SubServices and such
      * @return interface to instance of RadarService, if no bound service is running, it will return a spoof interface to nothing
      */
-    protected RadarService_interface4RadarActivity getBoundRadarService() {
+    RadarService_interface4RadarActivity getBoundRadarService() {
         if(rsBound){
             return rs;
         } else {
@@ -51,11 +51,11 @@ public abstract class RadarActivity extends ActionBarActivity implements RadarAc
         }
     }
 
-    protected RadarDatabase_Interface4RadarActivity getRadarDatabase() {
+    RadarDatabase_Interface4RadarActivity getRadarDatabase() {
         return db;
     }
 
-    protected RadarPreferences getRadarPreferences() {
+    RadarPreferences getRadarPreferences() {
         return RadarPreferences.getInstance(getApplicationContext());
     }
 
@@ -69,7 +69,7 @@ public abstract class RadarActivity extends ActionBarActivity implements RadarAc
      * start RadarService if it is not started yet and bind to it
      * (activity will be registered at service in onServiceConnected callback)
      */
-    protected void startAndBindRadarService(){
+    void startAndBindRadarService(){
         if(!isMyServiceRunning(RadarService.class)){
             Log.i(TAG,"starting the service");
             startService(new Intent(RadarActivity.this, RadarService.class));
@@ -84,7 +84,7 @@ public abstract class RadarActivity extends ActionBarActivity implements RadarAc
      * bind to the service only if it is running already.
      * (activity will be registered at service in onServiceConnected callback)
      */
-    protected void bindIfRunningRadarService(){
+    private void bindIfRunningRadarService(){
         Log.i(TAG,"bind if service is running");
         if(isMyServiceRunning(RadarService.class)){
             Log.i(TAG,"yup found it running, lets bind to it");
@@ -97,7 +97,7 @@ public abstract class RadarActivity extends ActionBarActivity implements RadarAc
     /**
      * unregister activity from the service and unbind from the service if it is running
      */
-    protected void unBindRadarService(){
+    private void unBindRadarService(){
         if (rsBound) {
             Log.i(TAG,"calling unregisterActivity() and unBindService()");
             rs.unregisterActivity(RadarActivity.this);
@@ -109,7 +109,7 @@ public abstract class RadarActivity extends ActionBarActivity implements RadarAc
     /**
      * unregister/unbind and stop service
      */
-    protected void unbindAndStopRadarService(){
+    void unbindAndStopRadarService(){
         unBindRadarService();
         if(isMyServiceRunning(RadarService.class)) {
             Log.i(TAG, "service found running, calling stopservice");
@@ -152,13 +152,13 @@ public abstract class RadarActivity extends ActionBarActivity implements RadarAc
     /**
      * overload in derived class to handle this event
      */
-    protected void onRadarServiceConnected() {
+    void onRadarServiceConnected() {
     }
 
     /**
      * overload in derived class to handle this event
      */
-    protected void onRadarServiceDisconnected() {
+    void onRadarServiceDisconnected() {
     }
 
     /**

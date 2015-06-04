@@ -28,7 +28,7 @@ import java.net.URL;
  * TODO: duplicate code
  */
 abstract public class RadarApiCall {
-    protected final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
+    final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
     private final String TAG = "RadarApiCall";
     //protected final String baseUrl = "http://192.168.0.5:8080/api/v1/";
     private boolean failed = false;
@@ -38,7 +38,7 @@ abstract public class RadarApiCall {
     protected abstract String getApiQueryString();
     public abstract void callAndParse() throws IOException;
 
-    protected String myHttpGet(String myurl) throws IOException {   // TODO: study this code
+    String myHttpGet(String myurl) throws IOException {   // TODO: study this code
         InputStream is = null;
         URL url = new URL(myurl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -60,7 +60,7 @@ abstract public class RadarApiCall {
         }
     }
 
-    protected String myHttpDelete(String myurl) throws IOException {
+    String myHttpDelete(String myurl) throws IOException {
         InputStream is = null;
         URL url = new URL(myurl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -82,7 +82,7 @@ abstract public class RadarApiCall {
         }
     }
 
-    protected String myHttpPost(String myurl, String jsondata) throws IOException {
+    String myHttpPost(String myurl, String jsondata) throws IOException {
         InputStream is = null;
         OutputStream os = null;
         URL url = new URL(myurl);

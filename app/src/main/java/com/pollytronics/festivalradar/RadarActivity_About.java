@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 public class RadarActivity_About extends RadarActivity {
 
+    @SuppressWarnings("unused")
     private static final String TAG = "RadarActivity_About";
 
     @Override

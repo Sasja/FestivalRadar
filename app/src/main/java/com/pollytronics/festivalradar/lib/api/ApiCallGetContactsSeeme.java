@@ -15,6 +15,7 @@ import java.util.Set;
  * Created by pollywog on 6/3/15.
  */
 public class ApiCallGetContactsSeeme extends RadarApiCall {
+    @SuppressWarnings("unused")
     protected final String TAG = "ApiCallGetContactsSeeme";
     private final String apiResourceName = "contacts";
     private JSONArray contacts;

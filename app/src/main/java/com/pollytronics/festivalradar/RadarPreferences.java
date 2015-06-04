@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
  */
 public class RadarPreferences {
 
+    @SuppressWarnings("unused")
     static final String TAG = "RadarPreferences";
     private static final String LOCALISATION_UPDATE_PCT = "localisationUpdateTime_percent";
     private static final String CLOUD_UPDATE_PCT = "cloudUpdateTime_percent";

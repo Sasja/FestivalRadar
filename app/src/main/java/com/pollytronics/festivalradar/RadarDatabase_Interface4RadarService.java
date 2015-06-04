@@ -9,8 +9,10 @@ import java.util.Collection;
  */
 public interface RadarDatabase_Interface4RadarService {
 
+    @SuppressWarnings("unused")
     Collection<RadarContact> getAllContacts();
 
+    @SuppressWarnings("unused")
     Collection<Long> getAllContactIds();
 
     void updateContact(RadarContact contact);

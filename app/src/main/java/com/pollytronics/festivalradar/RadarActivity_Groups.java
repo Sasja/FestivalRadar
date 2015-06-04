@@ -17,6 +17,7 @@ import android.view.ViewGroup;
  */
 public class RadarActivity_Groups extends RadarActivity {
 
+    @SuppressWarnings("unused")
     private final String TAG = "RadarActivity_Groups";
 
     private SectionsPagerAdapter mSectionsPagerAdapter;

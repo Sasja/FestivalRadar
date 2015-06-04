@@ -15,8 +15,10 @@ public interface RadarDatabase_Interface4RadarActivity {
 
     void removeContactById(long id);
 
+    @SuppressWarnings("unused")
     void updateContact(RadarContact contact);
 
+    @SuppressWarnings("unused")
     void addContact(RadarContact contact);
 
     void addContactWithId(RadarContact contact);

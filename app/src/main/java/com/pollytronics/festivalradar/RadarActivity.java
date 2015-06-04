@@ -26,14 +26,6 @@ public abstract class RadarActivity extends ActionBarActivity implements RadarAc
     private ServiceConnection rsConn;
 
     /**
-     * check if RadarService is running and instance is obtained.
-     * @return true if up and running
-     */
-    protected boolean isBoundToService() {
-        return rsBound;
-    }
-
-    /**
      * get instance of running service, it only returns the interface meant for activities to prevent RadarActivity subclasses to call
      * methods for ie SubServices and such
      * @return interface to instance of RadarService, if no bound service is running, it will return a spoof interface to nothing

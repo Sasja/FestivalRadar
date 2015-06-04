@@ -17,6 +17,7 @@ import java.util.ArrayList;
  */
 public class RadarActivity_Debug extends RadarActivity {
 
+    @SuppressWarnings("unused")
     private final String TAG = "RadarActivity_Debug";
 
     private TextView debugTextView;

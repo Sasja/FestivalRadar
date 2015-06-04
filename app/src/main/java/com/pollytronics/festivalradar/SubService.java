@@ -21,6 +21,7 @@ import android.os.Looper;
  */
 abstract class SubService {
 
+    @SuppressWarnings("unused")
     private final String TAG = "override this SubService TAG";
 
     private final RadarService rs;

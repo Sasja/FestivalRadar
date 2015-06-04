@@ -18,6 +18,7 @@ import java.util.Map;
  */
 public class RadarView extends View {
 
+    @SuppressWarnings("unused")
     static final String TAG = "RadarView";
     @SuppressLint("UseSparseArrays")
     private final Map<Long, RadarContact> contacts = new HashMap<Long, RadarContact>();
@@ -93,6 +94,7 @@ public class RadarView extends View {
         }
     }
 
+    @SuppressWarnings("unused")
     public void updateContact(RadarContact contact) {
         if(contacts.containsKey(contact.getID())) {
             throw new IllegalArgumentException("contact to update not present in RadarView!");

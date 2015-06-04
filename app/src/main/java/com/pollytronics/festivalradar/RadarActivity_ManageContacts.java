@@ -154,7 +154,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
                     RadarContact contact = getItem(position);
                     View view;
                     if (convertView == null) {
-                        view = LayoutInflater.from(RadarActivity_ManageContacts.this).inflate(R.layout.manage_contacs_list_item, null);
+                        view = LayoutInflater.from(RadarActivity_ManageContacts.this).inflate(R.layout.manage_contacs_list_item, null);   //TODO: figure out why lint complains
                     } else {
                         view = convertView;
                     }

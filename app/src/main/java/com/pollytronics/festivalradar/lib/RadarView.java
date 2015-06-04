@@ -24,6 +24,7 @@ public class RadarView extends View {
     private double bearing=0;
     @SuppressLint("UseSparseArrays")
     private Map<Long, RadarContact> contacts = new HashMap<Long, RadarContact>();
+    private Paint paint = new Paint();
 
     public RadarView(Context context) {
         super(context);
@@ -47,8 +48,6 @@ public class RadarView extends View {
         //int height = canvas.getHeight();
         int width = MeasureSpec.getSize(getWidth());     // works, but how?
         int height = MeasureSpec.getSize(getHeight());
-
-        Paint paint = new Paint();
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.rgb(0,0,0));

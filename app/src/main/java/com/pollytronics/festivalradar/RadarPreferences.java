@@ -10,10 +10,10 @@ import android.preference.PreferenceManager;
 public class RadarPreferences {
 
     static final String TAG = "RadarPreferences";
-    static final String LOCALISATION_UPDATE_PCT = "localisationUpdateTime_percent";
-    static final String CLOUD_UPDATE_PCT = "cloudUpdateTime_percent";
-    static final int LOCALISATION_UPDATE_PCT_INIT = 75;
-    static final int CLOUD_UPDATE_PCT_INIT = 25;
+    private static final String LOCALISATION_UPDATE_PCT = "localisationUpdateTime_percent";
+    private static final String CLOUD_UPDATE_PCT = "cloudUpdateTime_percent";
+    private static final int LOCALISATION_UPDATE_PCT_INIT = 75;
+    private static final int CLOUD_UPDATE_PCT_INIT = 25;
     private static RadarPreferences instance = null;
     private SharedPreferences preferences;
 

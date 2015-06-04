@@ -32,7 +32,7 @@ public class SubService_Localisation extends SubService implements
         super(rs);
     }
 
-    protected synchronized void buildGoogleApiClient() {
+    private synchronized void buildGoogleApiClient() {
         Context theContext = getRadarService().getContext();
         mGoogleApiClient = new GoogleApiClient.Builder(theContext)
                 .addConnectionCallbacks(this)
@@ -41,7 +41,7 @@ public class SubService_Localisation extends SubService implements
                 .build();
     }
 
-    protected void createLocationRequest() {
+    private void createLocationRequest() {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         mLocationRequest = new LocationRequest();
         int updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();

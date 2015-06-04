@@ -19,7 +19,7 @@ public class RadarActivity_Debug extends RadarActivity {
 
     private final String TAG = "RadarActivity_Debug";
 
-    TextView debugTextView;
+    private TextView debugTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class RadarActivity_Debug extends RadarActivity {
         super.onRadarServiceConnected();
     }
 
-    ArrayList<String> getLogCat() {
+    private ArrayList<String> getLogCat() {
         ArrayList<String> logCatLog = new ArrayList<>();
         try {
             Process logCatProcess = Runtime.getRuntime().exec("logcat -d");

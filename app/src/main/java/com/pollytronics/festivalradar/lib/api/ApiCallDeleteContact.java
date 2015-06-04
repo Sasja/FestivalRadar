@@ -12,9 +12,10 @@ import java.io.IOException;
  * Created by pollywog on 6/4/15.
  */
 public class ApiCallDeleteContact extends RadarApiCall {
-    protected final String apiResourceName = "contacts";
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "ApiCallDeleteContact";
+
+    private final String apiResourceName = "contacts";
     private long selfId = 0;
     private long deleteId = 0;
     private JSONObject contactJSON;

@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class ApiCallGetBlips extends RadarApiCall {
     protected final String TAG = "ApiCallGetBlips";
-    protected final String apiResourceName = "blips";
+    private final String apiResourceName = "blips";
     private JSONArray blips;
     private long selfId = 0;
 

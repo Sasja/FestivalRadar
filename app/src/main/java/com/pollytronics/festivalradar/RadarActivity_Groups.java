@@ -19,8 +19,8 @@ public class RadarActivity_Groups extends RadarActivity {
 
     private final String TAG = "RadarActivity_Groups";
 
-    SectionsPagerAdapter mSectionsPagerAdapter;
-    ViewPager mViewPager;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

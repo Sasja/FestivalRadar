@@ -15,8 +15,8 @@ import java.util.Set;
  * Created by pollywog on 6/3/15.
  */
 public class ApiCallGetContactsIsee extends RadarApiCall {
-    protected final String TAG = "ApiCallGetContactsIsee";
-    protected final String apiResourceName = "contacts";
+    private final String TAG = "ApiCallGetContactsIsee";
+    private final String apiResourceName = "contacts";
     private JSONArray contacts;
     private long selfId = 0;
 

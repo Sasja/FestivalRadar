@@ -19,7 +19,7 @@ import android.os.Looper;
  *
  * a few methods need to be overridden to handle some events.
  */
-abstract public class SubService {
+abstract class SubService {
 
     private final String TAG = "override this SubService TAG";
 
@@ -29,17 +29,17 @@ abstract public class SubService {
      */
     private Handler handler = new Handler(Looper.getMainLooper());
 
-    public SubService(RadarService rs){
+    SubService(RadarService rs){
         this.rs = rs;
     }
 
-    protected RadarService_Interface4SubService getRadarService() { return rs; }
+    RadarService_Interface4SubService getRadarService() { return rs; }
 
-    protected RadarDatabase_Interface4RadarService getRadarDatabase() { return rs.getRadarDataBase(); }
+    RadarDatabase_Interface4RadarService getRadarDatabase() { return rs.getRadarDataBase(); }
 
-    protected RadarPreferences getRadarPreferences() {return RadarPreferences.getInstance(rs.getApplicationContext());}
+    RadarPreferences getRadarPreferences() {return RadarPreferences.getInstance(rs.getApplicationContext());}
 
-    protected Handler getMainHandler(){
+    Handler getMainHandler(){
         return handler;
     }
 

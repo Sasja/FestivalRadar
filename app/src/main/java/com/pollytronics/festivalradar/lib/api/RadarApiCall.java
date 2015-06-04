@@ -28,8 +28,8 @@ import java.net.URL;
  * TODO: duplicate code
  */
 abstract public class RadarApiCall {
-    protected final String TAG = "RadarApiCall";
     protected final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
+    private final String TAG = "RadarApiCall";
     //protected final String baseUrl = "http://192.168.0.5:8080/api/v1/";
     private boolean failed = false;
 

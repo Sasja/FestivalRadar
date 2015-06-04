@@ -27,8 +27,8 @@ import java.util.Collection;
 public class RadarActivity_Main extends RadarActivity implements SensorEventListener {
 
     private static final String TAG = "RadarActivity_Main";
-    Switch toggleService;
-    RadarView radarView;
+    private Switch toggleService;
+    private RadarView radarView;
     private SensorManager mSensorManager;
     private Sensor mRotation;
 

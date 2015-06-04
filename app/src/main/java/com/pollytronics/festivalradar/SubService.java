@@ -23,11 +23,11 @@ abstract class SubService {
 
     private final String TAG = "override this SubService TAG";
 
-    private RadarService rs;
+    private final RadarService rs;
     /**
      * this gets a handler for the main thread, use it to post Runnables to the main thread
      */
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     SubService(RadarService rs){
         this.rs = rs;

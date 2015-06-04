@@ -19,12 +19,11 @@ import java.util.Map;
 public class RadarView extends View {
 
     static final String TAG = "RadarView";
-
+    @SuppressLint("UseSparseArrays")
+    private final Map<Long, RadarContact> contacts = new HashMap<Long, RadarContact>();
+    private final Paint paint = new Paint();
     private RadarBlip centerLocation;
     private double bearing=0;
-    @SuppressLint("UseSparseArrays")
-    private Map<Long, RadarContact> contacts = new HashMap<Long, RadarContact>();
-    private Paint paint = new Paint();
 
     public RadarView(Context context) {
         super(context);

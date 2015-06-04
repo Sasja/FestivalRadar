@@ -96,8 +96,8 @@ public class SubService_Cloud_2 extends SubService {
      * http://developer.android.com/reference/android/os/AsyncTask.html (See Memory observability)
      */
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
-        private ApiCallSetMyBlip setMyBlip = new ApiCallSetMyBlip();
-        private ApiCallGetBlips getBlips = new ApiCallGetBlips();
+        private final ApiCallSetMyBlip setMyBlip = new ApiCallSetMyBlip();
+        private final ApiCallGetBlips getBlips = new ApiCallGetBlips();
         /**
          * Gathers all the data needed to perform the api calls
          */

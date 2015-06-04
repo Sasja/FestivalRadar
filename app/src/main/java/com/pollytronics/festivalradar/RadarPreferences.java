@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 
 /**
  * Created by pollywog on 9/23/14.
+ * TODO: something is very wrong here with the instance always being null, and getInstance always returning a new object...
  */
 public class RadarPreferences {
 
@@ -15,7 +16,7 @@ public class RadarPreferences {
     private static final int LOCALISATION_UPDATE_PCT_INIT = 75;
     private static final int CLOUD_UPDATE_PCT_INIT = 25;
     private static RadarPreferences instance = null;
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
 
     private RadarPreferences(Context context){
         preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());

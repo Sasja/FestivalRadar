@@ -132,7 +132,6 @@ public class SubService_Cloud_2 extends SubService {
                 Log.i(TAG, "the api call has failed, not calling doTheWork() methods for the calls");
             } else {
                 Log.i(TAG, "parsing and using the responses of the webservice");
-                setMyBlip.doTheWork(getRadarDatabase());
                 getBlips.doTheWork(getRadarDatabase());
                 getRadarService().notifyNewData();
             }

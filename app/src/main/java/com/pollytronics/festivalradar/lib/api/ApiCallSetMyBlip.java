@@ -37,8 +37,6 @@ public class ApiCallSetMyBlip extends RadarApiCall {
         return baseUrl+apiResourceName+"?userid="+selfId;
     }
 
-    public void doTheWork(RadarDatabase_Interface4RadarService db) {}
-
     private String getApiBodyString(){
         return selfBlipJSON.toString();
     }

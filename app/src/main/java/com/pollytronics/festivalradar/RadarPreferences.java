@@ -16,6 +16,7 @@ public class RadarPreferences {
     private static final String CLOUD_UPDATE_PCT = "cloudUpdateTime_percent";
     private static final int LOCALISATION_UPDATE_PCT_INIT = 75;
     private static final int CLOUD_UPDATE_PCT_INIT = 25;
+    @SuppressWarnings("CanBeFinal")
     private static RadarPreferences instance = null;
     private final SharedPreferences preferences;
 

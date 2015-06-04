@@ -13,6 +13,7 @@ public class ApiCallDeleteContact extends RadarApiCall {
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "ApiCallDeleteContact";
 
+    @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "contacts";
     private long selfId = 0;
     private long deleteId = 0;

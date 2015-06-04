@@ -317,5 +317,4 @@ public class RadarActivity_ManageContacts extends RadarActivity {
             toast.show();
         }
     }
-
 }

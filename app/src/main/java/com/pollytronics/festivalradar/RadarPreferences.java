@@ -9,16 +9,13 @@ import android.preference.PreferenceManager;
  */
 public class RadarPreferences {
 
-    private static RadarPreferences instance = null;
-    private SharedPreferences preferences;
-
     static final String TAG = "RadarPreferences";
-
     static final String LOCALISATION_UPDATE_PCT = "localisationUpdateTime_percent";
     static final String CLOUD_UPDATE_PCT = "cloudUpdateTime_percent";
-
     static final int LOCALISATION_UPDATE_PCT_INIT = 75;
     static final int CLOUD_UPDATE_PCT_INIT = 25;
+    private static RadarPreferences instance = null;
+    private SharedPreferences preferences;
 
     private RadarPreferences(Context context){
         preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -51,9 +48,9 @@ public class RadarPreferences {
         return preferences.getInt(CLOUD_UPDATE_PCT,CLOUD_UPDATE_PCT_INIT);
     }
     public void setLocalisationUpdateRate_percent(double percent){
-        preferences.edit().putInt(LOCALISATION_UPDATE_PCT, (int) percent).commit();
+        preferences.edit().putInt(LOCALISATION_UPDATE_PCT, (int) percent).apply();
     }
     public void setCloudUpdateRate_percent(double percent){
-        preferences.edit().putInt(CLOUD_UPDATE_PCT, (int) percent).commit();
+        preferences.edit().putInt(CLOUD_UPDATE_PCT, (int) percent).apply();
     }
 }

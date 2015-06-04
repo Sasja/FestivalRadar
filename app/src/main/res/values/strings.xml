@@ -9,11 +9,10 @@
     <string name="title_activity_about_radar">About</string>
     <string name="action_settings">Settings</string>
     <string name="text_about">
+        \nnot a release version
+        \nlast release below:
         \n
-        \n not a release version
-        \n last release below:
-        \n
-        Festival (version 1.0.2.a)
+        \nFestival (version 1.0.2.a)
         \nspecial release for awesome alphatesters like you!
         \n
         \n - add contacts by entering their unique 4 letter id, you will be added to their contacts when they sync contacts

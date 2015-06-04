@@ -17,6 +17,7 @@ import java.util.Set;
 public class ApiCallGetContactsSeeme extends RadarApiCall {
     @SuppressWarnings("unused")
     protected final String TAG = "ApiCallGetContactsSeeme";
+    @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "contacts";
     private JSONArray contacts;
     private long selfId = 0;

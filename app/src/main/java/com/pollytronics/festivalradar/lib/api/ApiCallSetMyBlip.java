@@ -16,6 +16,7 @@ import java.io.IOException;
  */
 public class ApiCallSetMyBlip extends RadarApiCall {
     private final String TAG = "ApiCallSetMyBlip";
+    @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "blips";
     private final JSONObject selfBlipJSON = new JSONObject();
     private long selfId = 0;

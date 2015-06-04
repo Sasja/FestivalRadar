@@ -16,6 +16,7 @@ import java.io.IOException;
 public class ApiCallGetBlips extends RadarApiCall {
     @SuppressWarnings("unused")
     protected final String TAG = "ApiCallGetBlips";
+    @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "blips";
     private JSONArray blips;
     private long selfId = 0;

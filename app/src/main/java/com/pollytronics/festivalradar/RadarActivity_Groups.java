@@ -20,6 +20,7 @@ public class RadarActivity_Groups extends RadarActivity {
     @SuppressWarnings("unused")
     private final String TAG = "RadarActivity_Groups";
 
+    @SuppressWarnings("FieldCanBeLocal")
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
 

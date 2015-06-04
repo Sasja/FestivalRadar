@@ -16,6 +16,7 @@ public class ApiCallPostContact extends RadarApiCall {
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "ApiCallPostContact";
 
+    @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "contacts";
 
     private long selfId = 0;

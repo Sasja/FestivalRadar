@@ -53,8 +53,7 @@ abstract public class RadarApiCall {
             Log.i(TAG, "HTTP RESPONSE CODE: " + response);
             if(response!=200) throw new IOException();
             is = conn.getInputStream();
-            String contentString = readInputStream(is);
-            return contentString;
+            return readInputStream(is);
         } finally {
             if (is != null) is.close();
             conn.disconnect();
@@ -76,8 +75,7 @@ abstract public class RadarApiCall {
             Log.i(TAG, "HTTP RESPONSE CODE: " + response);
             if(response!=200) throw new IOException();
             is = conn.getInputStream();
-            String contentString = readInputStream(is);
-            return contentString;
+            return readInputStream(is);
         } finally {
             if (is != null) is.close();
             conn.disconnect();
@@ -105,8 +103,7 @@ abstract public class RadarApiCall {
             Log.i(TAG, "HTTP RESPONSE CODE: " + response);
             if(response!=200) throw new IOException();
             is = conn.getInputStream();
-            String contentString = readInputStream(is);
-            return contentString;
+            return readInputStream(is);
         } finally {
             if (is != null) is.close();
             conn.disconnect();

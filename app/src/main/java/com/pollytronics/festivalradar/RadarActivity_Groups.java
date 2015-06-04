@@ -12,6 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+/**
+ * TODO: What does @Nullable mean???
+ */
 public class RadarActivity_Groups extends RadarActivity {
 
     private final String TAG = "RadarActivity_Groups";
@@ -47,8 +50,7 @@ public class RadarActivity_Groups extends RadarActivity {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.groupsfragment_dummy, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.groupsfragment_dummy, container, false);
         }
     }
 
@@ -56,8 +58,7 @@ public class RadarActivity_Groups extends RadarActivity {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.groupsfragment_mygroups, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.groupsfragment_mygroups, container, false);
         }
     }
 
@@ -65,8 +66,7 @@ public class RadarActivity_Groups extends RadarActivity {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.groupsfragment_nearbygroups, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.groupsfragment_nearbygroups, container, false);
         }
     }
 
@@ -74,8 +74,7 @@ public class RadarActivity_Groups extends RadarActivity {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.groupsfragment_privategroups, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.groupsfragment_privategroups, container, false);
         }
     }
 

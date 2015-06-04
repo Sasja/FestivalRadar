@@ -14,6 +14,7 @@ import java.io.IOException;
  */
 public class ApiCallPostContact extends RadarApiCall {
     protected final String apiResourceName = "contacts";
+    @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "ApiCallPostContact";
     private long selfId = 0;
     private JSONObject contactJSON;

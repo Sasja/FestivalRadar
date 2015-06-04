@@ -13,6 +13,7 @@ import java.io.IOException;
  */
 public class ApiCallDeleteContact extends RadarApiCall {
     protected final String apiResourceName = "contacts";
+    @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "ApiCallDeleteContact";
     private long selfId = 0;
     private long deleteId = 0;

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pollytronics.festivalradar.lib.RadarContact;
+import com.pollytronics.festivalradar.lib.api.ApiCallDeleteContact;
 import com.pollytronics.festivalradar.lib.api.ApiCallGetContactsIsee;
 import com.pollytronics.festivalradar.lib.api.ApiCallGetContactsSeeme;
 import com.pollytronics.festivalradar.lib.api.ApiCallPostContact;
@@ -63,9 +64,33 @@ public class RadarActivity_ManageContacts extends RadarActivity {
     }
 
     public void onDelete(){
-        Log.i(TAG, "deleting selected radar contact");
-        getRadarDatabase().removeContact(clickedContact);
-        notifyDatabaseUpdate();         // TODO: this shouldn't be called here but happen autamatically
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()){
+            final ApiCallDeleteContact deleteContact = new ApiCallDeleteContact();
+            deleteContact.collectData(getRadarDatabase());
+            deleteContact.setContactId(clickedContact.getID());
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        deleteContact.callAndParse();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            Log.i(TAG, "posting a delete request to api for contact id: " + clickedContact.getID());
+            thread.start();
+            Log.i(TAG, "deleting selected radar contact (id=" + clickedContact.getID() + ")");
+            getRadarDatabase().removeContact(clickedContact);
+            Toast toast = Toast.makeText(getApplicationContext(), "contact removed", Toast.LENGTH_SHORT);
+            toast.show();
+            notifyDatabaseUpdate();         // TODO: this shouldn't be called here but happen autamatically
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(), "no connection", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     public void onDeny(){

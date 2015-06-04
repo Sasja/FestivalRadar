@@ -25,6 +25,7 @@ import java.net.URL;
  * TODO: check the error handling of this thing
  * TODO: with the doTheWork method some stuff can be implemented in this class but some
  * TODO:    could also be implemented in the ASyncTask onPostExecute, bit confusing
+ * TODO: duplicate code
  */
 abstract public class RadarApiCall {
     protected final String TAG = "RadarApiCall";
@@ -60,7 +61,30 @@ abstract public class RadarApiCall {
         }
     }
 
-    protected String myHttpPost(String myurl, String jsondata) throws IOException {   // TODO: study this code, the api returns a Error 415 Unsupported media type, this is not how a proper post is done
+    protected String myHttpDelete(String myurl) throws IOException {
+        InputStream is = null;
+        URL url = new URL(myurl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        try {
+            conn.setReadTimeout(1000);
+            conn.setConnectTimeout(10000);
+            conn.setRequestMethod("DELETE");
+            conn.setDoInput(true);
+            Log.i(TAG, "DELETE " + myurl);
+            conn.connect();
+            int response = conn.getResponseCode();
+            Log.i(TAG, "HTTP RESPONSE CODE: " + response);
+            if(response!=200) throw new IOException();
+            is = conn.getInputStream();
+            String contentString = readInputStream(is);
+            return contentString;
+        } finally {
+            if (is != null) is.close();
+            conn.disconnect();
+        }
+    }
+
+    protected String myHttpPost(String myurl, String jsondata) throws IOException {
         InputStream is = null;
         OutputStream os = null;
         URL url = new URL(myurl);
@@ -88,6 +112,7 @@ abstract public class RadarApiCall {
             conn.disconnect();
         }
     }
+
 
     /**
      * helper method to convert input stream to string

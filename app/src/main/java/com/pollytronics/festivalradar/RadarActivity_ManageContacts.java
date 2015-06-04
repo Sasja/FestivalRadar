@@ -265,9 +265,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
                 ics = apiCallGetContactsIsee.getCollection();
                 csm = apiCallGetContactsSeeme.getCollection();
                 Log.i(TAG, "successfully loaded all contact lists local and remote");
-                Log.i(TAG, "#(con)={} #(ics)={} #(csm)={}".format(Integer.toString(con.size()),
-                        Integer.toString(ics.size()),
-                        Integer.toString(csm.size())));
+                Log.i(TAG, String.format("nCON=%d nICS=%d nCSM=%d" ,con.size(), ics.size(), csm.size()));
                 // find contacts i need to add to local contacts (do in onPostExecute)
                 toAddToCon.addAll(ics);
                 toAddToCon.addAll(csm);

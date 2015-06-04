@@ -241,6 +241,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
             selfContact.setID(id).setName(name).addBlip(blip);
         } else {
             Log.i(TAG, "DID NOT FIND SELF_CONTACT! (or found more than one)");
+            Log.i(TAG, "c.getCount() = " + c.getCount());
             selfContact = null;
         }
         c.close();
@@ -285,7 +286,7 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
 
     private class RadarDbHelper extends SQLiteOpenHelper{
         public static final String DATABASE_NAME = "FestivalRadarContacts.db";
-        public static final int DATABASE_VERSION = 1;
+        public static final int DATABASE_VERSION = 2;
 
         public RadarDbHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -304,7 +305,8 @@ public class RadarDatabase implements RadarDatabase_Interface4RadarService, Rada
 
 
             ContentValues values = new ContentValues();
-            values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, 0);
+            long selfId = (new Random()).nextLong() % 10000;                                    // TODO: think about some proper account management
+            values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, selfId);
             values.put(ContactEntry.COLUMN_NAME_NAME, ContactEntry.SELF_CONTACT_NAME_VALUE);
             values.put(ContactEntry.COLUMN_NAME_LAST_LAT, 0.0);
             values.put(ContactEntry.COLUMN_NAME_LAST_LON, 0.0);

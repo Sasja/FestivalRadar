@@ -28,7 +28,7 @@ public class ApiCallDeleteContact extends RadarApiCall {
 
     @Override
     protected String getApiQueryString() {
-        return baseUrl+apiResourceName+"?userid="+selfId+"?contactid="+deleteId;
+        return baseUrl+apiResourceName+"?userid="+selfId+"&contactid="+deleteId;
     }
 
     private void parseContent(String content) { Log.i(TAG, "api reply = " + content);}

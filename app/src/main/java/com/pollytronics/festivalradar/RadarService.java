@@ -17,6 +17,7 @@ import android.util.Log;
  *      - This class delegates calls from activities to the right helper classes (SubServices)
  *      - This class provide methods to the SubServices to reach the Activities.
  * TODO: checking for api levels below HONEYCOMB is not sensible anymore as minSdkVersion is increased to 15 now
+ * TODO: designing and using a black and white notification icon
  */
 public class RadarService extends Service implements RadarService_Interface4SubService, RadarService_interface4RadarActivity {
 

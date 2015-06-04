@@ -1,5 +1,6 @@
 package com.pollytronics.festivalradar.lib;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ public class RadarView extends View {
 
     private RadarBlip centerLocation;
     private double bearing=0;
+    @SuppressLint("UseSparseArrays")
     private Map<Long, RadarContact> contacts = new HashMap<Long, RadarContact>();
 
     public RadarView(Context context) {

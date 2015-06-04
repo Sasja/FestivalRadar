@@ -9,20 +9,20 @@ import java.util.Collection;
  */
 public interface RadarDatabase_Interface4RadarActivity {
 
-    public Collection<RadarContact> getAllContacts();
+    Collection<RadarContact> getAllContacts();
 
-    public void removeContact(RadarContact contact);
+    void removeContact(RadarContact contact);
 
-    public void removeContactById(long id);
+    void removeContactById(long id);
 
-    public void updateContact(RadarContact contact);
+    void updateContact(RadarContact contact);
 
-    public void addContact(RadarContact contact);
+    void addContact(RadarContact contact);
 
-    public void addContactWithId(RadarContact contact);
+    void addContactWithId(RadarContact contact);
 
-    public RadarContact getSelfContact();
+    RadarContact getSelfContact();
 
-    public void updateSelfContact(RadarContact newSelfContact);
+    void updateSelfContact(RadarContact newSelfContact);
 
 }

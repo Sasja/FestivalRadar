@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.pollytronics.festivalradar.RadarDatabase_Interface;
 
-import java.io.IOException;
-
 /**
  * Created by pollywog on 6/4/15.
  */
@@ -28,14 +26,14 @@ public class ApiCallDeleteContact extends RadarApiCall {
     }
 
     @Override
+    public String getHttpMethod() {
+        return "DELETE";
+    }
+
+    @Override
     protected String getApiQueryString() {
         return baseUrl+apiResourceName+"?userid="+selfId+"&contactid="+deleteId;
     }
 
-    private void parseContent(String content) { Log.i(TAG, "api reply = " + content);}
-
-    @Override
-    public void callAndParse() throws IOException {
-        parseContent(myHttpDelete(getApiQueryString()));
-    }
+    protected void parseContent(String content) { Log.i(TAG, "api reply = " + content);}
 }

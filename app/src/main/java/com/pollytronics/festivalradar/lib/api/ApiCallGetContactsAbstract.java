@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,20 +27,19 @@ public abstract class ApiCallGetContactsAbstract extends RadarApiCall {
     }
 
     @Override
+    public String getHttpMethod() {
+        return "GET";
+    }
+    @Override
     protected abstract String getApiQueryString();
 
-    private void parseContent(String content) {
+    protected void parseContent(String content) {
         try {
             JSONObject jsonObject = new JSONObject(content);
             contacts = jsonObject.getJSONArray("contacts");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void callAndParse() throws IOException {
-        parseContent(myHttpGet(getApiQueryString()));
     }
 
     public Set<Long> getCollection() {

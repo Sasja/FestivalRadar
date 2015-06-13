@@ -7,8 +7,6 @@ import com.pollytronics.festivalradar.RadarDatabase_Interface;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 /**
  * Created by pollywog on 6/3/15.
  */
@@ -39,12 +37,15 @@ public class ApiCallPostContact extends RadarApiCall {
         return baseUrl+apiResourceName+"?userid="+selfId;
     }
 
-    private String getApiBodyString() {return contactJSON.toString();}
-
-    private void parseContent(String content) { Log.i(TAG, "api reply = "+content);}
+    @Override
+    protected String getApiBodyString() {return contactJSON.toString();}
 
     @Override
-    public void callAndParse() throws IOException {
-        parseContent(myHttpPost(getApiQueryString(),getApiBodyString()));
+    public String getHttpMethod() {
+        return "POST";
     }
+
+    @Override
+    protected void parseContent(String content) { Log.i(TAG, "api reply = " + content);}
+
 }

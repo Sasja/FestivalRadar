@@ -8,8 +8,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 /**
  * Created by pollywog on 6/3/15.
  */
@@ -26,11 +24,16 @@ public class ApiCallGetBlips extends RadarApiCall {
     }
 
     @Override
+    public String getHttpMethod() {
+        return "GET";
+    }
+
+    @Override
     protected String getApiQueryString() {
         return baseUrl+apiResourceName+"?userid="+selfId;
     }
 
-    private void parseContent(String content) {
+    protected void parseContent(String content) {
         try {
             JSONObject jsonObject = new JSONObject(content);
             blips = jsonObject.getJSONArray("blips");
@@ -65,10 +68,5 @@ public class ApiCallGetBlips extends RadarApiCall {
                 db.updateContact(contact);
             }
         }
-    }
-
-    @Override
-    public void callAndParse() throws IOException {
-        parseContent(myHttpGet(getApiQueryString()));
     }
 }

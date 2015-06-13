@@ -11,5 +11,4 @@ public class ApiCallGetContactsISee extends ApiCallGetContactsAbstract {
     protected String getApiQueryString() {
         return baseUrl+apiResourceName+"?userid="+selfId+"&mode=isee";
     }
-
 }

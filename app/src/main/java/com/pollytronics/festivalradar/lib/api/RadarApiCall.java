@@ -36,7 +36,6 @@ import java.net.URL;
  *
  *
  * TODO: check the error handling of this thing
- * TODO: duplicate code GET POST DELETE
  */
 abstract public class RadarApiCall {
     final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
@@ -46,71 +45,36 @@ abstract public class RadarApiCall {
 
     public void setFailedFlag() { failed = true; }
     public boolean hasFailed() { return failed; }
-
     public abstract void collectData(RadarDatabase_Interface db);
+
+    public abstract String getHttpMethod();
     protected abstract String getApiQueryString();
-    public abstract void callAndParse() throws IOException;
+    protected String getApiBodyString() { return ""; }
 
-    String myHttpGet(String myurl) throws IOException {   // TODO: study this code
-        InputStream is = null;
-        URL url = new URL(myurl);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        try {
-            conn.setReadTimeout(1000);
-            conn.setConnectTimeout(10000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            Log.i(TAG, "GET " + myurl);
-            conn.connect();
-            int response = conn.getResponseCode();
-            Log.i(TAG, "HTTP RESPONSE CODE: " + response);
-            if(response!=200) throw new IOException();
-            is = conn.getInputStream();
-            return readInputStream(is);
-        } finally {
-            if (is != null) is.close();
-            conn.disconnect();
-        }
-    }
+    protected abstract void parseContent(String content);
 
-    String myHttpDelete(String myurl) throws IOException {
-        InputStream is = null;
-        URL url = new URL(myurl);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        try {
-            conn.setReadTimeout(1000);
-            conn.setConnectTimeout(10000);
-            conn.setRequestMethod("DELETE");
-            conn.setDoInput(true);
-            Log.i(TAG, "DELETE " + myurl);
-            conn.connect();
-            int response = conn.getResponseCode();
-            Log.i(TAG, "HTTP RESPONSE CODE: " + response);
-            if(response!=200) throw new IOException();
-            is = conn.getInputStream();
-            return readInputStream(is);
-        } finally {
-            if (is != null) is.close();
-            conn.disconnect();
-        }
-    }
+    final public void callAndParse() throws IOException {
+        parseContent(myHttpRequest(getHttpMethod(), getApiQueryString(), getApiBodyString()));
+    };
 
-    String myHttpPost(String myurl, String jsondata) throws IOException {
+    String myHttpRequest(String method, String myUrl, String myBody) throws IOException {
         InputStream is = null;
         OutputStream os = null;
-        URL url = new URL(myurl);
+        URL url = new URL(myUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         try {
             conn.setReadTimeout(1000);
             conn.setConnectTimeout(10000);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(getHttpMethod());
             conn.setDoInput(true);
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type", "application/json");
-            Log.i(TAG, "POST " + myurl);
-            Log.i(TAG, "BODY = " + jsondata);
-            os = conn.getOutputStream();
-            writeToOutputStream(os, jsondata);
+            Log.i(TAG, getHttpMethod() + " " + myUrl);
+            if(getHttpMethod().equals("POST")) {
+                conn.setDoOutput(true);
+                conn.setRequestProperty("Content-Type", "application/json");
+                Log.i(TAG, "BODY = " + myBody);
+                os = conn.getOutputStream();
+                writeToOutputStream(os, myBody);
+            }
             conn.connect();
             int response = conn.getResponseCode();
             Log.i(TAG, "HTTP RESPONSE CODE: " + response);
@@ -122,7 +86,6 @@ abstract public class RadarApiCall {
             conn.disconnect();
         }
     }
-
 
     /**
      * helper method to convert input stream to string

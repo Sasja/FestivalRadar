@@ -24,7 +24,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     private final static String TAG = "RadarService";
     private final RadarBinder radarBinder = new RadarBinder();
     private final SubService_Localisation subServiceLocalisation = new SubService_Localisation(this);
-    private final SubService_Cloud_2 subServiceCloud = new SubService_Cloud_2(this);  // TODO: migrate to version 2 of subservice
+    private final SubService_Cloud_2 subServiceCloud = new SubService_Cloud_2(this);
     private RadarActivity_Interface4RadarService ra;
     private RadarDatabase_Interface4RadarService db;
     private Boolean raRegistered = false;

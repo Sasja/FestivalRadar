@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 import com.pollytronics.festivalradar.lib.RadarContact;
 import com.pollytronics.festivalradar.lib.api.ApiCallDeleteContact;
-import com.pollytronics.festivalradar.lib.api.ApiCallGetContactsIsee;
+import com.pollytronics.festivalradar.lib.api.ApiCallGetContactsISee;
 import com.pollytronics.festivalradar.lib.api.ApiCallGetContactsSeeme;
 import com.pollytronics.festivalradar.lib.api.ApiCallPostContact;
 
@@ -236,7 +236,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
         private final ApiCallPostContact postContact = new ApiCallPostContact();
         private final ApiCallGetContactsSeeme apiCallGetContactsSeeme = new ApiCallGetContactsSeeme();
-        private final ApiCallGetContactsIsee apiCallGetContactsIsee = new ApiCallGetContactsIsee();
+        private final ApiCallGetContactsISee apiCallGetContactsISee = new ApiCallGetContactsISee();
         private final Set<Long> con = new HashSet<Long>();
         private final Set<Long> toDeleteFromCon = new HashSet<Long>();
         private final Set<Long> toAddToCon = new HashSet<Long>();
@@ -249,7 +249,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
             // get selfId (into ApiCall objects)
             postContact.collectData(getRadarDatabase());
             apiCallGetContactsSeeme.collectData(getRadarDatabase());
-            apiCallGetContactsIsee.collectData(getRadarDatabase());
+            apiCallGetContactsISee.collectData(getRadarDatabase());
             // construct list of ids in local contacts
             for (RadarContact c : getRadarDatabase().getAllContacts()) {
                 con.add(c.getID());
@@ -260,9 +260,9 @@ public class RadarActivity_ManageContacts extends RadarActivity {
         protected String doInBackground(Void... params) {
             Log.i(TAG, "calling api");
             try {
-                apiCallGetContactsIsee.callAndParse();
+                apiCallGetContactsISee.callAndParse();
                 apiCallGetContactsSeeme.callAndParse();
-                ics = apiCallGetContactsIsee.getCollection();
+                ics = apiCallGetContactsISee.getCollection();
                 csm = apiCallGetContactsSeeme.getCollection();
                 Log.i(TAG, "successfully loaded all contact lists local and remote");
                 Log.i(TAG, String.format("nCON=%d nICS=%d nCSM=%d" ,con.size(), ics.size(), csm.size()));

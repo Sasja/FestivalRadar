@@ -11,25 +11,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO: this is superduplicate code with ApiCallGetContactsSeeme
- * Created by pollywog on 6/3/15.
+ * Abstract class for get contacts seeme and isee to prevent lots of duplicate code
+ * only one parameter is different in the rest api call
+ * Created by pollywog on 6/13/15.
  */
-public class ApiCallGetContactsIsee extends RadarApiCall {
-    @SuppressWarnings("unused")
-    private final String TAG = "ApiCallGetContactsIsee";
+public abstract class ApiCallGetContactsAbstract extends RadarApiCall {
     @SuppressWarnings("FieldCanBeLocal")
-    private final String apiResourceName = "contacts";
+    protected final String apiResourceName = "contacts";
+    @SuppressWarnings("unused")
+    private final String TAG = "ApiCallGetContactsAbstract";
+    protected long selfId = 0;
     private JSONArray contacts;
-    private long selfId = 0;
 
     public void collectData(RadarDatabase_Interface4RadarActivity db) {
         selfId = db.getSelfContact().getID();
     }
 
     @Override
-    protected String getApiQueryString() {
-        return baseUrl+apiResourceName+"?userid="+selfId+"&mode=isee";
-    }
+    protected abstract String getApiQueryString();
 
     private void parseContent(String content) {
         try {
@@ -47,7 +46,7 @@ public class ApiCallGetContactsIsee extends RadarApiCall {
 
     public Set<Long> getCollection() {
         Set<Long> collection = new HashSet<Long>();        //TODO: not sure what best data type is
-        for (int i=0; i<contacts.length(); i++){
+        for (int i=0; i<contacts.length(); i++) {
             try {
                 collection.add(contacts.getJSONObject(i).getLong("id"));
             } catch (JSONException e) {

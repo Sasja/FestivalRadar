@@ -18,7 +18,6 @@ import java.io.IOException;
  * This class uses the api_vxx methods to do the actual api calls
  *
  * TODO: minimize tcp connection lifetime to minimize load on server
- * TODO: further develop the APICall classes for the different calls
  * TODO: figure out how time is to be stored in backend db and into local phone-db, now its broken but not used
  * http://developer.android.com/training/basics/network-ops/connecting.html
  *

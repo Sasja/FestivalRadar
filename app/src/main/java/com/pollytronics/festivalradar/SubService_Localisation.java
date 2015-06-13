@@ -101,8 +101,12 @@ public class SubService_Localisation extends SubService implements
     public void onConnected(Bundle connectionHint) {
         Log.i(TAG, "woohoo Connected to google location services");
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        Log.i(TAG, "wow, got an actual location from google!! :" + mLastLocation.toString());
-        addBlipFromLocation(mLastLocation);
+        if (mLastLocation != null) {
+            Log.i(TAG, "obtained last location from google location services :" + mLastLocation.toString());
+            addBlipFromLocation(mLastLocation);
+        } else {
+            Log.i(TAG, "could not obtain last location from google location service");
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
    }
 

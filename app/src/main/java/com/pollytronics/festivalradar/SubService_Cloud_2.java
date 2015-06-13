@@ -15,6 +15,7 @@ import java.io.IOException;
  * Cloud SubService 2
  *
  * periodically pulls and pushes data from server and updates the local database
+ * This class uses the api_vxx methods to do the actual api calls
  *
  * TODO: minimize tcp connection lifetime to minimize load on server
  * TODO: further develop the APICall classes for the different calls

@@ -16,7 +16,7 @@ import java.net.URL;
  * Created by pollywog on 6/3/15.
  *
  * This class implements whatever needed to perform api calls,
- * work is separated into three domains
+ * work is separated into four domains
  * 1) preparing the call by gathering necessary data (must be called on main thread for threadsafety)
  *      this will put all necessary data into attributes local to the object
  * 2) the actual call (method must be called from async thread or exception will be thrown)
@@ -24,15 +24,16 @@ import java.net.URL;
  * 2') parsing the api call result body (this could be done on main thread but is done async to allow
  * doing a few consecutive call's that depend on previous call results in one thread)
  *      this parses the api call reply body and stores the information in attributes local to the object
- * 3) methods to retrieve the results from the object after a call (main thread)
- *      this can then be used to construct following api calls
- * 3') optionally methods that use the final results can be implemented here (main thread)
+ * 3) methods to retrieve the results from the object after a call (main thread or async thread)
+ *      this can then be used to construct following api calls in the same async thread
+ * 4) optionally methods that use the final results can be implemented here (main thread)
  *
  *
- * 1) is done through collectData()         abstract
+ * 1) is done through collectData()                                     abstract
  *    optionally some setSomething() methods can be provided
- * 2) is done through callAndParse()        abstract
- * 3) is done through optional getSomething() or doTheWork() methods
+ * 2+2') is done through callAndParse()                                 abstract
+ * 3) is done through optional getSomething()
+ * 4) is done throug doTheWork() methods
  *
  *
  * TODO: check the error handling of this thing
@@ -41,9 +42,7 @@ abstract public class RadarApiCall {
     final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
     private final String TAG = "RadarApiCall";
     //protected final String baseUrl = "http://192.168.0.5:8080/api/v1/";
-    private boolean callCompleted = false;
 
-    public boolean isCallCompleted() { return callCompleted; }
     public abstract void collectData(RadarDatabase_Interface db);
 
     public abstract String getHttpMethod();
@@ -54,7 +53,6 @@ abstract public class RadarApiCall {
 
     final public void callAndParse() throws IOException {
         parseContent(myHttpRequest(getHttpMethod(), getApiQueryString(), getApiBodyString()));
-        callCompleted = true;   // if the above request failed it will remain false as the IOException is thrown
     }
 
     /**

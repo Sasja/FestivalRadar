@@ -98,6 +98,7 @@ public class SubService_Cloud_2 extends SubService {
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
         private final ApiCallSetMyBlip setMyBlip = new ApiCallSetMyBlip();
         private final ApiCallGetBlips getBlips = new ApiCallGetBlips();
+        private boolean apiCallsSucceeded = false;
         /**
          * Gathers all the data needed to perform the api calls
          */
@@ -114,6 +115,7 @@ public class SubService_Cloud_2 extends SubService {
             try {
                 setMyBlip.callAndParse();
                 getBlips.callAndParse();
+                apiCallsSucceeded = true;
             } catch (IOException e) {
                 Log.i(TAG, "IOException: unable to complete all API requests");
                 return "IOExcepion: unable to complete all API requests";
@@ -126,12 +128,12 @@ public class SubService_Cloud_2 extends SubService {
          */
         @Override
         protected void onPostExecute(String s) {
-            if (!(setMyBlip.isCallCompleted() && getBlips.isCallCompleted())) {         // only take action if all api calls were successful
-                Log.i(TAG, "the api call has failed, not calling doTheWork() methods for the calls");
-            } else {
+            if (apiCallsSucceeded) {         // only take action if all api calls were successful
                 Log.i(TAG, "parsing and using the responses of the webservice");
                 getBlips.doTheWork(getRadarDatabase());
                 getRadarService().notifyNewData();
+            } else {
+                Log.i(TAG, "the api call has failed, not calling doTheWork() methods for the calls");
             }
         }
     }

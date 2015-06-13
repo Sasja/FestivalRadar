@@ -36,7 +36,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-
+/**
+ * TODO: specify proper behavior when remote api calls fail
+ */
 public class RadarActivity_ManageContacts extends RadarActivity {
 
     private static final String TAG = "ManageContactRadarAct";
@@ -72,7 +74,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
             deleteContact.setContactId(clickedContact.getID());
             Thread thread = new Thread(new Runnable() {
                 @Override
-                public void run() {
+                public void run() { // TODO: what to do when this fails?
                     try {
                         deleteContact.callAndParse();
                     } catch (IOException e) {
@@ -234,7 +236,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
      *      CON && !(ICS || CSM)        delete from CON
      **/
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
-        private final ApiCallPostContact postContact = new ApiCallPostContact();
+        private final ApiCallPostContact apiCallPostContact = new ApiCallPostContact();
         private final ApiCallGetContactsSeeme apiCallGetContactsSeeme = new ApiCallGetContactsSeeme();
         private final ApiCallGetContactsISee apiCallGetContactsISee = new ApiCallGetContactsISee();
         private final Set<Long> con = new HashSet<>();
@@ -243,11 +245,12 @@ public class RadarActivity_ManageContacts extends RadarActivity {
         private final Set<Long> toPostToCsm = new HashSet<>();
         private Set<Long> ics = new HashSet<>();
         private Set<Long> csm = new HashSet<>();
+        private boolean apiCallsSucceeded = false;
 
         @Override
         protected void onPreExecute() {
             // get selfId (into ApiCall objects)
-            postContact.collectData(getRadarDatabase());
+            apiCallPostContact.collectData(getRadarDatabase());
             apiCallGetContactsSeeme.collectData(getRadarDatabase());
             apiCallGetContactsISee.collectData(getRadarDatabase());
             // construct list of ids in local contacts
@@ -284,9 +287,10 @@ public class RadarActivity_ManageContacts extends RadarActivity {
                     } else {
                         Log.i(TAG, "this should not happen: local contact that i can see but cant see me, reposting to api (csm): " + id);
                     }
-                    postContact.setContactId(id);
-                    postContact.callAndParse();
+                    apiCallPostContact.setContactId(id);
+                    apiCallPostContact.callAndParse();
                 }
+                apiCallsSucceeded = true;
             } catch (IOException e) {
                 e.printStackTrace();
                 return "IOException: unable to complete all api requests";
@@ -296,25 +300,30 @@ public class RadarActivity_ManageContacts extends RadarActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            for(long id:toAddToCon){
-                String contactName="";
-                if (csm.contains(id)) {
-                    Log.i(TAG, "adding contact to local contacts (contact known in api but not in local contacts!?): " + id);
-                    contactName = "i forgot";
-                } else {
-                    Log.i(TAG, "adding contact to local contacts (autoaccept): " + id);
-                    contactName = "autoaccepted";
+            if (apiCallsSucceeded) {
+                for (long id : toAddToCon) {
+                    String contactName = "";
+                    if (csm.contains(id)) {
+                        Log.i(TAG, "adding contact to local contacts (contact known in api but not in local contacts!?): " + id);
+                        contactName = "i forgot";
+                    } else {
+                        Log.i(TAG, "adding contact to local contacts (autoaccept): " + id);
+                        contactName = "autoaccepted";
+                    }
+                    RadarContact newContact = new RadarContact().setName(contactName).setID(id);
+                    getRadarDatabase().addContactWithId(newContact);
                 }
-                RadarContact newContact = new RadarContact().setName(contactName).setID(id);
-                getRadarDatabase().addContactWithId(newContact);
+                for (long id : toDeleteFromCon) {
+                    Log.i(TAG, "deleting contact from local list (triggered by remote delete): " + id);
+                    getRadarDatabase().removeContactById(id);
+                }
+                notifyDatabaseUpdate();             // TODO: not sure this needs to be called
+                Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contacts_synced), Toast.LENGTH_SHORT);
+                toast.show();
+            } else { // apiCallsSucceeded == false
+                Toast toast = Toast.makeText(getApplicationContext(), "failed to sync", Toast.LENGTH_SHORT);
+                toast.show();
             }
-            for(long id:toDeleteFromCon){
-                Log.i(TAG, "deleting contact from local list (triggered by remote delete): " + id);
-                getRadarDatabase().removeContactById(id);
-            }
-            notifyDatabaseUpdate();             // TODO: not sure this needs to be called
-            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contacts_synced), Toast.LENGTH_SHORT);
-            toast.show();
         }
     }
 }

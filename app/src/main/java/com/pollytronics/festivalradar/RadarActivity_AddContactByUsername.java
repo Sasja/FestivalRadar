@@ -18,7 +18,7 @@ import com.pollytronics.festivalradar.lib.api_v01.ApiCallPostContact;
 import java.io.IOException;
 
 /**
- * TODO: post contact to api when adding it locally
+ * TODO: specify proper behavior in case of api request failures
  */
 public class RadarActivity_AddContactByUsername extends RadarActivity {
 
@@ -53,7 +53,7 @@ public class RadarActivity_AddContactByUsername extends RadarActivity {
                         postContact.setContactId(id);
                         Thread thread = new Thread(new Runnable() {
                             @Override
-                            public void run() {     // TODO: do what when this fails? should at least do some failure notification Toast or something
+                            public void run() {     // TODO: do what when this fails? should at least do some failure notification Toast or something, should the contact even be added locally when remotely has failed?
                                 try {
                                     postContact.callAndParse();
                                 } catch (IOException e) {

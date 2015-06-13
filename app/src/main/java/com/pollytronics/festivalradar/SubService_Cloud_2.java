@@ -6,8 +6,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.api.ApiCallGetBlips;
-import com.pollytronics.festivalradar.lib.api.ApiCallSetMyBlip;
+import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetBlips;
+import com.pollytronics.festivalradar.lib.api_v01.ApiCallSetMyBlip;
 
 import java.io.IOException;
 

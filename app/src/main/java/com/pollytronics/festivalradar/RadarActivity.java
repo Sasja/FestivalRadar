@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,9 +15,8 @@ import android.view.MenuItem;
 /**
  * Base class for all Activities
  * This class is only responsible for managing the connection to the RadarService
- * TODO: use the action bar API (api level 11) instead of this shit (i raised minSdkVersion from 9 to 15 on 12/5/2015)
  */
-public abstract class RadarActivity extends ActionBarActivity implements RadarActivity_Interface4RadarService {
+public abstract class RadarActivity extends AppCompatActivity implements RadarActivity_Interface4RadarService {
 
     private static final String TAG = "RadarActivity";
     private RadarService rs;        //needs access to more methods than just the interface, for handshaking,

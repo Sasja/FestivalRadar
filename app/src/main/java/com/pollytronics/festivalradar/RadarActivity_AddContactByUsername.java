@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.pollytronics.festivalradar.lib.RadarContact;
-import com.pollytronics.festivalradar.lib.api.ApiCallPostContact;
+import com.pollytronics.festivalradar.lib.api_v01.ApiCallPostContact;
 
 import java.io.IOException;
 

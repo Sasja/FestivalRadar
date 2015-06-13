@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar.lib.api;
+package com.pollytronics.festivalradar.lib.api_v01;
 
 import android.util.Log;
 

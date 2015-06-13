@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar.lib.api;
+package com.pollytronics.festivalradar.lib.api_v01;
 
 /**
  * Created by pollywog on 6/3/15.

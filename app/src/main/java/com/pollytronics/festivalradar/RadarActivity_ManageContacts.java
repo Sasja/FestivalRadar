@@ -24,10 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pollytronics.festivalradar.lib.RadarContact;
-import com.pollytronics.festivalradar.lib.api.ApiCallDeleteContact;
-import com.pollytronics.festivalradar.lib.api.ApiCallGetContactsISee;
-import com.pollytronics.festivalradar.lib.api.ApiCallGetContactsSeeme;
-import com.pollytronics.festivalradar.lib.api.ApiCallPostContact;
+import com.pollytronics.festivalradar.lib.api_v01.ApiCallDeleteContact;
+import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetContactsISee;
+import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetContactsSeeme;
+import com.pollytronics.festivalradar.lib.api_v01.ApiCallPostContact;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
                 Log.i(TAG, "onItemClick i=" + position + " id=" + id);
                 mDialog = new ContactActionDialogFragment();
                 clickedContact = (RadarContact) adapterView.getAdapter().getItem(position);
-                mDialog.show(getSupportFragmentManager(), "ContactActionDialog");
+                mDialog.show(getSupportFragmentManager(), "ContactActionDialog");               // TODO: figure out if i can graduate from supportFragmentmanager (since minsdk = 15)
             }
         });
         updateContactListView();
@@ -237,12 +237,12 @@ public class RadarActivity_ManageContacts extends RadarActivity {
         private final ApiCallPostContact postContact = new ApiCallPostContact();
         private final ApiCallGetContactsSeeme apiCallGetContactsSeeme = new ApiCallGetContactsSeeme();
         private final ApiCallGetContactsISee apiCallGetContactsISee = new ApiCallGetContactsISee();
-        private final Set<Long> con = new HashSet<Long>();
-        private final Set<Long> toDeleteFromCon = new HashSet<Long>();
-        private final Set<Long> toAddToCon = new HashSet<Long>();
-        private final Set<Long> toPostToCsm = new HashSet<Long>();
-        private Set<Long> ics = new HashSet<Long>();
-        private Set<Long> csm = new HashSet<Long>();
+        private final Set<Long> con = new HashSet<>();
+        private final Set<Long> toDeleteFromCon = new HashSet<>();
+        private final Set<Long> toAddToCon = new HashSet<>();
+        private final Set<Long> toPostToCsm = new HashSet<>();
+        private Set<Long> ics = new HashSet<>();
+        private Set<Long> csm = new HashSet<>();
 
         @Override
         protected void onPreExecute() {

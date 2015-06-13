@@ -2,6 +2,8 @@ package com.pollytronics.festivalradar.lib.api;
 
 import android.util.Log;
 
+import com.pollytronics.festivalradar.RadarDatabase_Interface;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,19 +15,28 @@ import java.net.URL;
 /**
  * Created by pollywog on 6/3/15.
  *
+ * This class implements whatever needed to perform api calls,
+ * work is separated into three domains
+ * 1) preparing the call by gathering necessary data (must be called on main thread for threadsafety)
+ *      this will put all necessary data into attributes local to the object
+ * 2) the actual call (method must be called from async thread or exception will be thrown)
+ *      this will use the gathered data to construct the right api call and return the body to the parser
+ * 2') parsing the api call result body (this could be done on main thread but is done async to allow
+ * doing a few consecutive call's that depend on previous call results in one thread)
+ *      this parses the api call reply body and stores the information in attributes local to the object
+ * 3) methods to retrieve the results from the object after a call (main thread)
+ *      this can then be used to construct following api calls
+ * 3') optionally methods that use the final results (main thread)
  *
- * APICall objects implement REST API Calls, separating the work in:
- * 1) collecting all the data needed for the call
- * 2) setting extra parameters manually
- * 3) constructing the query url/headers/body
- * 4) parsing a response into member fields
- * 5) using the results
  *
- * only 1 and 5 should access data outside the object itself as all others might be called on another thread
+ * 1) is done through collectData()         abstract
+ *    optionally some setSomething() methods can be provided
+ * 2) is done through callAndParse()        abstract
+ * 3) is done through optional getSomething() or doTheWork() methods
+ *
+ *
  * TODO: check the error handling of this thing
- * TODO: with the doTheWork method some stuff can be implemented in this class but some
- * TODO:    could also be implemented in the ASyncTask onPostExecute, bit confusing
- * TODO: duplicate code
+ * TODO: duplicate code GET POST DELETE
  */
 abstract public class RadarApiCall {
     final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
@@ -35,6 +46,8 @@ abstract public class RadarApiCall {
 
     public void setFailedFlag() { failed = true; }
     public boolean hasFailed() { return failed; }
+
+    public abstract void collectData(RadarDatabase_Interface db);
     protected abstract String getApiQueryString();
     public abstract void callAndParse() throws IOException;
 

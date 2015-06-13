@@ -7,9 +7,12 @@ import java.util.Collection;
 /**
  * Created by pollywog on 9/22/14.
  */
-public interface RadarDatabase_Interface4RadarActivity {
+public interface RadarDatabase_Interface {
 
     Collection<RadarContact> getAllContacts();
+
+    @SuppressWarnings("unused")
+    Collection<Long> getAllContactIds();
 
     void removeContact(RadarContact contact);
 
@@ -24,6 +27,9 @@ public interface RadarDatabase_Interface4RadarActivity {
     void addContactWithId(RadarContact contact);
 
     RadarContact getSelfContact();
+
+    @SuppressWarnings("unused")
+    RadarContact getContact(Long id);
 
     void updateSelfContact(RadarContact newSelfContact);
 

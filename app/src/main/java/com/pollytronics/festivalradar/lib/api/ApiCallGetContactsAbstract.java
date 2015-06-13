@@ -1,6 +1,6 @@
 package com.pollytronics.festivalradar.lib.api;
 
-import com.pollytronics.festivalradar.RadarDatabase_Interface4RadarActivity;
+import com.pollytronics.festivalradar.RadarDatabase_Interface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +23,7 @@ public abstract class ApiCallGetContactsAbstract extends RadarApiCall {
     protected long selfId = 0;
     private JSONArray contacts;
 
-    public void collectData(RadarDatabase_Interface4RadarActivity db) {
+    public void collectData(RadarDatabase_Interface db) {
         selfId = db.getSelfContact().getID();
     }
 

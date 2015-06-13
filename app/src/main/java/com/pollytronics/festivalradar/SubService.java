@@ -36,7 +36,7 @@ abstract class SubService {
 
     RadarService_Interface4SubService getRadarService() { return rs; }
 
-    RadarDatabase_Interface4RadarService getRadarDatabase() { return rs.getRadarDataBase(); }
+    RadarDatabase_Interface getRadarDatabase() { return rs.getRadarDataBase(); }
 
     RadarPreferences getRadarPreferences() {return RadarPreferences.getInstance(rs.getApplicationContext());}
 

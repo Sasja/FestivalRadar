@@ -2,7 +2,7 @@ package com.pollytronics.festivalradar.lib.api;
 
 import android.util.Log;
 
-import com.pollytronics.festivalradar.RadarDatabase_Interface4RadarService;
+import com.pollytronics.festivalradar.RadarDatabase_Interface;
 import com.pollytronics.festivalradar.lib.RadarBlip;
 import com.pollytronics.festivalradar.lib.RadarContact;
 
@@ -21,7 +21,8 @@ public class ApiCallSetMyBlip extends RadarApiCall {
     private final JSONObject selfBlipJSON = new JSONObject();
     private long selfId = 0;
 
-    public void collectData(RadarDatabase_Interface4RadarService db){
+    @Override
+    public void collectData(RadarDatabase_Interface db){
         Log.i(TAG, "collecting data for APICallSetMyBlip");
         RadarContact selfContact = db.getSelfContact();
         selfId = selfContact.getID();

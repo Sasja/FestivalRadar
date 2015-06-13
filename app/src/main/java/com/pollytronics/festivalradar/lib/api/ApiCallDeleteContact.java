@@ -2,7 +2,7 @@ package com.pollytronics.festivalradar.lib.api;
 
 import android.util.Log;
 
-import com.pollytronics.festivalradar.RadarDatabase_Interface4RadarActivity;
+import com.pollytronics.festivalradar.RadarDatabase_Interface;
 
 import java.io.IOException;
 
@@ -18,7 +18,8 @@ public class ApiCallDeleteContact extends RadarApiCall {
     private long selfId = 0;
     private long deleteId = 0;
 
-    public void collectData(RadarDatabase_Interface4RadarActivity db) {
+    @Override
+    public void collectData(RadarDatabase_Interface db) {
         selfId = db.getSelfContact().getID();
     }
 

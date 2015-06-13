@@ -1,6 +1,6 @@
 package com.pollytronics.festivalradar.lib.api;
 
-import com.pollytronics.festivalradar.RadarDatabase_Interface4RadarService;
+import com.pollytronics.festivalradar.RadarDatabase_Interface;
 import com.pollytronics.festivalradar.lib.RadarBlip;
 import com.pollytronics.festivalradar.lib.RadarContact;
 
@@ -21,7 +21,7 @@ public class ApiCallGetBlips extends RadarApiCall {
     private JSONArray blips;
     private long selfId = 0;
 
-    public void collectData(RadarDatabase_Interface4RadarService db) {
+    public void collectData(RadarDatabase_Interface db) {
         selfId = db.getSelfContact().getID();
     }
 
@@ -39,7 +39,7 @@ public class ApiCallGetBlips extends RadarApiCall {
         }
     }
 
-    public void doTheWork(RadarDatabase_Interface4RadarService db) {
+    public void doTheWork(RadarDatabase_Interface db) {
         JSONObject blipJSON;
         Long id, time;
         double lat, lon;

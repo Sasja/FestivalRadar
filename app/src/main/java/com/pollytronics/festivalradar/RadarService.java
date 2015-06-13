@@ -26,7 +26,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     private final SubService_Localisation subServiceLocalisation = new SubService_Localisation(this);
     private final SubService_Cloud_2 subServiceCloud = new SubService_Cloud_2(this);
     private RadarActivity_Interface4RadarService ra;
-    private RadarDatabase_Interface4RadarService db;
+    private RadarDatabase_Interface db;
     private Boolean raRegistered = false;
 
     /*
@@ -36,7 +36,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     public RadarService() {
     }
 
-    public RadarDatabase_Interface4RadarService getRadarDataBase(){
+    public RadarDatabase_Interface getRadarDataBase(){
         return db;
     }
 

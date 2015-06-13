@@ -2,7 +2,7 @@ package com.pollytronics.festivalradar.lib.api;
 
 import android.util.Log;
 
-import com.pollytronics.festivalradar.RadarDatabase_Interface4RadarActivity;
+import com.pollytronics.festivalradar.RadarDatabase_Interface;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +22,7 @@ public class ApiCallPostContact extends RadarApiCall {
     private long selfId = 0;
     private JSONObject contactJSON;
 
-    public void collectData(RadarDatabase_Interface4RadarActivity db) {
+    public void collectData(RadarDatabase_Interface db) {
         selfId = db.getSelfContact().getID();
     }
 

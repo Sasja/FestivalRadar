@@ -27,7 +27,7 @@ import java.util.Random;
  * TODO: check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
  * TODO: is it okay to do all this database stuff sync?
  */
-public class RadarDatabase implements RadarDatabase_Interface4RadarService, RadarDatabase_Interface4RadarActivity {
+public class RadarDatabase implements RadarDatabase_Interface {
 
     private static final String TAG="RadarDatabase";
     private static RadarDatabase instance=null;

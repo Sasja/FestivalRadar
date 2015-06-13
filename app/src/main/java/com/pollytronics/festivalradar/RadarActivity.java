@@ -21,7 +21,7 @@ public abstract class RadarActivity extends ActionBarActivity implements RadarAc
 
     private static final String TAG = "RadarActivity";
     private RadarService rs;        //needs access to more methods than just the interface, for handshaking,
-    private RadarDatabase_Interface4RadarActivity db;
+    private RadarDatabase_Interface db;
     private boolean rsBound = false;
     private ServiceConnection rsConn;
 
@@ -43,7 +43,7 @@ public abstract class RadarActivity extends ActionBarActivity implements RadarAc
         }
     }
 
-    RadarDatabase_Interface4RadarActivity getRadarDatabase() {
+    RadarDatabase_Interface getRadarDatabase() {
         return db;
     }
 

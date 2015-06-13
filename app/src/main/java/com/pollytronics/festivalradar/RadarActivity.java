@@ -157,6 +157,7 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
      */
     @Override
     protected void onStop() {
+        Log.i(TAG, "onStop() : calling unBindRadarService();");
         unBindRadarService();
         super.onStop();
     }

@@ -20,9 +20,7 @@ import java.util.Collection;
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
- * TODO: check and handle unavailable rotation_vector sensor!
- * TODO: don't ask for max rate of sensor, but request something reasonable
- * idee: de zon en of maan erbij zetten als het compas disabled is
+ * TODO: rotation sensor should be optionally disabled in the settings (idea to use sun and moon as an alternative reference)
  */
 public class RadarActivity_Main extends RadarActivity implements SensorEventListener {
 
@@ -55,19 +53,23 @@ public class RadarActivity_Main extends RadarActivity implements SensorEventList
         radarView = (RadarView) findViewById(R.id.radar_view);
         radarView.setBearing(0);
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);   // might return null!
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_FASTEST);  // motoG reports 7mA batt drain for mRotation.getPower()
+        if (mRotation != null) {
+            mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_GAME);  // motoG reports 7mA batt drain for mRotation.getPower()
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mSensorManager.unregisterListener(this);
+        if (mRotation != null) {
+            mSensorManager.unregisterListener(this);
+        }
     }
 
     @Override
@@ -117,7 +119,7 @@ public class RadarActivity_Main extends RadarActivity implements SensorEventList
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        // You're not supposed to do to much work  in this callback but this is reasonable
+        // You're not supposed to do to much work  in this callback but this seems reasonable
         if(sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
             //Log.i(TAG, "sensor event received! : " + sensorEvent.toString());
             float[] rotMat = new float[16];

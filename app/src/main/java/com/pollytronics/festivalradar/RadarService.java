@@ -6,7 +6,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -16,7 +15,6 @@ import android.util.Log;
  * This class forms a layer between SubService classes and RadarActivities:
  *      - This class delegates calls from activities to the right helper classes (SubServices)
  *      - This class provide methods to the SubServices to reach the Activities.
- * TODO: checking for api levels below HONEYCOMB is not sensible anymore as minSdkVersion is increased to 15 now
  * TODO: designing and using a black and white notification icon
  */
 public class RadarService extends Service implements RadarService_Interface4SubService, RadarService_interface4RadarActivity {
@@ -87,24 +85,20 @@ public class RadarService extends Service implements RadarService_Interface4SubS
 
     /**
      * gets called each time when an activity calls startService
-     * launches a sticky notification pointing back to RadarActivity_Main for SDK >= HONEYCOMB
-     * TODO: implement for lower SDKs
+     * launches a sticky notification pointing back to RadarActivity_Main
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-        {
-            Intent notificationIntent = new Intent(this, RadarActivity_Main.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-            Notification notification = new Notification.Builder(this)
-                    .setSmallIcon(R.drawable.ic_launcher)
-                    .setContentTitle(getString(R.string.service_notification_title))
-                    .setContentText(getString(R.string.service_notification_text))
-                    .setContentIntent(pendingIntent)
-                    .getNotification();
-            startForeground(1, notification);
-        }
+        Intent notificationIntent = new Intent(this, RadarActivity_Main.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle(getString(R.string.service_notification_title))
+                .setContentText(getString(R.string.service_notification_text))
+                .setContentIntent(pendingIntent)
+                .getNotification();         // TODO: check out getNotification alternatives?
+        startForeground(1, notification);
         return Service.START_STICKY;
     }
 

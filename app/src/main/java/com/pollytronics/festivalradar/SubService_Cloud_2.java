@@ -111,7 +111,7 @@ public class SubService_Cloud_2 extends SubService {
 
         @Override
         protected String doInBackground(Void... params) {
-            Log.i(TAG, "calling api");
+            Log.i(TAG, "calling api from SyncToWebserviceTask");
             try {
                 setMyBlip.callAndParse();
                 getBlips.callAndParse();

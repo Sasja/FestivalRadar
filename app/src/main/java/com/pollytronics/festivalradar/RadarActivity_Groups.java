@@ -12,9 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * TODO: What does @Nullable mean???
- */
 public class RadarActivity_Groups extends RadarActivity {
 
     @SuppressWarnings("unused")

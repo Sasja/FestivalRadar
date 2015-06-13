@@ -26,7 +26,7 @@ import java.net.URL;
  *      this parses the api call reply body and stores the information in attributes local to the object
  * 3) methods to retrieve the results from the object after a call (main thread)
  *      this can then be used to construct following api calls
- * 3') optionally methods that use the final results (main thread)
+ * 3') optionally methods that use the final results can be implemented here (main thread)
  *
  *
  * 1) is done through collectData()         abstract
@@ -55,7 +55,7 @@ abstract public class RadarApiCall {
 
     final public void callAndParse() throws IOException {
         parseContent(myHttpRequest(getHttpMethod(), getApiQueryString(), getApiBodyString()));
-    };
+    }
 
     String myHttpRequest(String method, String myUrl, String myBody) throws IOException {
         InputStream is = null;

@@ -116,8 +116,6 @@ public class SubService_Cloud_2 extends SubService {
                 getBlips.callAndParse();
             } catch (IOException e) {
                 Log.i(TAG, "IOException: unable to complete all API requests");
-                setMyBlip.setFailedFlag();
-                getBlips.setFailedFlag();
                 return "IOExcepion: unable to complete all API requests";
             }
             return null;
@@ -128,7 +126,7 @@ public class SubService_Cloud_2 extends SubService {
          */
         @Override
         protected void onPostExecute(String s) {
-            if (setMyBlip.hasFailed() || getBlips.hasFailed()) {
+            if (!(setMyBlip.isCallCompleted() && getBlips.isCallCompleted())) {         // only take action if all api calls were successful
                 Log.i(TAG, "the api call has failed, not calling doTheWork() methods for the calls");
             } else {
                 Log.i(TAG, "parsing and using the responses of the webservice");

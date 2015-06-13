@@ -41,10 +41,9 @@ abstract public class RadarApiCall {
     final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
     private final String TAG = "RadarApiCall";
     //protected final String baseUrl = "http://192.168.0.5:8080/api/v1/";
-    private boolean failed = false;
+    private boolean callCompleted = false;
 
-    public void setFailedFlag() { failed = true; }
-    public boolean hasFailed() { return failed; }
+    public boolean isCallCompleted() { return callCompleted; }
     public abstract void collectData(RadarDatabase_Interface db);
 
     public abstract String getHttpMethod();
@@ -55,9 +54,18 @@ abstract public class RadarApiCall {
 
     final public void callAndParse() throws IOException {
         parseContent(myHttpRequest(getHttpMethod(), getApiQueryString(), getApiBodyString()));
+        callCompleted = true;   // if the above request failed it will remain false as the IOException is thrown
     }
 
-    String myHttpRequest(String method, String myUrl, String myBody) throws IOException {
+    /**
+     * This method will throw an IOException when having any problems with the httprequest including any non 200 http status code.
+     * @param method
+     * @param myUrl
+     * @param myBody
+     * @return
+     * @throws IOException
+     */
+    private String myHttpRequest(String method, String myUrl, String myBody) throws IOException {
         InputStream is = null;
         OutputStream os = null;
         URL url = new URL(myUrl);

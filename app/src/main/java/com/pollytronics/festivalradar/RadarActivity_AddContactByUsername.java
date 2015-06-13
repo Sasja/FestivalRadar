@@ -53,7 +53,7 @@ public class RadarActivity_AddContactByUsername extends RadarActivity {
                         postContact.setContactId(id);
                         Thread thread = new Thread(new Runnable() {
                             @Override
-                            public void run() {
+                            public void run() {     // TODO: do what when this fails? should at least do some failure notification Toast or something
                                 try {
                                     postContact.callAndParse();
                                 } catch (IOException e) {
@@ -62,7 +62,9 @@ public class RadarActivity_AddContactByUsername extends RadarActivity {
                             }
                         });
                         thread.start();
+
                         getRadarDatabase().addContactWithId(newContact);
+
                         Toast toast = Toast.makeText(getApplicationContext(), "new user added", Toast.LENGTH_SHORT);
                         toast.show();
                         editTextAddContactId.setText("");

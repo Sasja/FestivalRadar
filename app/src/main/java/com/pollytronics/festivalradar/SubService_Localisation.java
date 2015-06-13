@@ -17,6 +17,7 @@ import com.pollytronics.festivalradar.lib.RadarContact;
  * requests location updates from the google play services on creation
  * and pushes them to the database
  * TODO: App crashes when location is disabled
+ * TODO: figure out wether mGoogleApiClient can be null, ive seen a RunTimeExceptions seemingly caused by such a thing using an emulator
  */
 public class SubService_Localisation extends SubService implements
         GoogleApiClient.ConnectionCallbacks,

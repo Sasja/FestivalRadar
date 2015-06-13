@@ -1,12 +1,12 @@
 package com.pollytronics.festivalradar;
 
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 /**
@@ -92,13 +92,12 @@ public class RadarService extends Service implements RadarService_Interface4SubS
         Log.i(TAG, "onStartCommand");
         Intent notificationIntent = new Intent(this, RadarActivity_Main.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-        Notification notification = new Notification.Builder(this)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle(getString(R.string.service_notification_title))
                 .setContentText(getString(R.string.service_notification_text))
-                .setContentIntent(pendingIntent)
-                .getNotification();         // TODO: check out getNotification alternatives?
-        startForeground(1, notification);
+                .setContentIntent(pendingIntent);
+        startForeground(1, notificationBuilder.build());
         return Service.START_STICKY;
     }
 

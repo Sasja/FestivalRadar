@@ -35,8 +35,6 @@ import java.net.URL;
  * 3) is done through optional getSomething()
  * 4) is done throug doTheWork() methods
  *
- *
- * TODO: check the error handling of this thing
  */
 abstract public class RadarApiCall {
     final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";

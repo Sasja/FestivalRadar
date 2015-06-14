@@ -76,7 +76,7 @@ abstract public class RadarApiCall {
             Log.i(TAG, getHttpMethod() + " " + myUrl);
             if(getHttpMethod().equals("POST")) {
                 conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type", "application/json");            // TODO: check out what this does exactly and put it outside the if (response for DELETE and PUT differs...)
+                conn.setRequestProperty("Content-Type", "application/json");
                 Log.i(TAG, "BODY = " + myBody);
                 os = conn.getOutputStream();
                 writeToOutputStream(os, myBody);

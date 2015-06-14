@@ -57,6 +57,8 @@ abstract public class RadarApiCall {
 
     /**
      * This method will throw an IOException when having any problems with the httprequest including any non 200 http status code.
+     * It assumes there is a connection
+     * TODO: figure out what would happen if called without a connection?
      * @param method
      * @param myUrl
      * @param myBody

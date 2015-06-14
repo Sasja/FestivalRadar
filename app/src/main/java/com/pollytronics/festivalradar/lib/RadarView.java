@@ -15,6 +15,7 @@ import java.util.Map;
 /**
  * Created by pollywog on 10/2/14.
  * TODO: hardware accelleration is now enabled in manifest and disabled for this view due to a lack of compatibility with/without. This if fine as long performance is good enough.
+ * TODO: make zoom value when app loads remembered in preferences or smth
  * TODO: make it prettier
  */
 public class RadarView extends View {
@@ -27,7 +28,8 @@ public class RadarView extends View {
     private final Paint paint = new Paint();
     private RadarBlip centerLocation;
     private double bearing=0;
-    private double zoomLevel = 1000.0;     // means its 200m to the left or right edge of screen
+    private double zoomLevel = 1000.0;     // means its that much meters to the left or right edge of screen
+    // TODO: zoomlevel should not be initialised here but from some stored value in preferences or smth
 
     public RadarView(Context context) {
         super(context);
@@ -139,5 +141,7 @@ public class RadarView extends View {
         this.bearing = bearing;
     }
 
-    public void setZoomLevel(double zoomLevel) { this.zoomLevel = zoomLevel; }
+    public void zoomPercent(double zoomPercent) {
+        this.zoomLevel = Math.pow(10, 5-zoomPercent/25);  // 0 -> 100km and 100 -> 10m
+    }
 }

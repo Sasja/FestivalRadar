@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.SeekBar;
 import android.widget.Switch;
 
 import com.pollytronics.festivalradar.lib.RadarBlip;
@@ -21,12 +22,14 @@ import java.util.Collection;
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
  * TODO: rotation sensor should be optionally disabled in the settings (idea to use sun and moon as an alternative reference)
+ * TODO: replace the dummy seekbar for zooming with some pinching action
  */
 public class RadarActivity_Main extends RadarActivity implements SensorEventListener {
 
     private static final String TAG = "RadarActivity_Main";
     private Switch toggleService;
     private RadarView radarView;
+    private SeekBar zoomSeekBar;
     private SensorManager mSensorManager;
     private Sensor mRotation;
 
@@ -40,13 +43,32 @@ public class RadarActivity_Main extends RadarActivity implements SensorEventList
         toggleService.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(toggleService.isChecked()) {
+                if (toggleService.isChecked()) {
                     Log.i(TAG, "RadarService button enabled");
                     startAndBindRadarService();
                 } else {
                     Log.i(TAG, "RadarService button disabled");
                     unbindAndStopRadarService();
                 }
+            }
+        });
+
+        zoomSeekBar = (SeekBar) findViewById(R.id.seekbar_zoomlevel);
+
+        zoomSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                radarView.zoomPercent(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 

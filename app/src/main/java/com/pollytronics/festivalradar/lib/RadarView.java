@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.View;
 
 import java.util.HashMap;
@@ -20,11 +21,13 @@ public class RadarView extends View {
 
     @SuppressWarnings("unused")
     static final String TAG = "RadarView";
+    static final double earthRadius = 6371000.0;
     @SuppressLint("UseSparseArrays")
     private final Map<Long, RadarContact> contacts = new HashMap<Long, RadarContact>();
     private final Paint paint = new Paint();
     private RadarBlip centerLocation;
     private double bearing=0;
+    private double zoomLevel = 1000.0;     // means its 200m to the left or right edge of screen
 
     public RadarView(Context context) {
         super(context);
@@ -39,6 +42,20 @@ public class RadarView extends View {
     public RadarView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
+    }
+
+    private Pair<Float, Float> calcScreenXY(RadarBlip blip, RadarBlip centerLocation, double screenWidth, double screenHeight, double bearing) {
+        double dLat = blip.getLatitude() - centerLocation.getLatitude();
+        double dLon = blip.getLongitude() - centerLocation.getLongitude();
+        double dLatMeters = dLat * 3.1415 / 180 * earthRadius;
+        double dLonMeters = dLon * 3.1415 / 180 * earthRadius * Math.cos(centerLocation.getLatitude() * 3.1415 / 180);
+        double dXPixels = (screenWidth / 2 / zoomLevel * dLonMeters);
+        double dYPixels = (screenWidth / 2 / zoomLevel * dLatMeters);
+        double bearingRad = (bearing * 3.1415 / 180.0);
+        return new Pair<>(
+                (float) (screenWidth/2 + Math.cos(bearingRad) * dXPixels - Math.sin(bearingRad) * dYPixels),
+                (float) (screenHeight/2 - Math.sin(bearingRad) * dXPixels - Math.cos(bearingRad) * dYPixels)
+        );
     }
 
     @Override
@@ -67,30 +84,18 @@ public class RadarView extends View {
             canvas.drawCircle(width/2, height/2, r, paint);
         }
 
+        canvas.restore();   // calculate own rotation from now on
+
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.argb(150, 0, 0, 250));
-        for(RadarContact c:contacts.values()) {
-            double dLat = c.getLastBlip().getLongitude() - centerLocation.getLongitude();
-            double dLon = c.getLastBlip().getLatitude() - centerLocation.getLatitude();
-            float x = (float) (width/2 + dLat/0.00001);     // TODO: this is laughable :)
-            float y = (float) (height/2 - dLon/0.00001);
-            canvas.drawCircle(x, y, 6, paint);
-        }
-
-        canvas.restore();   // calculate own rotation from now on
-
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(width / 25);
         for(RadarContact c:contacts.values()) {
-            double dLat = c.getLastBlip().getLongitude() - centerLocation.getLongitude();
-            double dLon = c.getLastBlip().getLatitude() - centerLocation.getLatitude();
-            float xt = (float) (dLat/0.00001);
-            float yt = (float) (dLon/0.00001);
-            float bearingRads = (float) (bearing * 3.1415 / 180.0);
-            float x = (float) (width/2 + Math.cos(bearingRads) * xt - Math.sin(bearingRads) * yt);
-            float y = (float) (height/2 - Math.sin(bearingRads) * xt - Math.cos(bearingRads) * yt + width/25);
-            canvas.drawText(c.getName(), x, y, paint);
+            Pair<Float, Float> xy = calcScreenXY(c.getLastBlip(), centerLocation, width, height, bearing);
+            canvas.drawCircle(xy.first, xy.second, width / 100
+                    , paint);
+            canvas.drawText(c.getName(), xy.first, xy.second + width/25, paint);
         }
 
         paint.setStyle(Paint.Style.STROKE);
@@ -133,4 +138,6 @@ public class RadarView extends View {
     public void setBearing(double bearing) {
         this.bearing = bearing;
     }
+
+    public void setZoomLevel(double zoomLevel) { this.zoomLevel = zoomLevel; }
 }

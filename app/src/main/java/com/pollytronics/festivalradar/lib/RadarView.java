@@ -50,9 +50,10 @@ public class RadarView extends View {
 
         super.onDraw(canvas);
 
-        canvas.rotate(-(float)bearing, (float)width/2, (float)height/2); //dont forget to restore!
+        canvas.rotate(-(float) bearing, (float) width / 2, (float) height / 2); //dont forget to restore!
 
         paint.setStyle(Paint.Style.STROKE);
+        paint.setFlags(Paint.ANTI_ALIAS_FLAG);
         paint.setStrokeWidth(5);
         paint.setColor(Color.rgb(200,100,100));
         canvas.drawLine(width/2, -width/2, width/2, height/2,paint);
@@ -73,8 +74,6 @@ public class RadarView extends View {
             double dLon = c.getLastBlip().getLatitude() - centerLocation.getLatitude();
             canvas.drawCircle((float)(width/2 + dLat/0.00001), (float)(height/2 - dLon/0.00001), 6, paint);
         }
-
-
 
         canvas.restore(); // don't draw after restore, as it does something with border offset or something
 

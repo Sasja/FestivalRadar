@@ -75,7 +75,7 @@ public class RadarView extends View {
             canvas.drawCircle((float)(width/2 + dLat/0.00001), (float)(height/2 - dLon/0.00001), 6, paint);
         }
 
-        canvas.restore(); // don't draw after restore, as it does something with border offset or something
+        canvas.restore();
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(false);

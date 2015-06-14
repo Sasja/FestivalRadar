@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * Created by pollywog on 10/2/14.
- * TODO: figure out how canvas.getWidth() and such is supposed to work
+ * TODO: hardware accelleration is now enabled in manifest and disabled for this view due to a lack of compatibility with/without. This if fine as long performance is good enough.
  * TODO: make it prettier
  */
 public class RadarView extends View {
@@ -43,16 +43,12 @@ public class RadarView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         //int width = canvas.getWidth();        //does not work on emulator
         //int height = canvas.getHeight();
-        int width = MeasureSpec.getSize(getWidth());     // works, but how?
+        int width = MeasureSpec.getSize(getWidth());     // works, but how? and why not just getWidth?
         int height = MeasureSpec.getSize(getHeight());
 
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.rgb(0,0,0));
-        paint.setStrokeWidth(1);
-        canvas.drawRect(1, 1, width, height, paint);
+        super.onDraw(canvas);
 
         canvas.rotate(-(float)bearing, (float)width/2, (float)height/2); //dont forget to restore!
 
@@ -78,12 +74,18 @@ public class RadarView extends View {
             canvas.drawCircle((float)(width/2 + dLat/0.00001), (float)(height/2 - dLon/0.00001), 6, paint);
         }
 
+
+
         canvas.restore(); // don't draw after restore, as it does something with border offset or something
 
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.rgb(0, 0, 0));
+        paint.setStrokeWidth(1);
+        canvas.drawRect(0, 0, width-1, height-1, paint);
     }
 
     private void init(){
-
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);   // Disables hardware acceleration for this view as theres no full compatibility with/without
     }
 
     public void addContact(RadarContact contact) {

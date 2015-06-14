@@ -15,7 +15,7 @@ import java.net.URL;
 /**
  * Created by pollywog on 6/3/15.
  *
- * This class implements whatever needed to perform api calls,
+ * This class implements the httprequests needed to perform api calls and provides a framework for derived api call classes
  * work is separated into four domains
  * 1) preparing the call by gathering necessary data (must be called on main thread for threadsafety)
  *      this will put all necessary data into attributes local to the object

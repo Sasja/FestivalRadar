@@ -4,11 +4,11 @@ import android.util.Log;
 
 import com.pollytronics.festivalradar.RadarDatabase_Interface;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -76,7 +76,7 @@ abstract public class RadarApiCall {
             Log.i(TAG, getHttpMethod() + " " + myUrl);
             if(getHttpMethod().equals("POST")) {
                 conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Content-Type", "application/json");            // TODO: check out what this does exactly and put it outside the if (response for DELETE and PUT differs...)
                 Log.i(TAG, "BODY = " + myBody);
                 os = conn.getOutputStream();
                 writeToOutputStream(os, myBody);
@@ -89,6 +89,7 @@ abstract public class RadarApiCall {
             return readInputStream(is);
         } finally {
             if (is != null) is.close();
+            if (os != null) os.close();
             conn.disconnect();
         }
     }
@@ -96,9 +97,10 @@ abstract public class RadarApiCall {
     /**
      * helper method to convert input stream to string
      * http://stackoverflow.com/questions/2492076/android-reading-from-an-input-stream-efficiently
-     * TODO: study this code, it might remove all newlines
+     *
+     * study this code, it might remove all newlines
      */
-    private String readInputStream(InputStream is) throws IOException {
+    /*private String readInputStream_bak(InputStream is) throws IOException {
         BufferedReader r = new BufferedReader(new InputStreamReader(is));
         StringBuilder total = new StringBuilder();
         String line;
@@ -106,6 +108,26 @@ abstract public class RadarApiCall {
             total.append(line);
         }
         return total.toString();
+    }*/
+
+    /**
+     * This method will read up to 8KB bytes from a stream of UTF-8 and return a string of it.
+     * @param is
+     * @return
+     * @throws IOException
+     */
+    private String readInputStream(InputStream is) throws IOException {     // Failure to read this stream will be handled on a higher level
+        final int bufferSize = 8 * 1024;
+        Reader reader = null;
+        reader = new InputStreamReader(is, "UTF-8");
+        char[] buffer = new char[bufferSize];
+        int charsRead = reader.read(buffer);
+        int theresMore = reader.read();
+        if (theresMore != -1) { // this happens when the response was longer than the buffer
+            Log.i(TAG, "api response longer than expected (bufferSize = " + bufferSize + " ), throwing IOException");
+            throw new IOException();
+        }
+        return new String(buffer, 0, charsRead);
     }
 
     /** helper method to write string into an output stream
@@ -113,9 +135,7 @@ abstract public class RadarApiCall {
      * http://stackoverflow.com/questions/9623158/curl-and-httpurlconnection-post-json-data
      */
     private void writeToOutputStream(OutputStream os, String data) throws IOException {
-        //OutputStreamWriter writer = new OutputStreamWriter(os);
-        byte[] test = data.getBytes("UTF-8");
-        os.write(test);
-        //writer.write(data, 0, data.length());
+        byte[] buffer = data.getBytes("UTF-8");
+        os.write(buffer);
     }
 }

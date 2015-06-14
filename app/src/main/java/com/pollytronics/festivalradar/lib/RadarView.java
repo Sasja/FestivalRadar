@@ -53,7 +53,7 @@ public class RadarView extends View {
         canvas.rotate(-(float) bearing, (float) width / 2, (float) height / 2); //dont forget to restore!
 
         paint.setStyle(Paint.Style.STROKE);
-        paint.setFlags(Paint.ANTI_ALIAS_FLAG);
+        paint.setAntiAlias(true);
         paint.setStrokeWidth(5);
         paint.setColor(Color.rgb(200,100,100));
         canvas.drawLine(width/2, -width/2, width/2, height/2,paint);
@@ -68,7 +68,7 @@ public class RadarView extends View {
 
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.argb(150,0,0,250));
+        paint.setColor(Color.argb(150, 0, 0, 250));
         for(RadarContact c:contacts.values()) {
             double dLat = c.getLastBlip().getLongitude() - centerLocation.getLongitude();
             double dLon = c.getLastBlip().getLatitude() - centerLocation.getLatitude();
@@ -78,6 +78,7 @@ public class RadarView extends View {
         canvas.restore(); // don't draw after restore, as it does something with border offset or something
 
         paint.setStyle(Paint.Style.STROKE);
+        paint.setAntiAlias(false);
         paint.setColor(Color.rgb(0, 0, 0));
         paint.setStrokeWidth(1);
         canvas.drawRect(0, 0, width-1, height-1, paint);

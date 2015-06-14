@@ -42,6 +42,7 @@ public class RadarView extends View {
     }
 
     @Override
+    // TODO: make this way more elegant and efficient and better in every imaginable way
     protected void onDraw(Canvas canvas) {
         //int width = canvas.getWidth();        //does not work on emulator
         //int height = canvas.getHeight();
@@ -72,10 +73,25 @@ public class RadarView extends View {
         for(RadarContact c:contacts.values()) {
             double dLat = c.getLastBlip().getLongitude() - centerLocation.getLongitude();
             double dLon = c.getLastBlip().getLatitude() - centerLocation.getLatitude();
-            canvas.drawCircle((float)(width/2 + dLat/0.00001), (float)(height/2 - dLon/0.00001), 6, paint);
+            float x = (float) (width/2 + dLat/0.00001);     // TODO: this is laughable :)
+            float y = (float) (height/2 - dLon/0.00001);
+            canvas.drawCircle(x, y, 6, paint);
         }
 
-        canvas.restore();
+        canvas.restore();   // calculate own rotation from now on
+
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(width / 25);
+        for(RadarContact c:contacts.values()) {
+            double dLat = c.getLastBlip().getLongitude() - centerLocation.getLongitude();
+            double dLon = c.getLastBlip().getLatitude() - centerLocation.getLatitude();
+            float xt = (float) (dLat/0.00001);
+            float yt = (float) (dLon/0.00001);
+            float bearingRads = (float) (bearing * 3.1415 / 180.0);
+            float x = (float) (width/2 + Math.cos(bearingRads) * xt - Math.sin(bearingRads) * yt);
+            float y = (float) (height/2 - Math.sin(bearingRads) * xt - Math.cos(bearingRads) * yt + width/25);
+            canvas.drawText(c.getName(), x, y, paint);
+        }
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(false);

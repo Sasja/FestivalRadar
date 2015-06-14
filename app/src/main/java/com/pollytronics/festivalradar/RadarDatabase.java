@@ -202,14 +202,6 @@ public class RadarDatabase implements RadarDatabase_Interface {
     }
 
     @Override
-    public void addContact(RadarContact contact) {      //TODO:clean this shit up, this method should not exist
-        int id = new Random().nextInt(1000)+666;
-        contact.setID(id);
-        Log.i(TAG,"CREATING RANDOM ID FOR NEW CONTACT, THIS SHOULDNT HAPPEN... but it did! :D");
-        addContactWithId(contact);
-    }
-
-    @Override
     public RadarContact getSelfContact() {
         RadarContact selfContact = new RadarContact();
         SQLiteDatabase db = radarDbHelper.getReadableDatabase();

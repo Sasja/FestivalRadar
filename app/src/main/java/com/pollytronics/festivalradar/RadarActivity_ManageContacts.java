@@ -38,6 +38,7 @@ import java.util.Set;
 
 /**
  * TODO: specify proper behavior when remote api calls fail
+ * TODO: add swipe down to refresh feature (see android samples)
  */
 public class RadarActivity_ManageContacts extends RadarActivity {
 

@@ -89,18 +89,36 @@ public class RadarView extends View {
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(true);
         paint.setStrokeWidth(5);
-        paint.setColor(Color.rgb(200,100,100));
-        canvas.drawLine(width/2, -width/2, width/2, height/2,paint);
+        paint.setColor(Color.rgb(200, 100, 100));
+        canvas.drawLine(width / 2, -width / 2, width / 2, height / 2, paint);
         paint.setStrokeWidth(3);
-        paint.setColor(Color.rgb(200,200,200));
-        canvas.drawLine(width/2, height/2, width/2, height-1+width/2,paint);
-        canvas.drawLine(-height/2, height/2, width-1+height/2, height/2, paint);
-        int radiusStep = width/8;
-        for(int r = radiusStep; r < Math.sqrt(width*width+height*height)/2; r += radiusStep) {
-            canvas.drawCircle(width/2, height/2, r, paint);
-        }
+        paint.setColor(Color.rgb(200, 200, 200));
+        canvas.drawLine(width / 2, height / 2, width / 2, height - 1 + width / 2, paint);
+        canvas.drawLine(-height / 2, height / 2, width - 1 + height / 2, height / 2, paint);
 
         canvas.restore();   // calculate own rotation from now on
+
+        int circleStepMeter = (int) (zoomLevel/2.5);    // the quotient will determine how many circles are drawn approx
+        int nulls = (int) Math.floor(Math.log10(circleStepMeter));
+        double expo = Math.log10(circleStepMeter)-nulls;
+        if (expo < 0.15) {                              // this will snap to a sensible scale circle interval
+            circleStepMeter = 1 * (int) Math.pow(10,nulls);
+        } else if (expo < 0.5) {
+            circleStepMeter = 2 * (int) Math.pow(10, nulls);
+        } else if (expo < 0.85) {
+            circleStepMeter = 5 * (int) Math.pow(10, nulls);
+        } else {
+            circleStepMeter = 1 * (int) Math.pow(10, nulls+1);
+        }
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(width / 30);
+        for (int i = 1; i*circleStepMeter < zoomLevel * 2; ++i) {
+            float radius = (float) (i*circleStepMeter/zoomLevel*width/2);
+            paint.setStrokeWidth(3);
+            canvas.drawCircle(width/2, height/2, radius, paint);
+            paint.setStrokeWidth(1);
+            canvas.drawText(String.valueOf(circleStepMeter*i), width/2, height/2 + radius - width / 60, paint);
+        }
 
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.FILL);
@@ -120,6 +138,8 @@ public class RadarView extends View {
         paint.setStrokeWidth(1);
         canvas.drawRect(0, 0, width-1, height-1, paint);
     }
+
+
 
     public void addContact(RadarContact contact) {
         if(contacts.containsKey(contact.getID())) {

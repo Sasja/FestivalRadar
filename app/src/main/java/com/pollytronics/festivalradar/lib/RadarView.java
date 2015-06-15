@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Pair;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import java.util.HashMap;
@@ -29,21 +31,33 @@ public class RadarView extends View {
     private RadarBlip centerLocation;
     private double bearing=0;
     private double zoomLevel = 1000.0;     // means its that much meters to the left or right edge of screen
+    private ScaleGestureDetector mScaleGestureDetector;
     // TODO: zoomlevel should not be initialised here but from some stored value in preferences or smth
 
     public RadarView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public RadarView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public RadarView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
+    }
+
+    private void init(Context context){
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);   // Disables hardware acceleration for this view as theres no full compatibility with/without
+        mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        mScaleGestureDetector.onTouchEvent(ev);
+        return true;
     }
 
     private Pair<Float, Float> calcScreenXY(RadarBlip blip, RadarBlip centerLocation, double screenWidth, double screenHeight, double bearing) {
@@ -107,10 +121,6 @@ public class RadarView extends View {
         canvas.drawRect(0, 0, width-1, height-1, paint);
     }
 
-    private void init(){
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);   // Disables hardware acceleration for this view as theres no full compatibility with/without
-    }
-
     public void addContact(RadarContact contact) {
         if(contacts.containsKey(contact.getID())) {
             throw new IllegalArgumentException("contact to add is allready present in RadarView");
@@ -143,5 +153,15 @@ public class RadarView extends View {
 
     public void zoomPercent(double zoomPercent) {
         this.zoomLevel = Math.pow(10, 5-zoomPercent/25);  // 0 -> 100km and 100 -> 10m
+    }
+
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            zoomLevel /= Math.pow(detector.getScaleFactor(), 2);    // increasing the exponent will make the zoom more sensitive.
+            zoomLevel = Math.max(10.0, Math.min(100000.0, zoomLevel));
+            invalidate();
+            return true;
+        }
     }
 }

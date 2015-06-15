@@ -53,25 +53,6 @@ public class RadarActivity_Main extends RadarActivity implements SensorEventList
             }
         });
 
-        zoomSeekBar = (SeekBar) findViewById(R.id.seekbar_zoomlevel);
-
-        zoomSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                radarView.zoomPercent(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
         radarView = (RadarView) findViewById(R.id.radar_view);
         radarView.setBearing(0);
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);

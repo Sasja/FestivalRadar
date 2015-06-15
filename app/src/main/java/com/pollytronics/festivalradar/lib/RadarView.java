@@ -123,8 +123,10 @@ public class RadarView extends View {
         for (int i = 1; i*circleStepMeter < zoomLevel * 2; ++i) {
             float radius = (float) (i*circleStepMeter/zoomLevel*width/2);
             paint.setStrokeWidth(3);
-            canvas.drawCircle(width/2, height/2, radius, paint);
+            paint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(width / 2, height / 2, radius, paint);
             paint.setStrokeWidth(1);
+            paint.setStyle(Paint.Style.FILL);
             canvas.drawText(intToScaleText(circleStepMeter*i), width/2, height/2 + radius - width / 60, paint);
         }
 

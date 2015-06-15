@@ -74,8 +74,16 @@ public class RadarView extends View {
         );
     }
 
+    private String intToScaleText(int meters) {
+        if (meters >= 1000) {
+            return String.valueOf(meters/1000) + "km";
+        } else {
+            return String.valueOf(meters) + "m";
+        }
+    }
+
     @Override
-    // TODO: make this way more elegant and efficient and better in every imaginable way
+    // TODO: make this way more elegant and efficient and better in every imaginable way once you like the look and feel of it
     protected void onDraw(Canvas canvas) {
         //int width = canvas.getWidth();        //does not work on emulator
         //int height = canvas.getHeight();
@@ -117,7 +125,7 @@ public class RadarView extends View {
             paint.setStrokeWidth(3);
             canvas.drawCircle(width/2, height/2, radius, paint);
             paint.setStrokeWidth(1);
-            canvas.drawText(String.valueOf(circleStepMeter*i), width/2, height/2 + radius - width / 60, paint);
+            canvas.drawText(intToScaleText(circleStepMeter*i), width/2, height/2 + radius - width / 60, paint);
         }
 
         paint.setStrokeWidth(1);

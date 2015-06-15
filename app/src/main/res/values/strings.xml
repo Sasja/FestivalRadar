@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Festival</string>
-    <string name="service_notification_title">Festival Radar</string>
+    <string name="app_name">Clique</string>
+    <string name="service_notification_title">Clique</string>
     <string name="service_notification_text">Service is running, go to the radar to disable</string>
     <string name="title_activity_about_radar">About</string>
     <string name="action_settings">Settings</string>
     <string name="text_about">
-        \nnot a release version
-        \nlast release below:
-        \n
-        \nFestival (version 1.0.2.a)
+        <!--\nnot a release version-->
+        <!--\nlast release below:-->
+        <!--\n-->
+        \nClique (version 1.0.3.a)
         \nspecial release for awesome alpha testers like you!
         \n
-        \n - add contacts by entering their unique 4 letter id, you will be added to their contacts when they sync contacts
-        \n - delete contacts by touching them
-        \n - switch on the radar and say goodbye to your battery and privacy (for now).
-        \n - have a look on http://festivalradarservice.herokuapp.com/ and you\'ll see all data
+        \nupdates since 1.0.2.a:
+        \n - lots of small improvements under the hood (http routines, code cleanups, error handling...)
+        \n - esthetical improvements to the radarview with indications of scale
+        \n - enabled pinching for zooming in and out
+        \n - new name!
         \n
         \nLet me know whenever something doesn\'t work or just tell me what you like or dislike and what features you would like to see in the future.
         \n

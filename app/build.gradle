@@ -8,8 +8,8 @@ android {
         applicationId "com.pollytronics.festivalradar"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 3
-        versionName "1.0.2.a"
+        versionCode 4
+        versionName "1.0.3.a"
     }
     buildTypes {
         release {

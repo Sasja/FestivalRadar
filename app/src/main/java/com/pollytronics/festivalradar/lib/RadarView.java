@@ -20,6 +20,7 @@ import java.util.Map;
  * TODO: make zoom value when app loads remembered in preferences or smth
  * TODO: make it prettier
  * TODO: 1.5km is displayed as 1km now...
+ * TODO: compass blocked on jill's motoG -> investigate, more logging
  */
 public class RadarView extends View {
 

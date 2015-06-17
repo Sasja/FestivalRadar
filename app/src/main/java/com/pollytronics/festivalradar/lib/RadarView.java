@@ -19,6 +19,7 @@ import java.util.Map;
  * TODO: hardware accelleration is now enabled in manifest and disabled for this view due to a lack of compatibility with/without. This if fine as long performance is good enough.
  * TODO: make zoom value when app loads remembered in preferences or smth
  * TODO: make it prettier
+ * TODO: 1.5km is displayed as 1km now...
  */
 public class RadarView extends View {
 

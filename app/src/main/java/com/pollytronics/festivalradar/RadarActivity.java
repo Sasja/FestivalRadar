@@ -15,6 +15,7 @@ import android.view.MenuItem;
 /**
  * Base class for all Activities
  * This class is only responsible for managing the connection to the RadarService
+ * TODO: stop using AppCompatActivity which will allow using <style name="AppTheme" parent="android:Themes.Holo.Light.DarkActionBar"> in styles.xml
  */
 public abstract class RadarActivity extends AppCompatActivity implements RadarActivity_Interface4RadarService {
 

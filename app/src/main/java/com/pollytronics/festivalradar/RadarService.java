@@ -93,7 +93,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
         Intent notificationIntent = new Intent(this, RadarActivity_Main.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.clique_bw)
                 .setContentTitle(getString(R.string.service_notification_title))
                 .setContentText(getString(R.string.service_notification_text))
                 .setContentIntent(pendingIntent);

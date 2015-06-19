@@ -44,6 +44,7 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
         listView.setAdapter(adapter);
     }
 
+    //TODO: kind of duplicate code here with ping
     private class RadarContactAdapter extends ArrayAdapter<RadarContact> {
 
         private static final int layout_resource = R.layout.list_item_mycontacts;
@@ -52,7 +53,6 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
             super(context, layout_resource, R.id.textview_contact_name, objects);
         }
 
-        //TODO: generate the views based on the the contacts content
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);

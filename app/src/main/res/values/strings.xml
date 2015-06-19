@@ -64,6 +64,7 @@
     <string name="contacts_ping_placeholder">ping simultaneously to connect\n(not implemented)</string>
     <string name="contacts_mycontacts_placeholder">manage your contacts\n(not implemented)</string>
     <string name="contacts_remote_placeholder">connect by userid or sms or whatever\n(not implemented)</string>
+    <string name="button_ping">PING</string>
 
 
 </resources>

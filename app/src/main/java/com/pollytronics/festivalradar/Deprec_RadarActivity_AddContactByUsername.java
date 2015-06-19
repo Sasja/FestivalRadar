@@ -40,7 +40,8 @@ public class Deprec_RadarActivity_AddContactByUsername extends RadarActivity {
             public void onClick(View view) {        //TODO: clean this up a bit, its doing to many things at once
                 String name = editTextAddContactName.getText().toString();
                 if(name.length()==0) name = "empty";
-                RadarContact newContact = (new RadarContact()).setName(name).addBlip(getRadarDatabase().getSelfContact().getLastBlip());    // make up some blip, TODO: make some sense here, think about contacts without blips
+                // make up some blip, TODO: make some sense here, think about contacts without blips
+                RadarContact newContact = (new RadarContact()).setName(name).addBlip(getRadarDatabase().getSelfContact().getLastBlip());
                 Long id;
                 try {
                     id = Long.decode(editTextAddContactId.getText().toString());
@@ -51,9 +52,10 @@ public class Deprec_RadarActivity_AddContactByUsername extends RadarActivity {
                         final ApiCallPostContact postContact = new ApiCallPostContact();
                         postContact.collectData(getRadarDatabase());
                         postContact.setContactId(id);
+                        // TODO: do what when this fails? should at least do some failure notification Toast or something, should the contact even be added locally when remotely has failed?
                         Thread thread = new Thread(new Runnable() {
                             @Override
-                            public void run() {     // TODO: do what when this fails? should at least do some failure notification Toast or something, should the contact even be added locally when remotely has failed?
+                            public void run() {
                                 try {
                                     postContact.callAndParse();
                                 } catch (IOException e) {

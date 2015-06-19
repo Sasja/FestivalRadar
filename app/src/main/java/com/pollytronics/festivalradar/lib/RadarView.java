@@ -16,7 +16,8 @@ import java.util.Map;
 
 /**
  * Created by pollywog on 10/2/14.
- * TODO: hardware accelleration is now enabled in manifest and disabled for this view due to a lack of compatibility with/without. This if fine as long performance is good enough.
+ * TODO: hardware accelleration is now enabled in manifest and disabled for this view due to a lack
+ * TODO: of compatibility with/without. This if fine as long performance is good enough.
  * TODO: make zoom value when app loads remembered in preferences or smth
  * TODO: make it prettier
  * TODO: 1.5km is displayed as 1km now...
@@ -52,7 +53,8 @@ public class RadarView extends View {
     }
 
     private void init(Context context){
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);   // Disables hardware acceleration for this view as theres no full compatibility with/without
+        // Disables hardware acceleration for this view as theres no full compatibility with/without
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
     }
 
@@ -62,7 +64,11 @@ public class RadarView extends View {
         return true;
     }
 
-    private Pair<Float, Float> calcScreenXY(RadarBlip blip, RadarBlip centerLocation, double screenWidth, double screenHeight, double bearing) {
+    private Pair<Float, Float> calcScreenXY(RadarBlip blip,
+                                            RadarBlip centerLocation,
+                                            double screenWidth,
+                                            double screenHeight,
+                                            double bearing) {
         double dLat = blip.getLatitude() - centerLocation.getLatitude();
         double dLon = blip.getLongitude() - centerLocation.getLongitude();
         double dLatMeters = dLat * 3.1415 / 180 * earthRadius;

@@ -78,7 +78,10 @@ public class RadarView extends View {
 
     private String intToScaleText(int meters) {
         if (meters >= 1000) {
-            return String.valueOf(meters/1000) + "km";
+            int km = meters/1000;
+            double frac = meters/1000.0 - km;
+            if(frac > 0) return String.valueOf(km + frac) + "km";
+            else return String.valueOf(km) + "km";
         } else {
             return String.valueOf(meters) + "m";
         }

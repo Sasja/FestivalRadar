@@ -5,6 +5,9 @@ import android.view.Menu;
 
 public class ViewPagerActivity_Groups extends RadarActivity_MyViewPagerAct {
 
+    @SuppressWarnings("unused")
+    private static final String TAG = "ViewPagerAct_Groups";
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.viewpageractivity_groups, menu);

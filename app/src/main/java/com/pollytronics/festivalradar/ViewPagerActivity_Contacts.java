@@ -5,6 +5,9 @@ import android.view.Menu;
 
 public class ViewPagerActivity_Contacts extends RadarActivity_MyViewPagerAct {
 
+    @SuppressWarnings("unused")
+    private static final String TAG = "ViewPagerAct_Contacts";
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.viewpageractivity_contacts, menu);

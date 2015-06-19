@@ -13,6 +13,9 @@ import android.view.ViewGroup;
  */
 public class MyViewPagerFragment extends Fragment {
 
+    @SuppressWarnings("unused")
+    private static final String TAG = "MyViewPagerFragment";
+
     public MyViewPagerFragment() { }
 
     @Override

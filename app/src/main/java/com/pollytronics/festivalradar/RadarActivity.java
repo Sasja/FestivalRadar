@@ -15,7 +15,7 @@ import android.view.MenuItem;
 /**
  * Base class for all Activities
  * This class is only responsible for managing the connection to the RadarService
- * TODO: stop using AppCompatActivity which will allow using <style name="AppTheme" parent="android:Themes.Holo.Light.DarkActionBar"> in styles.xml
+ * TODO: can i use a more funky Theme such as Holo.Light.DarkActionBar with AppCompatActivity??
  */
 public abstract class RadarActivity extends AppCompatActivity implements RadarActivity_Interface4RadarService {
 
@@ -196,6 +196,9 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
             return true;
         } else if (id == R.id.action_groups) {
             startActivity(new Intent(this, RadarActivity_Groups.class));
+            return true;
+        } else if (id == R.id.action_viewpagerdummy) {
+            startActivity(new Intent(this, RadarActivity_MyViewPagerAct.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

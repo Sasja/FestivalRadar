@@ -11,14 +11,15 @@
         android:hardwareAccelerated="true"
         android:icon="@mipmap/clique"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".RadarActivity_Main"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -32,7 +33,7 @@
         <activity
             android:name=".RadarActivity_About"
             android:label="@string/title_activity_about_radar"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_Main" />
@@ -40,35 +41,42 @@
         <activity
             android:name=".RadarActivity_Settings"
             android:label="@string/title_activity_settings_radar"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_Main" />
         </activity>
         <activity
             android:name=".RadarActivity_ManageContacts"
-            android:label="@string/title_activity_manage_contacts_radar">
+            android:label="@string/title_activity_manage_contacts_radar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_Main" />
         </activity>
         <activity
             android:name=".RadarActivity_Debug"
-            android:label="@string/title_activity_debug_radar">
+            android:label="@string/title_activity_debug_radar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_Main" />
         </activity>
         <activity
             android:name=".RadarActivity_AddContactByUsername"
-            android:label="@string/title_activity_add_contact_by_username">
+            android:label="@string/title_activity_add_contact_by_username" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_ManageContacts" />
         </activity>
         <activity
             android:name=".RadarActivity_Groups"
-            android:label="@string/title_activity_radar_activity__groups">
+            android:label="@string/title_activity_radar_activity__groups" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.pollytronics.festivalradar.RadarActivity_Main" />
+        </activity>
+        <activity
+            android:name=".RadarActivity_MyViewPagerAct"
+            android:label="@string/title_activity_radar_activity__my_view_pager">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.festivalradar.RadarActivity_Main" />

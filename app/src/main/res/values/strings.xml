@@ -53,5 +53,7 @@
     <string name="toast_contacts_synced">contacts synced</string>
     <string name="toast_contact_removed">contact removed</string>
     <string name="toast_no_network">no network</string>
+    <string name="title_activity_radar_activity__my_view_pager">Dummy</string>
+    <string name="hello_blank_fragment">This is a dummy fragment layout</string>
 
 </resources>

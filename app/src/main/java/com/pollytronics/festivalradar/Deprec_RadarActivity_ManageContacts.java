@@ -60,7 +60,7 @@ public class Deprec_RadarActivity_ManageContacts extends RadarActivity {
                 Log.i(TAG, "onItemClick i=" + position + " id=" + id);
                 mDialog = new ContactActionDialogFragment();
                 clickedContact = (RadarContact) adapterView.getAdapter().getItem(position);
-                mDialog.show(getSupportFragmentManager(), "ContactActionDialog");               // TODO: figure out if i can graduate from supportFragmentmanager (since minsdk = 15)
+                mDialog.show(getSupportFragmentManager(), "ContactActionDialog");
             }
         });
         updateContactListView();

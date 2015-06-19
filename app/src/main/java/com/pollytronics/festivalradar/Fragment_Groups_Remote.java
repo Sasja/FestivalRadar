@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 
 public class Fragment_Groups_Remote extends MyViewPagerFragment {
 
+    @SuppressWarnings("unused")
+    private static final String TAG = "Frag_Groups_Remote";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 
 public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
 
+    @SuppressWarnings("unused")
+    private static final String TAG = "Frag_Contacts_MyContacts";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

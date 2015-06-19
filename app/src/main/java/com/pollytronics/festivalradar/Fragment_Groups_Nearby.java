@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 
 
 public class Fragment_Groups_Nearby extends MyViewPagerFragment {
+
+    @SuppressWarnings("unused")
+    private static final String TAG = "Frag_Groups_Nearby";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

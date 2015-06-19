@@ -104,7 +104,7 @@ public class Deprec_RadarActivity_ManageContacts extends RadarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.manage_contacts_radar, menu);
+        getMenuInflater().inflate(R.menu.managecontacts_old, menu);
         return true;
     }
 

@@ -34,7 +34,7 @@ public class RadarActivity_Debug extends RadarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.debug_radar, menu);
+        getMenuInflater().inflate(R.menu.debug, menu);
         return true;
     }
 

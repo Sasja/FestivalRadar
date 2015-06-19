@@ -95,7 +95,7 @@ public class RadarActivity_Main extends RadarActivity implements SensorEventList
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);        //add this to the generated code to include the 'global' option items described in RadarActivity
-        getMenuInflater().inflate(R.menu.main_radaractivity, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 

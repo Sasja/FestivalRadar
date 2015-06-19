@@ -169,7 +169,7 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.radaractivity, menu);
+        getMenuInflater().inflate(R.menu.radaractivity_base, menu);
         return true;
     }
 
@@ -189,13 +189,16 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
             startActivity(new Intent(this, RadarActivity_About.class));
             return true;
         } else if (id == R.id.action_contacts) {
-            startActivity(new Intent(this, Deprec_RadarActivity_ManageContacts.class));
+            startActivity(new Intent(this, ViewPagerActivity_Contacts.class));
             return true;
         } else if (id == R.id.action_debug) {
             startActivity(new Intent(this, RadarActivity_Debug.class));
             return true;
         } else if (id == R.id.action_groups) {
             startActivity(new Intent(this, ViewPagerActivity_Groups.class));
+            return true;
+        } else if (id == R.id.action_contacts_old) {
+            startActivity(new Intent(this, Deprec_RadarActivity_ManageContacts.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

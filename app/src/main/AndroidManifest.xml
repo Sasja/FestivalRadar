@@ -82,6 +82,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.festivalradar.RadarActivity_Main" />
         </activity>
+        <activity
+            android:name=".ViewPagerActivity_Contacts"
+            android:label="@string/title_activity_view_pager_activity__contacts"
+            android:parentActivityName=".RadarActivity_Main" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.pollytronics.festivalradar.RadarActivity_Main" />
+        </activity>
     </application>
 
 </manifest>

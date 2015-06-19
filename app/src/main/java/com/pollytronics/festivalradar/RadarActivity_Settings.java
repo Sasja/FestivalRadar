@@ -98,7 +98,7 @@ public class RadarActivity_Settings extends RadarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         super.onCreateOptionsMenu(menu);    //this will add the global menu actions also
-        getMenuInflater().inflate(R.menu.settings_radar, menu);
+        getMenuInflater().inflate(R.menu.settings, menu);
         return true;
     }
 

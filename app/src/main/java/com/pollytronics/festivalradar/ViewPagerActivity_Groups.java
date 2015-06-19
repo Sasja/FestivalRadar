@@ -7,7 +7,7 @@ public class ViewPagerActivity_Groups extends RadarActivity_MyViewPagerAct {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_viewpageractivity_groups, menu);
+        getMenuInflater().inflate(R.menu.viewpageractivity_groups, menu);
         return true;
     }
 

@@ -89,7 +89,7 @@ public class Deprec_RadarActivity_AddContactByUsername extends RadarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_add_contact_by_username, menu);
+        getMenuInflater().inflate(R.menu.addcontactbyusername, menu);
         return true;
     }
 

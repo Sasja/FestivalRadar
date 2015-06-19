@@ -23,4 +23,8 @@ public class MyViewPagerFragment extends Fragment {
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_viewpagerdummy, container, false);
     }
+
+    protected RadarDatabase_Interface getRadarDatabase() {
+        return ((RadarActivity) getActivity()).getRadarDatabase();
+    }
 }

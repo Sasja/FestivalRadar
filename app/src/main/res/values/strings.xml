@@ -60,7 +60,7 @@
     <string name="groups_remote_placeholder">connect to remote and private groups\n(not implemented)</string>
 
     <string name="title_activity_view_pager_activity__groups">Groups</string>
-    <string name="title_activity_view_pager_activity__contacts">contacts</string>
+    <string name="title_activity_view_pager_activity__contacts">Contacts</string>
     <string name="contacts_ping_placeholder">ping simultaneously to connect\n(not implemented)</string>
     <string name="contacts_mycontacts_placeholder">manage your contacts\n(not implemented)</string>
     <string name="contacts_remote_placeholder">connect by userid or sms or whatever\n(not implemented)</string>

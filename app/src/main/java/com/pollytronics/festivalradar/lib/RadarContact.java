@@ -7,7 +7,7 @@ package com.pollytronics.festivalradar.lib;
  * methods that change the object should return themselves to calls can be chained.
  * Created by pollywog on 9/22/14.
  */
-public class RadarContact {
+public class RadarContact implements Comparable<RadarContact>{
 
     private String name;
     private RadarBlip lastBlip;
@@ -55,5 +55,19 @@ public class RadarContact {
     public RadarContact setID(long ID) {
         this.ID = ID;
         return this;
+    }
+
+    @Override
+    public int compareTo(RadarContact another) {
+        int result = getName().toUpperCase().compareTo(another.getName().toUpperCase());
+        if (result == 0) {
+            result = ((Long) getID()).compareTo(another.getID());
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

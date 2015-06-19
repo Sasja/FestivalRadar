@@ -151,13 +151,13 @@ public class Deprec_RadarActivity_ManageContacts extends RadarActivity {
         });
         ArrayAdapter<RadarContact> adapter = (ArrayAdapter<RadarContact>) listView.getAdapter();
         if(adapter==null) {
-            adapter = new ArrayAdapter<RadarContact>(this, R.layout.manage_contacs_list_item, contacts) {
+            adapter = new ArrayAdapter<RadarContact>(this, R.layout.list_item_mycontacts, contacts) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     RadarContact contact = getItem(position);
                     View view;
                     if (convertView == null) {
-                        view = LayoutInflater.from(Deprec_RadarActivity_ManageContacts.this).inflate(R.layout.manage_contacs_list_item, null);   //TODO: figure out why lint complains
+                        view = LayoutInflater.from(Deprec_RadarActivity_ManageContacts.this).inflate(R.layout.list_item_mycontacts, null);   //TODO: figure out why lint complains
                     } else {
                         view = convertView;
                     }

@@ -55,5 +55,12 @@
     <string name="toast_no_network">no network</string>
     <string name="title_activity_radar_activity__my_view_pager">Dummy</string>
     <string name="hello_blank_fragment">This is a dummy fragment layout</string>
+    <string name="groups_nearby_placeholder">find nearby groups\n(not implemented)</string>
+    <string name="groups_mygroups_placeholder">manage your groups\n(not implemented)</string>
+    <string name="groups_remote_placeholder">connect to remote and private groups\n(not implemented)</string>
+    <string name="title_activity_view_pager_activity__groups">Groups</string>
+
+    <string name="hello_world">Hello world!</string>
+
 
 </resources>

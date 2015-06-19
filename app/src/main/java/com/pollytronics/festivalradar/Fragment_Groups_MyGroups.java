@@ -2,23 +2,17 @@ package com.pollytronics.festivalradar;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class FragmentViewPagerDummy extends Fragment {
-
-    public FragmentViewPagerDummy() { }
-
+public class Fragment_Groups_MyGroups extends MyViewPagerFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_fragment_view_pager_dummy, container, false);
+        return inflater.inflate(R.layout.fragment_groups_mygroups, container, false);
     }
+
 }

@@ -43,9 +43,9 @@ public class RadarActivity_MyViewPagerAct extends RadarActivity {
      * Override this baby to put the right fragments into the viewPager
      */
     protected void loadMyFragments() {
-        addFragment(FragmentViewPagerDummy.class, "DUMMY1");
-        addFragment(FragmentViewPagerDummy.class, "DUMMY2");
-        addFragment(FragmentViewPagerDummy.class, "DUMMY3");
+        addFragment(MyViewPagerFragment.class, "DUMMY1");
+        addFragment(MyViewPagerFragment.class, "DUMMY2");
+        addFragment(MyViewPagerFragment.class, "DUMMY3");
     }
 
     protected void addFragment(Class fragmentClass, String title) {
@@ -56,7 +56,7 @@ public class RadarActivity_MyViewPagerAct extends RadarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_radar_activity__my_view_pager);
+        setContentView(R.layout.myviewpager_base);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(fragmentPagerAdapter);

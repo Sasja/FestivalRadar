@@ -40,7 +40,7 @@ import java.util.Set;
  * TODO: specify proper behavior when remote api calls fail
  * TODO: add swipe down to refresh feature (see android samples)
  */
-public class RadarActivity_ManageContacts extends RadarActivity {
+public class Deprec_RadarActivity_ManageContacts extends RadarActivity {
 
     private static final String TAG = "ManageContactRadarAct";
     private DialogFragment mDialog;
@@ -115,7 +115,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_add_contact_by_username) {
-            startActivity(new Intent(this, RadarActivity_AddContactByUsername.class));
+            startActivity(new Intent(this, Deprec_RadarActivity_AddContactByUsername.class));
             return true;
         } else if (id == R.id.action_sync_contacts) {
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -157,7 +157,7 @@ public class RadarActivity_ManageContacts extends RadarActivity {
                     RadarContact contact = getItem(position);
                     View view;
                     if (convertView == null) {
-                        view = LayoutInflater.from(RadarActivity_ManageContacts.this).inflate(R.layout.manage_contacs_list_item, null);   //TODO: figure out why lint complains
+                        view = LayoutInflater.from(Deprec_RadarActivity_ManageContacts.this).inflate(R.layout.manage_contacs_list_item, null);   //TODO: figure out why lint complains
                     } else {
                         view = convertView;
                     }
@@ -187,12 +187,12 @@ public class RadarActivity_ManageContacts extends RadarActivity {
 
     public static class ContactActionDialogFragment extends DialogFragment {
 
-        RadarActivity_ManageContacts mRadarActivity;
+        Deprec_RadarActivity_ManageContacts mRadarActivity;
 
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            mRadarActivity = (RadarActivity_ManageContacts) activity;
+            mRadarActivity = (Deprec_RadarActivity_ManageContacts) activity;
         }
 
         @Override

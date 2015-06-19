@@ -47,7 +47,7 @@
                 android:value=".RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".RadarActivity_ManageContacts"
+            android:name=".Deprec_RadarActivity_ManageContacts"
             android:label="@string/title_activity_manage_contacts_radar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -61,22 +61,23 @@
                 android:value=".RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".RadarActivity_AddContactByUsername"
+            android:name=".Deprec_RadarActivity_AddContactByUsername"
             android:label="@string/title_activity_add_contact_by_username" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".RadarActivity_ManageContacts" />
+                android:value=".Deprec_RadarActivity_ManageContacts" />
         </activity>
         <activity
-            android:name=".RadarActivity_Groups"
-            android:label="@string/title_activity_radar_activity__groups" >
+            android:name=".RadarActivity_MyViewPagerAct"
+            android:label="@string/title_activity_radar_activity__my_view_pager" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.festivalradar.RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".RadarActivity_MyViewPagerAct"
-            android:label="@string/title_activity_radar_activity__my_view_pager">
+            android:name=".ViewPagerActivity_Groups"
+            android:label="@string/title_activity_view_pager_activity__groups"
+            android:parentActivityName=".RadarActivity_Main" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.festivalradar.RadarActivity_Main" />

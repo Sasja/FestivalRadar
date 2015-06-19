@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.pollytronics.festivalradar.RadarActivity_Main">
 
-    <item android:id="@+id/action_manage_contacts"
+    <item android:id="@+id/action_contacts"
         android:icon="@drawable/ic_action_person"
         android:orderInCategory="100"
         android:title="@string/action_manage_contacts"
@@ -31,12 +31,6 @@
         android:id="@+id/action_debug"
         android:orderInCategory="100"
         android:title="@string/action_debug"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_viewpagerdummy"
-        android:orderInCategory="100"
-        android:title="viewpager"
         app:showAsAction="never" />
 
 </menu>

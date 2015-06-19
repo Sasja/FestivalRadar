@@ -188,17 +188,14 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
         } else if (id == R.id.action_about){
             startActivity(new Intent(this, RadarActivity_About.class));
             return true;
-        } else if (id == R.id.action_manage_contacts) {
-            startActivity(new Intent(this, RadarActivity_ManageContacts.class));
+        } else if (id == R.id.action_contacts) {
+            startActivity(new Intent(this, Deprec_RadarActivity_ManageContacts.class));
             return true;
         } else if (id == R.id.action_debug) {
             startActivity(new Intent(this, RadarActivity_Debug.class));
             return true;
         } else if (id == R.id.action_groups) {
-            startActivity(new Intent(this, RadarActivity_Groups.class));
-            return true;
-        } else if (id == R.id.action_viewpagerdummy) {
-            startActivity(new Intent(this, RadarActivity_MyViewPagerAct.class));
+            startActivity(new Intent(this, ViewPagerActivity_Groups.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

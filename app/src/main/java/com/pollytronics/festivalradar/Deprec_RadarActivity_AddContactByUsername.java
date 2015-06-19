@@ -20,7 +20,7 @@ import java.io.IOException;
 /**
  * TODO: specify proper behavior in case of api request failures
  */
-public class RadarActivity_AddContactByUsername extends RadarActivity {
+public class Deprec_RadarActivity_AddContactByUsername extends RadarActivity {
 
     private final String TAG = "AddContactByUsername";
     private EditText editTextAddContactName;

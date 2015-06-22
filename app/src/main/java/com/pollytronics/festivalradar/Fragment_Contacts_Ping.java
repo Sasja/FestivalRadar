@@ -26,6 +26,7 @@ import java.util.List;
  * TODO: animate adding/ignoring contact (add => fly to the right, ignore => shrink or dissolve or smth)
  * TODO: turning screen will not remember the contacts in the ping list
  * TODO: maybe the pingtask belongs in the activity class?
+ * TODO: some feedback when pinging is in progress
  *
  */
 public class Fragment_Contacts_Ping extends MyViewPager_Contacts_Fragment {
@@ -134,10 +135,17 @@ public class Fragment_Contacts_Ping extends MyViewPager_Contacts_Fragment {
             Button connectButt = (Button) view.findViewById(R.id.button_ping_connect);
             connectButt.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View v) {   //TODO: clean up / refactor
                     Log.i(TAG, "onClick()... adding contact");
-                    getContactActivity().addNewContact(contact);
-                    remove(contact);    //TODO: what if there is no network?
+                    ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                    if (networkInfo != null && networkInfo.isConnected()){
+                        getContactActivity().addNewContact(contact);
+                        remove(contact);
+                    } else {
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "no network", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
                 }
             });
             Button ignoreButt = (Button) view.findViewById(R.id.button_ping_ignore);

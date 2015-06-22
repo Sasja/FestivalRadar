@@ -76,6 +76,12 @@ public class RadarActivity_MyViewPagerAct extends RadarActivity {
         return myPagerFragments.get(nr);
     }
 
+    @Override
+    public void notifyDatabaseUpdate() {
+        super.notifyDatabaseUpdate();
+        for(MyViewPagerFragment f : myPagerFragments.values()) f.notifyDatabaseUpdate();
+    }
+
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
         public MyFragmentPagerAdapter(FragmentManager fm) { super(fm); }
 

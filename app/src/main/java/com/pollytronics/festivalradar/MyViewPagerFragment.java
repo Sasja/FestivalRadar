@@ -3,6 +3,7 @@ package com.pollytronics.festivalradar;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,5 +27,9 @@ public class MyViewPagerFragment extends Fragment {
 
     protected RadarDatabase_Interface getRadarDatabase() {
         return ((RadarActivity) getActivity()).getRadarDatabase();
+    }
+
+    protected void notifyDatabaseUpdate() {
+        Log.i(TAG, "received a notifyDatabaseUpdate");
     }
 }

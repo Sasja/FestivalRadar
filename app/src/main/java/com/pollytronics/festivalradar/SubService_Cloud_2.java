@@ -94,6 +94,8 @@ public class SubService_Cloud_2 extends SubService {
      * it relies on APICall objects to handle the api details of each api separate interaction.
      * doInBackground can communicate with the other methods by setting member fields, it's safe:
      * http://developer.android.com/reference/android/os/AsyncTask.html (See Memory observability)
+     * TODO: might be prettier to return a boolean for success from doInbackground instead of using a var
+     * TODO: also look for other uses similar to this
      */
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
         private final ApiCallSetMyBlip setMyBlip = new ApiCallSetMyBlip();
@@ -129,7 +131,7 @@ public class SubService_Cloud_2 extends SubService {
         @Override
         protected void onPostExecute(String s) {
             if (apiCallsSucceeded) {         // only take action if all api calls were successful
-                Log.i(TAG, "parsing and using the responses of the webservice");
+                Log.i(TAG, "using/aplying the responses of the webservice");
                 getBlips.doTheWork(getRadarDatabase());
                 getRadarService().notifyNewData();
             } else {

@@ -23,6 +23,8 @@ import java.util.List;
 
 /**
  * TODO: fix duplicate code everywhere checking for network availability (also other files)
+ * TODO: animate adding/ignoring contact (add => fly to the right, ignore => shrink or dissolve or smth)
+ * TODO: turning screen will not remember the contacts in the ping list
  */
 public class Fragment_Contacts_Ping extends MyViewPagerFragment {
     @SuppressWarnings("unused")

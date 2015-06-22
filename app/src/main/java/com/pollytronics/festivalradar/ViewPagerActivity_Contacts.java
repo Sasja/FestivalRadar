@@ -13,6 +13,9 @@ import com.pollytronics.festivalradar.lib.api_v01.ApiCallPostContact;
 
 import java.io.IOException;
 
+/**
+ * TODO: Study https://developer.android.com/training/sync-adapters/index.html and consider implementing such a thing
+ */
 public class ViewPagerActivity_Contacts extends RadarActivity_MyViewPagerAct {
     @SuppressWarnings("unused")
     private static final String TAG = "ViewPagerAct_Contacts";

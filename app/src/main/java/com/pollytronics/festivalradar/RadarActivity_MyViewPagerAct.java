@@ -57,6 +57,7 @@ public class RadarActivity_MyViewPagerAct extends RadarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.myviewpager_base);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
+        viewPager.setOffscreenPageLimit(2);     // this will prevent destruction of first fragment if last is shown (in case of three frags
         fragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(fragmentPagerAdapter);
         viewPager.setCurrentItem(1);

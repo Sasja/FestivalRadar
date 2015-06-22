@@ -23,7 +23,6 @@ import java.util.List;
 
 /**
  * TODO: fix duplicate code everywhere checking for network availability (also other files)
- * TODO: find and increase the parameter to prevent first fragment destruction when showing third
  */
 public class Fragment_Contacts_Ping extends MyViewPagerFragment {
     @SuppressWarnings("unused")

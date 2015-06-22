@@ -125,8 +125,22 @@ public class Fragment_Contacts_Ping extends MyViewPagerFragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
-            RadarContact contact = getItem(position);
+            final RadarContact contact = getItem(position);
             // TODO: further apply the values of contact to the view object
+            Button connectButt = (Button) view.findViewById(R.id.button_ping_connect);
+            connectButt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i(TAG, "onClick()... adding contact");
+                }
+            });
+            Button ignoreButt = (Button) view.findViewById(R.id.button_ping_ignore);
+            ignoreButt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    remove(contact);
+                }
+            });
             return view;
         }
     }

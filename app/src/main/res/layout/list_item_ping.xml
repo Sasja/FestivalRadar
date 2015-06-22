@@ -17,11 +17,13 @@
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <Button
+        android:id="@+id/button_ping_connect"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:background="@android:drawable/ic_input_add"/>
 
     <Button
+        android:id="@+id/button_ping_ignore"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:background="@android:drawable/ic_delete"/>

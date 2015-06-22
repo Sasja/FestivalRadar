@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -164,7 +165,8 @@ public class RadarView extends View {
 
     public void addContact(RadarContact contact) {
         if(contacts.containsKey(contact.getID())) {
-            throw new IllegalArgumentException("contact to add is allready present in RadarView");
+            //throw new IllegalArgumentException("contact to add is allready present in RadarView");
+            Log.i(TAG, "WARNING: contact ID is allready present in RaderView, duplicate ID's?");
         } else {
             contacts.put(contact.getID(),contact);
         }
@@ -177,7 +179,6 @@ public class RadarView extends View {
         } else {
             contacts.put(contact.getID(), contact);
         }
-
     }
 
     public void removeAllContacts() {

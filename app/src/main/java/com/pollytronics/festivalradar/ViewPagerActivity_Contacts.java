@@ -19,10 +19,13 @@ import com.pollytronics.festivalradar.lib.RadarContact;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallDeleteContact;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetContactsISee;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetContactsSeeme;
+import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallPostContact;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -231,6 +234,7 @@ public class ViewPagerActivity_Contacts extends RadarActivity_MyViewPagerAct {
         private final ApiCallPostContact apiCallPostContact = new ApiCallPostContact();
         private final ApiCallGetContactsSeeme apiCallGetContactsSeeme = new ApiCallGetContactsSeeme();
         private final ApiCallGetContactsISee apiCallGetContactsISee = new ApiCallGetContactsISee();
+        private final ApiCallGetProfile apiCallGetProfile = new ApiCallGetProfile();
         private final Set<Long> con = new HashSet<>();
         private final Set<Long> toDeleteFromCon = new HashSet<>();
         private final Set<Long> toAddToCon = new HashSet<>();
@@ -238,6 +242,7 @@ public class ViewPagerActivity_Contacts extends RadarActivity_MyViewPagerAct {
         private Set<Long> ics = new HashSet<>();
         private Set<Long> csm = new HashSet<>();
         private boolean apiCallsSucceeded = false;
+        private Map<Long, String> newContactNames= new HashMap<>();
 
         @Override
         protected void onPreExecute() {
@@ -282,6 +287,13 @@ public class ViewPagerActivity_Contacts extends RadarActivity_MyViewPagerAct {
                     apiCallPostContact.setContactId(id);
                     apiCallPostContact.callAndParse();
                 }
+                // now gather the names of the contacts i need to add locally
+                for(long id:toAddToCon) {
+                    Log.i(TAG, "requesting remote name for new contact (id="+id+")");
+                    apiCallGetProfile.setRequestedId(id);
+                    apiCallGetProfile.callAndParse();
+                    newContactNames.put(id, apiCallGetProfile.getName());
+                }
                 apiCallsSucceeded = true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -294,14 +306,12 @@ public class ViewPagerActivity_Contacts extends RadarActivity_MyViewPagerAct {
         protected void onPostExecute(String s) {
             if (apiCallsSucceeded) {
                 for (long id : toAddToCon) {
-                    String contactName = "";
                     if (csm.contains(id)) {
                         Log.i(TAG, "adding contact to local contacts (contact known in api but not in local contacts!?): " + id);
-                        contactName = "i forgot";
                     } else {
                         Log.i(TAG, "adding contact to local contacts (autoaccept): " + id);
-                        contactName = "autoaccepted";
                     }
+                    String contactName = newContactNames.get(id);
                     RadarContact newContact = new RadarContact().setName(contactName).setID(id);
                     getRadarDatabase().addContactWithId(newContact);
                 }

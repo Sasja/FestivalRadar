@@ -23,7 +23,6 @@ import com.pollytronics.festivalradar.lib.RadarActivity_Interface4RadarService;
  * This class forms a layer between SubService classes and RadarActivities:
  *      - This class delegates calls from activities to the right helper classes (SubServices)
  *      - This class provide methods to the SubServices to reach the Activities.
- * TODO: designing and using a black and white notification icon
  */
 public class RadarService extends Service implements RadarService_Interface4SubService, RadarService_interface4RadarActivity {
 

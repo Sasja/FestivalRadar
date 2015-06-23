@@ -47,25 +47,11 @@
                 android:value=".RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".Deprec_RadarActivity_ManageContacts"
-            android:label="@string/title_activity_manage_contacts_radar" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".RadarActivity_Main" />
-        </activity>
-        <activity
             android:name=".RadarActivity_Debug"
             android:label="@string/title_activity_debug_radar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RadarActivity_Main" />
-        </activity>
-        <activity
-            android:name=".Deprec_RadarActivity_AddContactByUsername"
-            android:label="@string/title_activity_add_contact_by_username" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Deprec_RadarActivity_ManageContacts" />
         </activity>
         <activity
             android:name=".RadarActivity_MyViewPagerAct"

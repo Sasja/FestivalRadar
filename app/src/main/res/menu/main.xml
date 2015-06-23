@@ -33,10 +33,4 @@
         android:title="@string/action_debug"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_contacts_old"
-        android:orderInCategory="100"
-        android:title="manage contacts (old)"
-        app:showAsAction="never" />
-
 </menu>

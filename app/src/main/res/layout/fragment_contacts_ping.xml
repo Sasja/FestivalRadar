@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.pollytronics.festivalradar.Fragment_Contacts_Ping">
+    tools:context="com.pollytronics.clique.Fragment_Contacts_Ping">
 
     <ListView
         android:id="@+id/listview_ping"

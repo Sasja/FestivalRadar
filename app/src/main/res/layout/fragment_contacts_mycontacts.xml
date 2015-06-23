@@ -4,6 +4,6 @@
     android:id="@+id/listview_mycontacts"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.pollytronics.festivalradar.Fragment_Contacts_MyContacts">
+    tools:context="com.pollytronics.clique.Fragment_Contacts_MyContacts">
 
 </ListView>

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.pollytronics.festivalradar.RadarActivity_Settings">
+    tools:context="com.pollytronics.festivalradar.CliqueActivity_Settings">
 
     <LinearLayout
         android:layout_width="match_parent"

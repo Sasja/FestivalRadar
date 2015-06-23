@@ -5,7 +5,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.pollytronics.festivalradar.lib.RadarActivity;
+import com.pollytronics.festivalradar.lib.CliqueActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,22 +13,22 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
- * RadarActivity for debugging purposes
+ * CliqueActivity for debugging purposes
  * shows received calls
  * TODO: have a look at the SlidingsTabBasic demo for some ideas for logging
  * TODO: doesnt work on api 15 cheapo tablet, no text visible
  */
-public class RadarActivity_Debug extends RadarActivity {
+public class CliqueActivity_Debug extends CliqueActivity {
 
     @SuppressWarnings("unused")
-    private final String TAG = "RadarActivity_Debug";
+    private final String TAG = "CliqueActivity_Debug";
 
     private TextView debugTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.radaractivity_debug);
+        setContentView(R.layout.cliqueactivity_debug);
         debugTextView = (TextView) findViewById(R.id.textview_debug);
     }
 

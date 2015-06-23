@@ -12,8 +12,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import com.pollytronics.festivalradar.lib.base.RadarBlip;
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.base.Blip;
+import com.pollytronics.festivalradar.lib.base.Contact;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +32,9 @@ public class RadarView extends View {
     static final String TAG = "RadarView";
     static final double earthRadius = 6371000.0;
     @SuppressLint("UseSparseArrays")
-    private final Map<Long, RadarContact> contacts = new HashMap<Long, RadarContact>();
+    private final Map<Long, Contact> contacts = new HashMap<Long, Contact>();
     private final Paint paint = new Paint();
-    private RadarBlip centerLocation;
+    private Blip centerLocation;
     private double bearing=0;
     private double zoomLevel = 1000.0;     // means its that much meters to the left or right edge of screen
     private ScaleGestureDetector mScaleGestureDetector;
@@ -67,8 +67,8 @@ public class RadarView extends View {
         return true;
     }
 
-    private Pair<Float, Float> calcScreenXY(RadarBlip blip,
-                                            RadarBlip centerLocation,
+    private Pair<Float, Float> calcScreenXY(Blip blip,
+                                            Blip centerLocation,
                                             double screenWidth,
                                             double screenHeight,
                                             double bearing) {
@@ -149,7 +149,7 @@ public class RadarView extends View {
         paint.setColor(Color.argb(150, 0, 0, 250));
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(width / 25);
-        for(RadarContact c:contacts.values()) {
+        for(Contact c:contacts.values()) {
             Pair<Float, Float> xy = calcScreenXY(c.getLastBlip(), centerLocation, width, height, bearing);
             canvas.drawCircle(xy.first, xy.second, width / 100
                     , paint);
@@ -165,7 +165,7 @@ public class RadarView extends View {
 
 
 
-    public void addContact(RadarContact contact) {
+    public void addContact(Contact contact) {
         if(contacts.containsKey(contact.getID())) {
             //throw new IllegalArgumentException("contact to add is allready present in RadarView");
             Log.i(TAG, "WARNING: contact ID is allready present in RaderView, duplicate ID's?");
@@ -175,7 +175,7 @@ public class RadarView extends View {
     }
 
     @SuppressWarnings("unused")
-    public void updateContact(RadarContact contact) {
+    public void updateContact(Contact contact) {
         if(contacts.containsKey(contact.getID())) {
             throw new IllegalArgumentException("contact to update not present in RadarView!");
         } else {
@@ -187,7 +187,7 @@ public class RadarView extends View {
         contacts.clear();
     }
 
-    public void setCenterLocation(RadarBlip centerLocation) {
+    public void setCenterLocation(Blip centerLocation) {
         this.centerLocation = centerLocation;
     }
 

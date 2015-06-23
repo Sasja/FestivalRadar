@@ -7,14 +7,14 @@ import android.location.Location;
  * extension of the Location class for use within radar app
  */
 
-public class RadarBlip extends Location{
+public class Blip extends Location{
 
     @SuppressWarnings("FieldCanBeLocal")
-    private static final String PROVIDER = "RadarBlip";
+    private static final String PROVIDER = "Blip";
     @SuppressWarnings("unused")
-    private static String TAG = "RadarBlip";
+    private static String TAG = "Blip";
 
-    public RadarBlip(){
+    public Blip(){
         super(PROVIDER);
         final double LAT = 51.072478;   //initialise there to facilitate testing, shouldn't matter
         final double LON = 3.709913;
@@ -23,11 +23,11 @@ public class RadarBlip extends Location{
         setTime(0);
     }
 
-    public RadarBlip(Location location) {
+    public Blip(Location location) {
         super(location);
     }
 
-    public RadarBlip(RadarBlip blip) {
+    public Blip(Blip blip) {
         super(blip);
     }
 

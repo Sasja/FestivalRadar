@@ -6,7 +6,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.service.RadarService;
+import com.pollytronics.festivalradar.lib.service.CliqueService;
 import com.pollytronics.festivalradar.lib.service.SubService;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetBlips;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallSetMyBlip;
@@ -52,7 +52,7 @@ public class SubService_Cloud_2 extends SubService {
         }
     };
 
-    public SubService_Cloud_2(RadarService rs) {
+    public SubService_Cloud_2(CliqueService rs) {
         super(rs);
     }
 

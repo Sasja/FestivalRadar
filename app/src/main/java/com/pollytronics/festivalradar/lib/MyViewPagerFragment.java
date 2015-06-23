@@ -9,11 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pollytronics.festivalradar.R;
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
 
 
 /**
- * A Base class for Fragments that plug into my ViewPager class RadarActivity_MyViewPagerAct
+ * A Base class for Fragments that plug into my ViewPager class CliqueActivity_MyViewPagerAct
  */
 public class MyViewPagerFragment extends Fragment {
 
@@ -28,8 +28,8 @@ public class MyViewPagerFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_viewpagerdummy, container, false);
     }
 
-    protected RadarDatabase_Interface getRadarDatabase() {
-        return ((RadarActivity) getActivity()).getRadarDatabase();
+    protected CliqueDb_Interface getCligueDb() {
+        return ((CliqueActivity) getActivity()).getRadarDatabase();
     }
 
     public void notifyDatabaseUpdate() {

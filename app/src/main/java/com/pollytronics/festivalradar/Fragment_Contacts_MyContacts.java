@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pollytronics.festivalradar.lib.MyViewPagerFragment;
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.base.Contact;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +34,7 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.i(TAG, "onItemClick i=" + position + " id=" + id);
-                RadarContact selectedContact = (RadarContact) parent.getAdapter().getItem(position);
+                Contact selectedContact = (Contact) parent.getAdapter().getItem(position);
                 ((MVP_Activity_Contacts) getActivity()).confirmAndDeleteContact(selectedContact);
             }
         });
@@ -43,14 +43,14 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
     }
     
     private void fillListViewFromLocalDb(ListView listView) {
-        List<RadarContact> localContacts = new ArrayList<>(getRadarDatabase().getAllContacts());
+        List<Contact> localContacts = new ArrayList<>(getCligueDb().getAllContacts());
         Collections.sort(localContacts);
-        RadarContactAdapter adapter = (RadarContactAdapter) listView.getAdapter();
+        CliqueContactAdapter adapter = (CliqueContactAdapter) listView.getAdapter();
         if(adapter == null) {   // there is no adapter yet
-            adapter = new RadarContactAdapter(getActivity(), localContacts);
+            adapter = new CliqueContactAdapter(getActivity(), localContacts);
         } else {                // lets reuse the current adapter
             adapter.clear();
-            for(RadarContact c : localContacts) adapter.add(c);
+            for(Contact c : localContacts) adapter.add(c);
         }
         listView.setAdapter(adapter);
     }
@@ -73,18 +73,18 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
 
 
     //TODO: kind of duplicate code here with ping
-    private class RadarContactAdapter extends ArrayAdapter<RadarContact> {
+    private class CliqueContactAdapter extends ArrayAdapter<Contact> {
 
         private static final int layout_resource = R.layout.list_item_mycontacts;
 
-        public RadarContactAdapter(Context context, List<RadarContact> objects) {
+        public CliqueContactAdapter(Context context, List<Contact> objects) {
             super(context, layout_resource, R.id.textview_contact_name, objects);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
-            RadarContact contact = getItem(position);
+            Contact contact = getItem(position);
             TextView tv_extra = (TextView) view.findViewById(R.id.textview_contact_extra);
             tv_extra.setText(contact.getLastBlip().toString());
             return view;

@@ -15,8 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.pollytronics.festivalradar.lib.RadarActivity_MyViewPagerAct;
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.CliqueActivity_MyViewPagerAct;
+import com.pollytronics.festivalradar.lib.base.Contact;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallDeleteContact;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetContactsISee;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetContactsSeeme;
@@ -32,11 +32,11 @@ import java.util.Set;
 /**
  * TODO: Study https://developer.android.com/training/sync-adapters/index.html and consider implementing such a thing
  */
-public class MVP_Activity_Contacts extends RadarActivity_MyViewPagerAct {
+public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     @SuppressWarnings("unused")
     private static final String TAG = "ViewPagerAct_Contacts";
 
-    RadarContact selectedContact = null;
+    Contact selectedContact = null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -102,7 +102,7 @@ public class MVP_Activity_Contacts extends RadarActivity_MyViewPagerAct {
      * check for network, do the api call to post new contact, when successful remove it from the list and add it locally.
      * then refresh the mycontact list.
      */
-    public void addNewContact(RadarContact contact) {
+    public void addNewContact(Contact contact) {
         Log.i(TAG, "adding contact locally");
         getRadarDatabase().addContact(contact);
         notifyDatabaseUpdate();
@@ -110,7 +110,7 @@ public class MVP_Activity_Contacts extends RadarActivity_MyViewPagerAct {
         new postNewContactTask(contact).execute();
     }
 
-    public void confirmAndDeleteContact(RadarContact contact) {
+    public void confirmAndDeleteContact(Contact contact) {
         selectedContact = contact;  //TODO: yo, using global variables, nice!
         DialogFragment mDialog = new TemporaryDeleteDialog();
         mDialog.show(getSupportFragmentManager(), "DeleteContactDialog");
@@ -174,9 +174,9 @@ public class MVP_Activity_Contacts extends RadarActivity_MyViewPagerAct {
     private class postNewContactTask extends AsyncTask<Void, Void, String> {
         private final ApiCallPostContact postContact = new ApiCallPostContact();
         private boolean apiCallSucceeded = false;
-        private RadarContact contact;
+        private Contact contact;
 
-        public postNewContactTask(RadarContact contact) {
+        public postNewContactTask(Contact contact) {
             this.contact = contact;
         }
 
@@ -252,7 +252,7 @@ public class MVP_Activity_Contacts extends RadarActivity_MyViewPagerAct {
             apiCallGetContactsSeeme.collectData(getRadarDatabase());
             apiCallGetContactsISee.collectData(getRadarDatabase());
             // construct list of ids in local contacts
-            for (RadarContact c : getRadarDatabase().getAllContacts()) {
+            for (Contact c : getRadarDatabase().getAllContacts()) {
                 con.add(c.getID());
             }
         }
@@ -313,7 +313,7 @@ public class MVP_Activity_Contacts extends RadarActivity_MyViewPagerAct {
                         Log.i(TAG, "adding contact to local contacts (autoaccept): " + id);
                     }
                     String contactName = newContactNames.get(id);
-                    RadarContact newContact = new RadarContact().setName(contactName).setID(id);
+                    Contact newContact = new Contact().setName(contactName).setID(id);
                     getRadarDatabase().addContact(newContact);
                 }
                 for (long id : toDeleteFromCon) {

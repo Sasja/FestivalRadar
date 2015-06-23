@@ -23,7 +23,7 @@ import java.util.Map;
  * TODO: if i need to call fragment methods from the activity i need an extra method to get a ref of the fragments as stored in fragments
  * TODO: if calling methods on fragments, make sure they are alive (some parameter, or check for it) to prevent nullpointerexceptions
  */
-public class RadarActivity_MyViewPagerAct extends RadarActivity {
+public class CliqueActivity_MyViewPagerAct extends CliqueActivity {
 
     private static final String TAG = "MyViewPagerAct";
 
@@ -36,7 +36,7 @@ public class RadarActivity_MyViewPagerAct extends RadarActivity {
     private List<Class> fragments = new ArrayList<>();
     private List<String> fragmentTitles = new ArrayList<>();
 
-    public RadarActivity_MyViewPagerAct() {
+    public CliqueActivity_MyViewPagerAct() {
         loadMyFragments();
     }
 

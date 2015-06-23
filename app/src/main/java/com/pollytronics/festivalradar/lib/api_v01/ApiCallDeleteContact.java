@@ -2,12 +2,12 @@ package com.pollytronics.festivalradar.lib.api_v01;
 
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
 
 /**
  * Created by pollywog on 6/4/15.
  */
-public class ApiCallDeleteContact extends RadarApiCall {
+public class ApiCallDeleteContact extends CliqueApiCall {
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "ApiCallDeleteContact";
 
@@ -17,7 +17,7 @@ public class ApiCallDeleteContact extends RadarApiCall {
     private long deleteId = 0;
 
     @Override
-    public void collectData(RadarDatabase_Interface db) {
+    public void collectData(CliqueDb_Interface db) {
         selfId = db.getSelfContact().getID();
     }
 

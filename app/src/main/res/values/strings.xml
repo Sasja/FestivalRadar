@@ -3,8 +3,8 @@
 
     <string name="app_name">Clique</string>
     <string name="service_notification_title">Clique</string>
-    <string name="service_notification_text">Service is running, go to the radar to disable</string>
-    <string name="title_activity_about_radar">About</string>
+    <string name="service_notification_text">Service is running, open Clique to disable</string>
+    <string name="title_activity_about">About</string>
     <string name="action_settings">Settings</string>
     <string name="text_about">
         \nnot a release version
@@ -25,11 +25,11 @@
         \n thanks for testing!
         \n alexander.steen.gent@gmail.com</string>
     <string name="action_about">About</string>
-    <string name="title_activity_settings_radar">Settings</string>
-    <string name="title_activity_manage_contacts_radar">Contacts</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_manage_contacts">Contacts</string>
     <string name="action_manage_contacts">Contacts</string>
     <string name="button_add_contact">Add</string>
-    <string name="title_activity_debug_radar">Debug</string>
+    <string name="title_activity_debug">Debug</string>
     <string name="action_debug">Debug</string>
     <string name="settings_localisation_update_rate">Localisation Update Rate</string>
     <string name="settings_cloud_update_rate">Network Connection Rate</string>
@@ -41,7 +41,7 @@
     <string name="dialog_delete_contact">Delete this contact?</string>
     <string name="dialog_confirm">yes</string>
     <string name="dialog_deny">no</string>
-    <string name="title_activity_radar_activity__groups">Groups</string>
+    <string name="title_activity_groups">Groups</string>
     <string name="groups_tab_nearby">NEARBY</string>
     <string name="groups_tab_mygroups">MY GROUPS</string>
     <string name="groups_tab_private">PRIVATE</string>
@@ -54,7 +54,7 @@
     <string name="toast_contacts_synced">contacts synced</string>
     <string name="toast_contact_removed">contact removed</string>
     <string name="toast_no_network">no network</string>
-    <string name="title_activity_radar_activity__my_view_pager">Dummy</string>
+    <string name="title_activity_my_view_pager">Dummy</string>
     <string name="hello_blank_fragment">This is a dummy fragment layout</string>
     <string name="groups_nearby_placeholder">find nearby groups\n(not implemented)</string>
     <string name="groups_mygroups_placeholder">manage your groups\n(not implemented)</string>

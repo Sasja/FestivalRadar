@@ -3,7 +3,7 @@ package com.pollytronics.festivalradar.lib;
 /**
  * Created by pollywog on 9/22/14.
  */
-public interface RadarActivity_Interface4RadarService {
+public interface CliqueActivity_Interface4CliqueService {
     void print(String text);
 
     void notifyDatabaseUpdate();

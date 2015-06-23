@@ -1,7 +1,7 @@
 package com.pollytronics.festivalradar.lib.api_v01;
 
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.base.Contact;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by pollywog on 6/19/15.
  */
-public class ApiCallGetPings extends RadarApiCall {
+public class ApiCallGetPings extends CliqueApiCall {
 
     @SuppressWarnings("unused")
     protected final String TAG = "ApiCallGetPings";
@@ -22,7 +22,7 @@ public class ApiCallGetPings extends RadarApiCall {
     private JSONArray pings;
     private long selfId = 0;
 
-    public void collectData(RadarDatabase_Interface db) {selfId = db.getSelfContact().getID(); }
+    public void collectData(CliqueDb_Interface db) {selfId = db.getSelfContact().getID(); }
 
     @Override
     public String getHttpMethod() { return "GET"; }
@@ -39,13 +39,13 @@ public class ApiCallGetPings extends RadarApiCall {
         }
     }
 
-    public List<RadarContact> getAllPingContacts() {
-        List<RadarContact> pingContacts = new ArrayList<>();
+    public List<Contact> getAllPingContacts() {
+        List<Contact> pingContacts = new ArrayList<>();
         JSONObject pingJSON;
         for(int i = 0; i < pings.length(); i++) {
             try {
                 pingJSON = pings.getJSONObject(i);
-                RadarContact rc = new RadarContact();
+                Contact rc = new Contact();
                 rc.setID(pingJSON.getLong("userid"));
                 rc.setName(pingJSON.getString("nick"));
                 pingContacts.add(rc);

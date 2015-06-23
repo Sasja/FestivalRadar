@@ -14,8 +14,8 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.pollytronics.festivalradar.lib.RadarActivity;
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.CliqueActivity;
+import com.pollytronics.festivalradar.lib.base.Contact;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallPostProfile;
 
@@ -26,9 +26,9 @@ import java.io.IOException;
  */
 
 
-public class RadarActivity_Settings extends RadarActivity {
+public class CliqueActivity_Settings extends CliqueActivity {
 
-    private static final String TAG = "RadarActivity_Settings";
+    private static final String TAG = "CliqueActivity_Settings";
 
     private EditText setIdEditText;
     private EditText setNameEditText;
@@ -38,7 +38,7 @@ public class RadarActivity_Settings extends RadarActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.radaractivity_settings);
+        setContentView(R.layout.cliqueactivity_settings);
 
         SeekBar localisationSeekBar = (SeekBar) findViewById(R.id.seekbar_localisation_update_rate);
         localisationSeekBar.setProgress(getRadarPreferences().getLocalisationUpdateTime_percent());
@@ -99,7 +99,7 @@ public class RadarActivity_Settings extends RadarActivity {
                     Log.i(TAG, "thats not a number, cant set this ID");
                     return;
                 }
-                RadarContact selfContact = getRadarDatabase().getSelfContact();
+                Contact selfContact = getRadarDatabase().getSelfContact();
                 selfContact.setID(id);
                 getRadarDatabase().updateSelfContact(selfContact);
             }

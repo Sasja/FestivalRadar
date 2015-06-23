@@ -2,7 +2,7 @@ package com.pollytronics.festivalradar.lib.api_v01;
 
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,7 +10,7 @@ import org.json.JSONObject;
 /**
  * Created by pollywog on 6/23/15.
  */
-public class ApiCallPostProfile extends RadarApiCall {
+public class ApiCallPostProfile extends CliqueApiCall {
     private final String TAG = "ApiCallPostProfile";
 
     private final String apiResourceName = "profiles";
@@ -18,7 +18,7 @@ public class ApiCallPostProfile extends RadarApiCall {
     private long selfId = 0;
     private JSONObject profileJSON;
 
-    public void collectData(RadarDatabase_Interface db) { selfId = db.getSelfContact().getID();}
+    public void collectData(CliqueDb_Interface db) { selfId = db.getSelfContact().getID();}
 
     public void setName(String name) {
         try {

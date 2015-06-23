@@ -4,7 +4,7 @@
     android:id="@+id/view_pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.pollytronics.festivalradar.lib.RadarActivity_MyViewPagerAct">
+    tools:context="com.pollytronics.festivalradar.lib.CliqueActivity_MyViewPagerAct">
 
     <android.support.v4.view.PagerTabStrip
         android:layout_width="match_parent"

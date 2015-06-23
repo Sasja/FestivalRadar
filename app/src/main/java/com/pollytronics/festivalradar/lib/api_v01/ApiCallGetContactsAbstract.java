@@ -1,6 +1,6 @@
 package com.pollytronics.festivalradar.lib.api_v01;
 
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,7 +14,7 @@ import java.util.Set;
  * only one parameter is different in the rest api call
  * Created by pollywog on 6/13/15.
  */
-public abstract class ApiCallGetContactsAbstract extends RadarApiCall {
+public abstract class ApiCallGetContactsAbstract extends CliqueApiCall {
     @SuppressWarnings("FieldCanBeLocal")
     protected final String apiResourceName = "contacts";
     @SuppressWarnings("unused")
@@ -22,7 +22,7 @@ public abstract class ApiCallGetContactsAbstract extends RadarApiCall {
     protected long selfId = 0;
     private JSONArray contacts;
 
-    public void collectData(RadarDatabase_Interface db) {
+    public void collectData(CliqueDb_Interface db) {
         selfId = db.getSelfContact().getID();
     }
 

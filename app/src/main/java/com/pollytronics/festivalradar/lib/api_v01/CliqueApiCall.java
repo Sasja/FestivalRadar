@@ -2,7 +2,7 @@ package com.pollytronics.festivalradar.lib.api_v01;
 
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,12 +36,12 @@ import java.net.URL;
  * 4) is done throug doTheWork() methods
  *
  */
-abstract public class RadarApiCall {
+abstract public class CliqueApiCall {
     final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
-    private final String TAG = "RadarApiCall";
+    private final String TAG = "CliqueApiCall";
     //protected final String baseUrl = "http://192.168.0.5:8080/api/v1/";
 
-    public abstract void collectData(RadarDatabase_Interface db);
+    public abstract void collectData(CliqueDb_Interface db);
 
     public abstract String getHttpMethod();
     protected abstract String getApiQueryString();

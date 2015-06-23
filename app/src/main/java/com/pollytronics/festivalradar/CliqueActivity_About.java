@@ -4,18 +4,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.pollytronics.festivalradar.lib.RadarActivity;
+import com.pollytronics.festivalradar.lib.CliqueActivity;
 
 
-public class RadarActivity_About extends RadarActivity {
+public class CliqueActivity_About extends CliqueActivity {
 
     @SuppressWarnings("unused")
-    private static final String TAG = "RadarActivity_About";
+    private static final String TAG = "CliqueActivity_About";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.radaractivity_about);
+        setContentView(R.layout.cliqueactivity_about);
     }
 
 

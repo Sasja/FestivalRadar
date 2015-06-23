@@ -2,9 +2,9 @@ package com.pollytronics.festivalradar.lib.api_v01;
 
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
-import com.pollytronics.festivalradar.lib.base.RadarBlip;
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.base.Blip;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
+import com.pollytronics.festivalradar.lib.base.Contact;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +12,7 @@ import org.json.JSONObject;
 /**
  * Created by pollywog on 6/3/15.
  */
-public class ApiCallSetMyBlip extends RadarApiCall {
+public class ApiCallSetMyBlip extends CliqueApiCall {
     private final String TAG = "ApiCallSetMyBlip";
     @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "blips";
@@ -20,11 +20,11 @@ public class ApiCallSetMyBlip extends RadarApiCall {
     private long selfId = 0;
 
     @Override
-    public void collectData(RadarDatabase_Interface db){
+    public void collectData(CliqueDb_Interface db){
         Log.i(TAG, "collecting data for APICallSetMyBlip");
-        RadarContact selfContact = db.getSelfContact();
+        Contact selfContact = db.getSelfContact();
         selfId = selfContact.getID();
-        RadarBlip selfBlip = selfContact.getLastBlip();
+        Blip selfBlip = selfContact.getLastBlip();
         try {
             selfBlipJSON.put("lat", selfBlip.getLatitude());
             selfBlipJSON.put("lon", selfBlip.getLongitude());

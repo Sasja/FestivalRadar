@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.base.RadarBlip;
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.base.Blip;
+import com.pollytronics.festivalradar.lib.base.Contact;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,31 +18,31 @@ import java.util.Random;
 /**
  * Created by pollywog on 9/22/14.
  *
- * A class that implements the RadarDatabase_Interface using a SQLite database on the mobile device
+ * A class that implements the CliqueDb_Interface using a SQLite database on the mobile device
  * This class should only be used directly for instantiation with getInstance(), use the interface for all other uses.
  * the static (Class) method getInstance will return the available instance or create it when necessary.
  *
  * TODO: onUpgrade() and onDowngrade just discards all data at the moment
- * TODO: make method updateContacts(Collection<RadarContact> contacts) and use it from within SubService_Cloud_2
+ * TODO: make method updateContacts(Collection<Contact> contacts) and use it from within SubService_Cloud_2
  * TODO: check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
  * TODO: is it okay to do all this database stuff sync?
  */
-public class RadarDatabase_SQLite implements RadarDatabase_Interface {
+public class CliqueDb_SQLite implements CliqueDb_Interface {
 
     public static final String DATABASE_NAME = "Clique.db";
     public static final int DATABASE_VERSION = 1;   // increasing this give everyone a new random 4 digit id and discard contacts
-    private static final String TAG="RadarDatabase_SQLite";
-    private static RadarDatabase_SQLite instance=null;
-    private final RadarDbHelper radarDbHelper;  // can be final as it is only assigned in the constructor, that is allowed apparently
+    private static final String TAG="CliqueDb_SQLite";
+    private static CliqueDb_SQLite instance=null;
+    private final CliqueDbHelper cliqueDbHelper;  // can be final as it is only assigned in the constructor, that is allowed apparently
 
-    private RadarDatabase_SQLite(Context context){
-        radarDbHelper = new RadarDbHelper(context);
-        Log.i(TAG,"initialised radarDbHelper");
+    private CliqueDb_SQLite(Context context){
+        cliqueDbHelper = new CliqueDbHelper(context);
+        Log.i(TAG,"initialised cliqueDbHelper");
     }
 
-    public static RadarDatabase_SQLite getInstance(Context context){
+    public static CliqueDb_SQLite getInstance(Context context){
         if(instance==null){
-            instance = new RadarDatabase_SQLite(context);
+            instance = new CliqueDb_SQLite(context);
         }
         return instance;
     }
@@ -51,9 +51,9 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
      * return an Collection of all strored contacts
      */
     @Override
-    public Collection<RadarContact> getAllContacts() {
-        Collection<RadarContact> contacts = new HashSet<>();
-        SQLiteDatabase db = radarDbHelper.getReadableDatabase();
+    public Collection<Contact> getAllContacts() {
+        Collection<Contact> contacts = new HashSet<>();
+        SQLiteDatabase db = cliqueDbHelper.getReadableDatabase();
         String[] projection = {
                 ContactEntry.COLUMN_NAME_GLOBAL_ID,
                 ContactEntry.COLUMN_NAME_NAME,
@@ -76,11 +76,11 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
             double lastLat = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LAT));
             double lastLon = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LON));
             long lastTime = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_TIME));
-            RadarBlip blip = new RadarBlip();
+            Blip blip = new Blip();
             blip.setLatitude(lastLat);
             blip.setLongitude(lastLon);
             blip.setTime(lastTime);
-            RadarContact aContact = new RadarContact().setID(id).setName(name).addBlip(blip);
+            Contact aContact = new Contact().setID(id).setName(name).addBlip(blip);
             contacts.add(aContact);
         }
         c.close();
@@ -91,7 +91,7 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
     @Override
     public Collection<Long> getAllContactIds() {
         Collection<Long> contactIds = new HashSet<>();
-        SQLiteDatabase db = radarDbHelper.getReadableDatabase();
+        SQLiteDatabase db = cliqueDbHelper.getReadableDatabase();
         String[] projection = {
                 ContactEntry.COLUMN_NAME_GLOBAL_ID,
         };
@@ -114,9 +114,9 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
     //-------------------------------
 
     @Override
-    public RadarContact getContact(Long id) {
-        RadarContact contact;
-        SQLiteDatabase db = radarDbHelper.getReadableDatabase();
+    public Contact getContact(Long id) {
+        Contact contact;
+        SQLiteDatabase db = cliqueDbHelper.getReadableDatabase();
         String[] projection = {
                 ContactEntry.COLUMN_NAME_GLOBAL_ID,
                 ContactEntry.COLUMN_NAME_NAME,
@@ -136,11 +136,11 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
             double lastLat = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LAT));
             double lastLon = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LON));
             long lastTime = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_TIME));
-            RadarBlip blip = new RadarBlip();
+            Blip blip = new Blip();
             blip.setLatitude(lastLat);
             blip.setLongitude(lastLon);
             blip.setTime(lastTime);
-            contact = new RadarContact().setID(id).setName(name).addBlip(blip);
+            contact = new Contact().setID(id).setName(name).addBlip(blip);
         } else {
             contact = null;
         }
@@ -150,7 +150,7 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
     }
 
     @Override
-    public void removeContact(RadarContact contact) {
+    public void removeContact(Contact contact) {
         if(contact.getName() != ContactEntry.SELF_CONTACT_NAME_VALUE) {
             removeContactById(contact.getID());
         } else Log.i(TAG, "DO NOT USE THIS METHOD FOR THE SELF_CONTACT");
@@ -158,7 +158,7 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
 
     @Override
     public void removeContactById(long id) {
-        SQLiteDatabase db = radarDbHelper.getWritableDatabase();
+        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
         String selection = ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + Long.toString(id);
         int n = db.delete(ContactEntry.TABLE_NAME, selection, null);
         Log.i(TAG, "removed " + Integer.toString(n) + " contacts from database");
@@ -166,9 +166,9 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
     }
 
     @Override
-    public void updateContact(RadarContact contact) {               //TODO: this updates one contact at a time, should not be used over all contacts
+    public void updateContact(Contact contact) {               //TODO: this updates one contact at a time, should not be used over all contacts
         if(contact.getName() != ContactEntry.SELF_CONTACT_NAME_VALUE) {
-            SQLiteDatabase db = radarDbHelper.getWritableDatabase();
+            SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(ContactEntry.COLUMN_NAME_NAME, contact.getName());
             values.put(ContactEntry.COLUMN_NAME_LAST_LAT, contact.getLastBlip().getLatitude());
@@ -186,9 +186,9 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
     }
 
     @Override
-    public void addContact(RadarContact contact) {
+    public void addContact(Contact contact) {
         if(contact.getName() != ContactEntry.SELF_CONTACT_NAME_VALUE) {
-            SQLiteDatabase db = radarDbHelper.getWritableDatabase();
+            SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, contact.getID());
             values.put(ContactEntry.COLUMN_NAME_NAME, contact.getName());
@@ -203,9 +203,9 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
     }
 
     @Override
-    public RadarContact getSelfContact() {
-        RadarContact selfContact = new RadarContact();
-        SQLiteDatabase db = radarDbHelper.getReadableDatabase();
+    public Contact getSelfContact() {
+        Contact selfContact = new Contact();
+        SQLiteDatabase db = cliqueDbHelper.getReadableDatabase();
         String[] projection = {
                 ContactEntry.COLUMN_NAME_GLOBAL_ID,
                 ContactEntry.COLUMN_NAME_NAME,
@@ -227,7 +227,7 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
             double lastLat = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LAT));
             double lastLon = c.getDouble(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_LON));
             long lastTime = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_LAST_TIME));
-            RadarBlip blip = new RadarBlip();
+            Blip blip = new Blip();
             blip.setLatitude(lastLat);
             blip.setLongitude(lastLon);
             blip.setTime(lastTime);
@@ -243,8 +243,8 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
     }
 
     @Override
-    public void updateSelfContact(RadarContact newSelfContact) {
-        SQLiteDatabase db = radarDbHelper.getWritableDatabase();
+    public void updateSelfContact(Contact newSelfContact) {
+        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, newSelfContact.getID());
         values.put(ContactEntry.COLUMN_NAME_NAME, ContactEntry.SELF_CONTACT_NAME_VALUE);
@@ -277,8 +277,8 @@ public class RadarDatabase_SQLite implements RadarDatabase_Interface {
         public static final String SELF_CONTACT_NAME_VALUE="SELF_CONTACT";
     }
 
-    private class RadarDbHelper extends SQLiteOpenHelper{
-        public RadarDbHelper(Context context) {
+    private class CliqueDbHelper extends SQLiteOpenHelper{
+        public CliqueDbHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 

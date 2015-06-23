@@ -1,8 +1,8 @@
 package com.pollytronics.festivalradar.lib.api_v01;
 
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
-import com.pollytronics.festivalradar.lib.base.RadarBlip;
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.base.Blip;
+import com.pollytronics.festivalradar.lib.base.Contact;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,7 +11,7 @@ import org.json.JSONObject;
 /**
  * Created by pollywog on 6/3/15.
  */
-public class ApiCallGetBlips extends RadarApiCall {
+public class ApiCallGetBlips extends CliqueApiCall {
     @SuppressWarnings("unused")
     protected final String TAG = "ApiCallGetBlips";
     @SuppressWarnings("FieldCanBeLocal")
@@ -19,7 +19,7 @@ public class ApiCallGetBlips extends RadarApiCall {
     private JSONArray blips;
     private long selfId = 0;
 
-    public void collectData(RadarDatabase_Interface db) {
+    public void collectData(CliqueDb_Interface db) {
         selfId = db.getSelfContact().getID();
     }
 
@@ -42,12 +42,12 @@ public class ApiCallGetBlips extends RadarApiCall {
         }
     }
 
-    public void doTheWork(RadarDatabase_Interface db) {
+    public void doTheWork(CliqueDb_Interface db) {
         JSONObject blipJSON;
         Long id, time;
         double lat, lon;
-        RadarBlip blip = new RadarBlip();
-        RadarContact contact;
+        Blip blip = new Blip();
+        Contact contact;
         for (int i = 0; i < blips.length(); i++) {
             try {
                 blipJSON = blips.getJSONObject(i);

@@ -12,41 +12,41 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.pollytronics.festivalradar.CliqueActivity_About;
+import com.pollytronics.festivalradar.CliqueActivity_Debug;
 import com.pollytronics.festivalradar.R;
-import com.pollytronics.festivalradar.RadarActivity_About;
-import com.pollytronics.festivalradar.RadarActivity_Debug;
-import com.pollytronics.festivalradar.RadarActivity_Settings;
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_SQLite;
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
-import com.pollytronics.festivalradar.lib.preferences.RadarPreferences;
-import com.pollytronics.festivalradar.lib.service.RadarService;
+import com.pollytronics.festivalradar.CliqueActivity_Settings;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_SQLite;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
+import com.pollytronics.festivalradar.lib.preferences.CliquePreferences;
+import com.pollytronics.festivalradar.lib.service.CliqueService;
 import com.pollytronics.festivalradar.MVP_Activity_Contacts;
 import com.pollytronics.festivalradar.MVP_Activity_Groups;
-import com.pollytronics.festivalradar.lib.service.RadarService_interface4RadarActivity;
+import com.pollytronics.festivalradar.lib.service.CliqueService_interface4CliqueActivity;
 
 /**
  * Base class for all Activities
- * This class is only responsible for managing the connection to the RadarService
+ * This class is only responsible for managing the connection to the CliqueService
  * TODO: can i use a more funky Theme such as Holo.Light.DarkActionBar with AppCompatActivity??
  */
-public abstract class RadarActivity extends AppCompatActivity implements RadarActivity_Interface4RadarService {
+public abstract class CliqueActivity extends AppCompatActivity implements CliqueActivity_Interface4CliqueService {
 
-    private static final String TAG = "RadarActivity";
-    private RadarService rs;        //needs access to more methods than just the interface, for handshaking,
-    private RadarDatabase_Interface db;
+    private static final String TAG = "CliqueActivity";
+    private CliqueService rs;        //needs access to more methods than just the interface, for handshaking,
+    private CliqueDb_Interface db;
     private boolean rsBound = false;
     private ServiceConnection rsConn;
 
     /**
-     * get instance of running service, it only returns the interface meant for activities to prevent RadarActivity subclasses to call
+     * get instance of running service, it only returns the interface meant for activities to prevent CliqueActivity subclasses to call
      * methods for ie SubServices and such
-     * @return interface to instance of RadarService, if no bound service is running, it will return a spoof interface to nothing
+     * @return interface to instance of CliqueService, if no bound service is running, it will return a spoof interface to nothing
      */
-    protected RadarService_interface4RadarActivity getBoundRadarService() {
+    protected CliqueService_interface4CliqueActivity getBoundRadarService() {
         if(rsBound){
             return rs;
         } else {
-            return new RadarService_interface4RadarActivity() {
+            return new CliqueService_interface4CliqueActivity() {
                 @Override
                 public void notifyNewSettings() {
                     Log.i(TAG, "called notifyNewSettings() while not connected to service");
@@ -55,33 +55,33 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
         }
     }
 
-    public RadarDatabase_Interface getRadarDatabase() {
+    public CliqueDb_Interface getRadarDatabase() {
         return db;
     }
 
-    protected RadarPreferences getRadarPreferences() {
-        return RadarPreferences.getInstance(getApplicationContext());
+    protected CliquePreferences getRadarPreferences() {
+        return CliquePreferences.getInstance(getApplicationContext());
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = RadarDatabase_SQLite.getInstance(this);
+        db = CliqueDb_SQLite.getInstance(this);
     }
 
     /**
-     * start RadarService if it is not started yet and bind to it
+     * start CliqueService if it is not started yet and bind to it
      * (activity will be registered at service in onServiceConnected callback)
      */
     protected void startAndBindRadarService(){
-        if(!isMyServiceRunning(RadarService.class)){
+        if(!isMyServiceRunning(CliqueService.class)){
             Log.i(TAG,"starting the service");
-            startService(new Intent(RadarActivity.this, RadarService.class));
+            startService(new Intent(CliqueActivity.this, CliqueService.class));
         } else {
             Log.i(TAG,"service was found running, let's bind and register anyhow");
         }
         Log.i(TAG, "binding to radarservice now");
-        bindService(new Intent(RadarActivity.this, RadarService.class), rsConn, 0);
+        bindService(new Intent(CliqueActivity.this, CliqueService.class), rsConn, 0);
     }
 
     /**
@@ -90,9 +90,9 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
      */
     private void bindIfRunningRadarService(){
         Log.i(TAG,"bind if service is running");
-        if(isMyServiceRunning(RadarService.class)){
+        if(isMyServiceRunning(CliqueService.class)){
             Log.i(TAG,"yup found it running, lets bind to it");
-            bindService(new Intent(RadarActivity.this, RadarService.class), rsConn, 0);
+            bindService(new Intent(CliqueActivity.this, CliqueService.class), rsConn, 0);
         } else {
             Log.i(TAG, "seems its not running");
         }
@@ -104,7 +104,7 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
     private void unBindRadarService(){
         if (rsBound) {
             Log.i(TAG,"calling unregisterActivity() and unBindService()");
-            rs.unregisterActivity(RadarActivity.this);
+            rs.unregisterActivity(CliqueActivity.this);
             rsBound = false;
             unbindService(rsConn);
         }
@@ -115,9 +115,9 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
      */
     protected void unbindAndStopRadarService(){
         unBindRadarService();
-        if(isMyServiceRunning(RadarService.class)) {
+        if(isMyServiceRunning(CliqueService.class)) {
             Log.i(TAG, "service found running, calling stopservice");
-            stopService(new Intent(RadarActivity.this, RadarService.class));
+            stopService(new Intent(CliqueActivity.this, CliqueService.class));
         } else {
             Log.i(TAG, "no running service found...");
         }
@@ -125,7 +125,7 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
 
     /**
      * connects to service if it is running
-     * sets up callbacks to retrieve RadarService instance and register activity at Service on onServiceConnected
+     * sets up callbacks to retrieve CliqueService instance and register activity at Service on onServiceConnected
      * manages rsBound variable accordingly
      */
     @Override
@@ -133,20 +133,20 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
         rsConn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                Log.i(TAG,"onServiceConnected, getting RadarService object now");
-                RadarService.RadarBinder radarBinder = (RadarService.RadarBinder) iBinder;
-                rs = radarBinder.getRadarService();
+                Log.i(TAG,"onServiceConnected, getting CliqueService object now");
+                CliqueService.CliqueBinder cliqueBinder = (CliqueService.CliqueBinder) iBinder;
+                rs = cliqueBinder.getRadarService();
                 Log.i(TAG, "now registering Activity at Service");
-                rs.registerActivity(RadarActivity.this);
+                rs.registerActivity(CliqueActivity.this);
                 rsBound = true;
-                RadarActivity.this.onRadarServiceConnected();
+                CliqueActivity.this.onRadarServiceConnected();
             }
 
             @Override
             public void onServiceDisconnected(ComponentName componentName) {
                 Log.i(TAG, "onServiceDisconnected");
                 rsBound = false;
-                RadarActivity.this.onRadarServiceDisconnected();
+                CliqueActivity.this.onRadarServiceDisconnected();
             }
         };
         bindIfRunningRadarService();
@@ -181,7 +181,7 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.radaractivity_base, menu);
+        getMenuInflater().inflate(R.menu.cliqueactivity_base, menu);
         return true;
     }
 
@@ -195,16 +195,16 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this, RadarActivity_Settings.class));
+            startActivity(new Intent(this, CliqueActivity_Settings.class));
             return true;
         } else if (id == R.id.action_about){
-            startActivity(new Intent(this, RadarActivity_About.class));
+            startActivity(new Intent(this, CliqueActivity_About.class));
             return true;
         } else if (id == R.id.action_contacts) {
             startActivity(new Intent(this, MVP_Activity_Contacts.class));
             return true;
         } else if (id == R.id.action_debug) {
-            startActivity(new Intent(this, RadarActivity_Debug.class));
+            startActivity(new Intent(this, CliqueActivity_Debug.class));
             return true;
         } else if (id == R.id.action_groups) {
             startActivity(new Intent(this, MVP_Activity_Groups.class));

@@ -2,10 +2,10 @@ package com.pollytronics.festivalradar;
 
 import android.view.Menu;
 
-import com.pollytronics.festivalradar.lib.RadarActivity_MyViewPagerAct;
+import com.pollytronics.festivalradar.lib.CliqueActivity_MyViewPagerAct;
 
 
-public class MVP_Activity_Groups extends RadarActivity_MyViewPagerAct {
+public class MVP_Activity_Groups extends CliqueActivity_MyViewPagerAct {
 
     @SuppressWarnings("unused")
     private static final String TAG = "ViewPagerAct_Groups";

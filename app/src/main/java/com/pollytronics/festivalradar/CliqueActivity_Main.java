@@ -12,9 +12,9 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
-import com.pollytronics.festivalradar.lib.RadarActivity;
-import com.pollytronics.festivalradar.lib.base.RadarBlip;
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.CliqueActivity;
+import com.pollytronics.festivalradar.lib.base.Blip;
+import com.pollytronics.festivalradar.lib.base.Contact;
 import com.pollytronics.festivalradar.lib.gui_elements.RadarView;
 
 import java.util.Collection;
@@ -26,9 +26,9 @@ import java.util.Collection;
  * TODO: make the calculated bearing sensible when holding the phone upright or tilted looking from below or display a warning to prevent confusion
  * TODO: replace the dummy seekbar for zooming with some pinching action
  */
-public class RadarActivity_Main extends RadarActivity implements SensorEventListener {
+public class CliqueActivity_Main extends CliqueActivity implements SensorEventListener {
 
-    private static final String TAG = "RadarActivity_Main";
+    private static final String TAG = "CliqueActivity_Main";
     private Switch toggleService;
     private RadarView radarView;
     private SeekBar zoomSeekBar;
@@ -38,7 +38,7 @@ public class RadarActivity_Main extends RadarActivity implements SensorEventList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.radaractivity_main);
+        setContentView(R.layout.cliqueactivity_main);
         getSupportActionBar().setDisplayShowTitleEnabled(false);        //TODO: try not to do these things dynamically but in xml
 
         toggleService = (Switch) findViewById(R.id.toggle_service);
@@ -46,10 +46,10 @@ public class RadarActivity_Main extends RadarActivity implements SensorEventList
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (toggleService.isChecked()) {
-                    Log.i(TAG, "RadarService button enabled");
+                    Log.i(TAG, "CliqueService button enabled");
                     startAndBindRadarService();
                 } else {
-                    Log.i(TAG, "RadarService button disabled");
+                    Log.i(TAG, "CliqueService button disabled");
                     unbindAndStopRadarService();
                 }
             }
@@ -95,7 +95,7 @@ public class RadarActivity_Main extends RadarActivity implements SensorEventList
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);        //add this to the generated code to include the 'global' option items described in RadarActivity
+        super.onCreateOptionsMenu(menu);        //add this to the generated code to include the 'global' option items described in CliqueActivity
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -112,11 +112,11 @@ public class RadarActivity_Main extends RadarActivity implements SensorEventList
     }
 
     private void feedDataToRadarView(){
-        RadarBlip centerLocation = getRadarDatabase().getSelfContact().getLastBlip();
+        Blip centerLocation = getRadarDatabase().getSelfContact().getLastBlip();
         radarView.setCenterLocation(centerLocation);
         radarView.removeAllContacts();
-        Collection<RadarContact> contacts = getRadarDatabase().getAllContacts();
-        for(RadarContact c:contacts){
+        Collection<Contact> contacts = getRadarDatabase().getAllContacts();
+        for(Contact c:contacts){
             radarView.addContact(c);
         }
         radarView.invalidate();

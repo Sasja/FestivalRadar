@@ -3,17 +3,17 @@ package com.pollytronics.festivalradar.lib.service;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
-import com.pollytronics.festivalradar.lib.preferences.RadarPreferences;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
+import com.pollytronics.festivalradar.lib.preferences.CliquePreferences;
 
 /**
  * Created by pollywog on 9/20/14.
- * abstract class for helper classes for the RadarService class
- * rs refers to the RadarService instance containing this and all other helper instances,
+ * abstract class for helper classes for the CliqueService class
+ * rs refers to the CliqueService instance containing this and all other helper instances,
  * it provides appropriate interfaces through
  *
  * getRadarService()
- * getRadarDatabase()
+ * getCligueDb()
  * getRadarPreferences()
  *
  * and it provides a Handler to post tasks on the main thread through
@@ -27,21 +27,21 @@ public abstract class SubService {
     @SuppressWarnings("unused")
     private final String TAG = "override this SubService TAG";
 
-    private final RadarService rs;
+    private final CliqueService rs;
     /**
      * this gets a handler for the main thread, use it to post Runnables to the main thread
      */
     private final Handler handler = new Handler(Looper.getMainLooper());
 
-    protected SubService(RadarService rs){
+    protected SubService(CliqueService rs){
         this.rs = rs;
     }
 
-    protected RadarService_Interface4SubService getRadarService() { return rs; }
+    protected CliqueService_Interface4SubService getRadarService() { return rs; }
 
-    protected RadarDatabase_Interface getRadarDatabase() { return rs.getRadarDataBase(); }
+    protected CliqueDb_Interface getRadarDatabase() { return rs.getRadarDataBase(); }
 
-    protected RadarPreferences getRadarPreferences() {return RadarPreferences.getInstance(rs.getApplicationContext());}
+    protected CliquePreferences getRadarPreferences() {return CliquePreferences.getInstance(rs.getApplicationContext());}
 
     protected Handler getMainHandler(){
         return handler;

@@ -10,38 +10,38 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.pollytronics.festivalradar.R;
-import com.pollytronics.festivalradar.RadarActivity_Main;
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_SQLite;
-import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.CliqueActivity_Main;
+import com.pollytronics.festivalradar.lib.CliqueActivity_Interface4CliqueService;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_Interface;
+import com.pollytronics.festivalradar.lib.database.CliqueDb_SQLite;
 import com.pollytronics.festivalradar.SubService_Cloud_2;
 import com.pollytronics.festivalradar.SubService_Localisation;
-import com.pollytronics.festivalradar.lib.RadarActivity_Interface4RadarService;
 
 /**
- * The RadarService class manages the connection to RadarActivity and derived classes
+ * The CliqueService class manages the connection to CliqueActivity and derived classes
  * it creates a few helper classes derived from the SubService class to implement its features and to delegate calls to
  * This class forms a layer between SubService classes and RadarActivities:
  *      - This class delegates calls from activities to the right helper classes (SubServices)
  *      - This class provide methods to the SubServices to reach the Activities.
  */
-public class RadarService extends Service implements RadarService_Interface4SubService, RadarService_interface4RadarActivity {
+public class CliqueService extends Service implements CliqueService_Interface4SubService, CliqueService_interface4CliqueActivity {
 
-    private final static String TAG = "RadarService";
-    private final RadarBinder radarBinder = new RadarBinder();
+    private final static String TAG = "CliqueService";
+    private final CliqueBinder cliqueBinder = new CliqueBinder();
     private final SubService_Localisation subServiceLocalisation = new SubService_Localisation(this);
     private final SubService_Cloud_2 subServiceCloud = new SubService_Cloud_2(this);
-    private RadarActivity_Interface4RadarService ra;
-    private RadarDatabase_Interface db;
+    private CliqueActivity_Interface4CliqueService ra;
+    private CliqueDb_Interface db;
     private Boolean raRegistered = false;
 
     /*
     create an instance of each helper class here, and add calls in onCreate, onDestroy, onRegister and onUnregister
      */
 
-    public RadarService() {
+    public CliqueService() {
     }
 
-    public RadarDatabase_Interface getRadarDataBase(){
+    public CliqueDb_Interface getRadarDataBase(){
         return db;
     }
 
@@ -50,7 +50,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      */
     @Override
     public void onCreate() {
-        db = RadarDatabase_SQLite.getInstance(this);
+        db = CliqueDb_SQLite.getInstance(this);
         Log.i(TAG, "onCreate, initialising sub services");
         subServiceLocalisation.onCreate();
         subServiceCloud.onCreate();
@@ -92,12 +92,12 @@ public class RadarService extends Service implements RadarService_Interface4SubS
 
     /**
      * gets called each time when an activity calls startService
-     * launches a sticky notification pointing back to RadarActivity_Main
+     * launches a sticky notification pointing back to CliqueActivity_Main
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand");
-        Intent notificationIntent = new Intent(this, RadarActivity_Main.class);
+        Intent notificationIntent = new Intent(this, CliqueActivity_Main.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.clique_bw)
@@ -110,19 +110,19 @@ public class RadarService extends Service implements RadarService_Interface4SubS
 
     /**
      * gets called when activity wants to bind, it sends the binder back
-     * @return throwaway instance of RadarBinder class
+     * @return throwaway instance of CliqueBinder class
      */
     @Override
     public IBinder onBind(Intent intent) {
-        return radarBinder;
+        return cliqueBinder;
     }
 
     /**
-     * gets called from RadarActivity to pass and save its instance in the RadarService
+     * gets called from CliqueActivity to pass and save its instance in the CliqueService
      * will only remember the last calling activity
      * it will call onRegister methods on SubServices
      */
-    public void registerActivity(RadarActivity_Interface4RadarService ra){
+    public void registerActivity(CliqueActivity_Interface4CliqueService ra){
         Log.i(TAG,"registering activity");
         this.ra = ra;
         raRegistered = true;
@@ -130,12 +130,12 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     }
 
     /**
-     * gets called from RadarActivity
-     * forget a certain RadarActivity instance.
+     * gets called from CliqueActivity
+     * forget a certain CliqueActivity instance.
      * If the one calling doesn't match the current one, do nothing
      * will call onUnregister methods on SubServices
      */
-    public void unregisterActivity(RadarActivity_Interface4RadarService ra){
+    public void unregisterActivity(CliqueActivity_Interface4CliqueService ra){
         if (this.ra == ra) {
             Log.i(TAG,"unregistering activity");
             this.ra = null;
@@ -172,9 +172,9 @@ public class RadarService extends Service implements RadarService_Interface4SubS
     /**
      * throwaway class for activity and services getting each others instances
      */
-    public class RadarBinder extends Binder {
-        public RadarService getRadarService(){
-            return RadarService.this;
+    public class CliqueBinder extends Binder {
+        public CliqueService getRadarService(){
+            return CliqueService.this;
         }
     }
 

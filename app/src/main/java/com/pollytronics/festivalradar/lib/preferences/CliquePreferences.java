@@ -8,25 +8,25 @@ import android.preference.PreferenceManager;
  * Created by pollywog on 9/23/14.
  * TODO: something is very wrong here with the instance always being null, and getInstance always returning a new object...
  */
-public class RadarPreferences {
+public class CliquePreferences {
 
     @SuppressWarnings("unused")
-    static final String TAG = "RadarPreferences";
+    static final String TAG = "CliquePreferences";
     private static final String LOCALISATION_UPDATE_PCT = "localisationUpdateTime_percent";
     private static final String CLOUD_UPDATE_PCT = "cloudUpdateTime_percent";
     private static final int LOCALISATION_UPDATE_PCT_INIT = 75;
     private static final int CLOUD_UPDATE_PCT_INIT = 25;
     @SuppressWarnings("CanBeFinal")
-    private static RadarPreferences instance = null;
+    private static CliquePreferences instance = null;
     private final SharedPreferences preferences;
 
-    private RadarPreferences(Context context){
+    private CliquePreferences(Context context){
         preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
 
-    public static RadarPreferences getInstance(Context context) {
+    public static CliquePreferences getInstance(Context context) {
         if(instance==null) {
-            return new RadarPreferences(context);
+            return new CliquePreferences(context);
         } else {
             return instance;
         }

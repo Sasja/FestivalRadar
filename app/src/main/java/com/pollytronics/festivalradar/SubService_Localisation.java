@@ -9,9 +9,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.pollytronics.festivalradar.lib.service.RadarService;
-import com.pollytronics.festivalradar.lib.base.RadarBlip;
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.base.Contact;
+import com.pollytronics.festivalradar.lib.service.CliqueService;
+import com.pollytronics.festivalradar.lib.base.Blip;
 import com.pollytronics.festivalradar.lib.service.SubService;
 
 /**
@@ -19,7 +19,7 @@ import com.pollytronics.festivalradar.lib.service.SubService;
  * requests location updates from the google play services on creation
  * and pushes them to the database
  * TODO: figure out wether mGoogleApiClient can be null, ive seen a RunTimeExceptions seemingly caused by such a thing using an emulator AND my old tablet without google services
- * TODO: it says smth like unable to stop RadarService (IllegalStateException) GoogleApiClient is not connected yet
+ * TODO: it says smth like unable to stop CliqueService (IllegalStateException) GoogleApiClient is not connected yet
  * TODO: might want to notify the user to enable its own location. (later with maps, you could run the app without your own location in principle)
  */
 public class SubService_Localisation extends SubService implements
@@ -32,7 +32,7 @@ public class SubService_Localisation extends SubService implements
     private Location mLastLocation;
     private LocationRequest mLocationRequest;
 
-    public SubService_Localisation(RadarService rs) {
+    public SubService_Localisation(CliqueService rs) {
         super(rs);
     }
 
@@ -95,8 +95,8 @@ public class SubService_Localisation extends SubService implements
     //-------------------------------------------------
 
     private void addBlipFromLocation(Location location) {
-        RadarContact selfContact = getRadarDatabase().getSelfContact();
-        selfContact.addBlip(new RadarBlip(location));
+        Contact selfContact = getRadarDatabase().getSelfContact();
+        selfContact.addBlip(new Blip(location));
         getRadarDatabase().updateSelfContact(selfContact);
         getRadarService().notifyNewData();
     }

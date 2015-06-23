@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.base.Contact;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetPings;
 
 import java.io.IOException;
@@ -59,14 +59,14 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         return view;
     }
 
-    private void fillListViewFromList(ListView aListView, List<RadarContact> contacts) {
-        Log.i(TAG, "filling listView with radarcontacts retrieved from api");
-        RadarContactAdapter adapter = (RadarContactAdapter) aListView.getAdapter();
+    private void fillListViewFromList(ListView aListView, List<Contact> contacts) {
+        Log.i(TAG, "filling listView with cliquecontacts retrieved from api");
+        CliqueContactAdapter adapter = (CliqueContactAdapter) aListView.getAdapter();
         if (adapter == null) {
-            adapter = new RadarContactAdapter(getActivity(), contacts);
+            adapter = new CliqueContactAdapter(getActivity(), contacts);
         } else {
             adapter.clear();
-            for(RadarContact c: contacts) adapter.add(c);
+            for(Contact c: contacts) adapter.add(c);
         }
         aListView.setAdapter(adapter);
     }
@@ -79,7 +79,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
      *
      * 1) do the api call for POST ping
      * 2) wait a few seconds, then do the GET ping api call
-     * 2) update the listView through the RadarContactAdapter
+     * 2) update the listView through the CliqueContactAdapter
      *
      * TODO: do the post api call once it is really implemented and the waiting and whatnot
      *
@@ -91,7 +91,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering own user id");
-            getPings.collectData(getRadarDatabase());
+            getPings.collectData(getCligueDb());
         }
 
         @Override
@@ -119,18 +119,18 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
     }
 
     //TODO: kind of duplicate code here with mycontacts
-    private class RadarContactAdapter extends ArrayAdapter<RadarContact> {
+    private class CliqueContactAdapter extends ArrayAdapter<Contact> {
 
         private static final int layout_resource = R.layout.list_item_ping;
 
-        public RadarContactAdapter(Context context, List<RadarContact> objects) {
+        public CliqueContactAdapter(Context context, List<Contact> objects) {
             super(context, layout_resource, R.id.textview_contact_name,objects);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
-            final RadarContact contact = getItem(position);
+            final Contact contact = getItem(position);
             // TODO: further apply the values of contact to the view object
             Button connectButt = (Button) view.findViewById(R.id.button_ping_connect);
             connectButt.setOnClickListener(new View.OnClickListener() {

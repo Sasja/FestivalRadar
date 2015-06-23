@@ -185,7 +185,7 @@ public class RadarDatabase implements RadarDatabase_Interface {
     }
 
     @Override
-    public void addContactWithId(RadarContact contact) {
+    public void addContact(RadarContact contact) {
         if(contact.getName() != ContactEntry.SELF_CONTACT_NAME_VALUE) {
             SQLiteDatabase db = radarDbHelper.getWritableDatabase();
             ContentValues values = new ContentValues();

@@ -21,7 +21,7 @@ public interface RadarDatabase_Interface {
     @SuppressWarnings("unused")
     void updateContact(RadarContact contact);
 
-    void addContactWithId(RadarContact contact);
+    void addContact(RadarContact contact);
 
     RadarContact getSelfContact();
 

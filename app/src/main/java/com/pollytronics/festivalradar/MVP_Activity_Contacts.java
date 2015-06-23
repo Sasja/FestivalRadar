@@ -104,7 +104,7 @@ public class MVP_Activity_Contacts extends RadarActivity_MyViewPagerAct {
      */
     public void addNewContact(RadarContact contact) {
         Log.i(TAG, "adding contact locally");
-        getRadarDatabase().addContactWithId(contact);
+        getRadarDatabase().addContact(contact);
         notifyDatabaseUpdate();
         Log.i(TAG, "launching task to add contact remotely");
         new postNewContactTask(contact).execute();
@@ -314,7 +314,7 @@ public class MVP_Activity_Contacts extends RadarActivity_MyViewPagerAct {
                     }
                     String contactName = newContactNames.get(id);
                     RadarContact newContact = new RadarContact().setName(contactName).setID(id);
-                    getRadarDatabase().addContactWithId(newContact);
+                    getRadarDatabase().addContact(newContact);
                 }
                 for (long id : toDeleteFromCon) {
                     Log.i(TAG, "deleting contact from local list (triggered by remote delete): " + id);

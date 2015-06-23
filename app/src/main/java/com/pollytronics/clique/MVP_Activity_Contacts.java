@@ -104,7 +104,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
      */
     public void addNewContact(Contact contact) {
         Log.i(TAG, "adding contact locally");
-        getRadarDatabase().addContact(contact);
+        getCliqueDatabase().addContact(contact);
         notifyDatabaseUpdate();
         Log.i(TAG, "launching task to add contact remotely");
         new postNewContactTask(contact).execute();
@@ -122,7 +122,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()){
             final ApiCallDeleteContact deleteContact = new ApiCallDeleteContact();
-            deleteContact.collectData(getRadarDatabase());
+            deleteContact.collectData(getCliqueDatabase());
             deleteContact.setContactId(selectedContact.getID());
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -137,7 +137,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             Log.i(TAG, "posting a delete request to api for contact id: " + selectedContact.getID());
             thread.start();
             Log.i(TAG, "deleting selected radar contact (id=" + selectedContact.getID() + ")");
-            getRadarDatabase().removeContact(selectedContact);
+            getCliqueDatabase().removeContact(selectedContact);
             Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contact_removed), Toast.LENGTH_SHORT);
             toast.show();
             notifyDatabaseUpdate();         // TODO: this shouldn't be called here but happen autamatically
@@ -183,7 +183,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering own use id");
-            postContact.collectData(getRadarDatabase());
+            postContact.collectData(getCliqueDatabase());
             postContact.setContactId(contact.getID());
         }
 
@@ -248,11 +248,11 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         @Override
         protected void onPreExecute() {
             // get selfId (into ApiCall objects)
-            apiCallPostContact.collectData(getRadarDatabase());
-            apiCallGetContactsSeeme.collectData(getRadarDatabase());
-            apiCallGetContactsISee.collectData(getRadarDatabase());
+            apiCallPostContact.collectData(getCliqueDatabase());
+            apiCallGetContactsSeeme.collectData(getCliqueDatabase());
+            apiCallGetContactsISee.collectData(getCliqueDatabase());
             // construct list of ids in local contacts
-            for (Contact c : getRadarDatabase().getAllContacts()) {
+            for (Contact c : getCliqueDatabase().getAllContacts()) {
                 con.add(c.getID());
             }
         }
@@ -314,11 +314,11 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                     }
                     String contactName = newContactNames.get(id);
                     Contact newContact = new Contact().setName(contactName).setID(id);
-                    getRadarDatabase().addContact(newContact);
+                    getCliqueDatabase().addContact(newContact);
                 }
                 for (long id : toDeleteFromCon) {
                     Log.i(TAG, "deleting contact from local list (triggered by remote delete): " + id);
-                    getRadarDatabase().removeContactById(id);
+                    getCliqueDatabase().removeContactById(id);
                 }
                 notifyDatabaseUpdate();             // TODO: not sure this needs to be called
                 Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contacts_synced), Toast.LENGTH_SHORT);

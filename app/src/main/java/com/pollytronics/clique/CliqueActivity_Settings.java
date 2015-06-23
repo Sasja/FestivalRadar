@@ -41,9 +41,9 @@ public class CliqueActivity_Settings extends CliqueActivity {
         setContentView(R.layout.cliqueactivity_settings);
 
         SeekBar localisationSeekBar = (SeekBar) findViewById(R.id.seekbar_localisation_update_rate);
-        localisationSeekBar.setProgress(getRadarPreferences().getLocalisationUpdateTime_percent());
+        localisationSeekBar.setProgress(getCliquePreferences().getLocalisationUpdateTime_percent());
         SeekBar cloudSeekBar = (SeekBar) findViewById(R.id.seekbar_cloud_update_rate);
-        cloudSeekBar.setProgress(getRadarPreferences().getCloudUpdateTime_percent());
+        cloudSeekBar.setProgress(getCliquePreferences().getCloudUpdateTime_percent());
         setIdEditText = (EditText) findViewById(R.id.edittext_setid);
         Button setIdButton = (Button) findViewById(R.id.button_setid);
         Button setNameButton = (Button) findViewById(R.id.button_setname);
@@ -62,9 +62,9 @@ public class CliqueActivity_Settings extends CliqueActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                getRadarPreferences().setLocalisationUpdateRate_percent(seekBar.getProgress());
+                getCliquePreferences().setLocalisationUpdateRate_percent(seekBar.getProgress());
                 Log.i(TAG, "setting Localisation update rate to " + Integer.toString(seekBar.getProgress()));
-                getBoundRadarService().notifyNewSettings();
+                getBoundCliqueService().notifyNewSettings();
             }
         });
 
@@ -81,13 +81,13 @@ public class CliqueActivity_Settings extends CliqueActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                getRadarPreferences().setCloudUpdateRate_percent(seekBar.getProgress());
+                getCliquePreferences().setCloudUpdateRate_percent(seekBar.getProgress());
                 Log.i(TAG, "setting Cloud update rate to " + Integer.toString(seekBar.getProgress()));
-                getBoundRadarService().notifyNewSettings();
+                getBoundCliqueService().notifyNewSettings();
             }
         });
 
-        setIdEditText.setHint(Long.toString(getRadarDatabase().getSelfContact().getID()));
+        setIdEditText.setHint(Long.toString(getCliqueDatabase().getSelfContact().getID()));
 
         setIdButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,9 +99,9 @@ public class CliqueActivity_Settings extends CliqueActivity {
                     Log.i(TAG, "thats not a number, cant set this ID");
                     return;
                 }
-                Contact selfContact = getRadarDatabase().getSelfContact();
+                Contact selfContact = getCliqueDatabase().getSelfContact();
                 selfContact.setID(id);
-                getRadarDatabase().updateSelfContact(selfContact);
+                getCliqueDatabase().updateSelfContact(selfContact);
             }
         });
 
@@ -148,7 +148,7 @@ public class CliqueActivity_Settings extends CliqueActivity {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering selfId");
-            postProfile.collectData(getRadarDatabase());
+            postProfile.collectData(getCliqueDatabase());
         }
 
         @Override
@@ -183,7 +183,7 @@ public class CliqueActivity_Settings extends CliqueActivity {
         private boolean apiCallSucceeded = false;
 
         @Override
-        protected void onPreExecute() { getProfile.setRequestedId(getRadarDatabase().getSelfContact().getID()); }
+        protected void onPreExecute() { getProfile.setRequestedId(getCliqueDatabase().getSelfContact().getID()); }
 
         @Override
         protected String doInBackground(Void... params) {

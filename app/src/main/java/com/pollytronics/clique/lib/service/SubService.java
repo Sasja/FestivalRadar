@@ -12,9 +12,9 @@ import com.pollytronics.clique.lib.preferences.CliquePreferences;
  * rs refers to the CliqueService instance containing this and all other helper instances,
  * it provides appropriate interfaces through
  *
- * getRadarService()
+ * getCliqueService()
  * getCligueDb()
- * getRadarPreferences()
+ * getCliquePreferences()
  *
  * and it provides a Handler to post tasks on the main thread through
  *

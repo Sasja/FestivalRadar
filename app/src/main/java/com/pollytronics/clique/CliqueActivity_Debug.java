@@ -60,13 +60,13 @@ public class CliqueActivity_Debug extends CliqueActivity {
     }
 
     @Override
-    protected void onRadarServiceDisconnected() {
-        super.onRadarServiceDisconnected();
+    protected void onCliqueServiceDisconnected() {
+        super.onCliqueServiceDisconnected();
     }
 
     @Override
-    protected void onRadarServiceConnected() {
-        super.onRadarServiceConnected();
+    protected void onCliqueServiceConnected() {
+        super.onCliqueServiceConnected();
     }
 
     private ArrayList<String> getLogCat() {

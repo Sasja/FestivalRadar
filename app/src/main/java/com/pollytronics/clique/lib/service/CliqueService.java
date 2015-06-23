@@ -173,7 +173,7 @@ public class CliqueService extends Service implements CliqueService_Interface4Su
      * throwaway class for activity and services getting each others instances
      */
     public class CliqueBinder extends Binder {
-        public CliqueService getRadarService(){
+        public CliqueService getCliqueService(){
             return CliqueService.this;
         }
     }

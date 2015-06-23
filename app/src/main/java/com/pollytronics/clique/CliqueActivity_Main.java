@@ -47,10 +47,10 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (toggleService.isChecked()) {
                     Log.i(TAG, "CliqueService button enabled");
-                    startAndBindRadarService();
+                    startAndBindCliqueService();
                 } else {
                     Log.i(TAG, "CliqueService button disabled");
-                    unbindAndStopRadarService();
+                    unbindAndStopCliqueService();
                 }
             }
         });
@@ -84,12 +84,12 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     }
 
     @Override
-    protected void onRadarServiceDisconnected(){
+    protected void onCliqueServiceDisconnected(){
         toggleService.setChecked(false);
     }
 
     @Override
-    protected void onRadarServiceConnected(){
+    protected void onCliqueServiceConnected(){
         toggleService.setChecked(true);
     }
 
@@ -112,10 +112,10 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     }
 
     private void feedDataToRadarView(){
-        Blip centerLocation = getRadarDatabase().getSelfContact().getLastBlip();
+        Blip centerLocation = getCliqueDatabase().getSelfContact().getLastBlip();
         radarView.setCenterLocation(centerLocation);
         radarView.removeAllContacts();
-        Collection<Contact> contacts = getRadarDatabase().getAllContacts();
+        Collection<Contact> contacts = getCliqueDatabase().getAllContacts();
         for(Contact c:contacts){
             radarView.addContact(c);
         }

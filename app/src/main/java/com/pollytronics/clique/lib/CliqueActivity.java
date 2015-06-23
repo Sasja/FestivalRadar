@@ -42,7 +42,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
      * methods for ie SubServices and such
      * @return interface to instance of CliqueService, if no bound service is running, it will return a spoof interface to nothing
      */
-    protected CliqueService_interface4CliqueActivity getBoundRadarService() {
+    protected CliqueService_interface4CliqueActivity getBoundCliqueService() {
         if(rsBound){
             return rs;
         } else {
@@ -55,11 +55,11 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
         }
     }
 
-    public CliqueDb_Interface getRadarDatabase() {
+    public CliqueDb_Interface getCliqueDatabase() {
         return db;
     }
 
-    protected CliquePreferences getRadarPreferences() {
+    protected CliquePreferences getCliquePreferences() {
         return CliquePreferences.getInstance(getApplicationContext());
     }
 
@@ -73,14 +73,14 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
      * start CliqueService if it is not started yet and bind to it
      * (activity will be registered at service in onServiceConnected callback)
      */
-    protected void startAndBindRadarService(){
+    protected void startAndBindCliqueService(){
         if(!isMyServiceRunning(CliqueService.class)){
             Log.i(TAG,"starting the service");
             startService(new Intent(CliqueActivity.this, CliqueService.class));
         } else {
             Log.i(TAG,"service was found running, let's bind and register anyhow");
         }
-        Log.i(TAG, "binding to radarservice now");
+        Log.i(TAG, "binding to cliqueservice now");
         bindService(new Intent(CliqueActivity.this, CliqueService.class), rsConn, 0);
     }
 
@@ -88,7 +88,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
      * bind to the service only if it is running already.
      * (activity will be registered at service in onServiceConnected callback)
      */
-    private void bindIfRunningRadarService(){
+    private void bindIfRunningCliqueService(){
         Log.i(TAG,"bind if service is running");
         if(isMyServiceRunning(CliqueService.class)){
             Log.i(TAG,"yup found it running, lets bind to it");
@@ -101,7 +101,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     /**
      * unregister activity from the service and unbind from the service if it is running
      */
-    private void unBindRadarService(){
+    private void unBindCliqueService(){
         if (rsBound) {
             Log.i(TAG,"calling unregisterActivity() and unBindService()");
             rs.unregisterActivity(CliqueActivity.this);
@@ -113,8 +113,8 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     /**
      * unregister/unbind and stop service
      */
-    protected void unbindAndStopRadarService(){
-        unBindRadarService();
+    protected void unbindAndStopCliqueService(){
+        unBindCliqueService();
         if(isMyServiceRunning(CliqueService.class)) {
             Log.i(TAG, "service found running, calling stopservice");
             stopService(new Intent(CliqueActivity.this, CliqueService.class));
@@ -135,34 +135,34 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
                 Log.i(TAG,"onServiceConnected, getting CliqueService object now");
                 CliqueService.CliqueBinder cliqueBinder = (CliqueService.CliqueBinder) iBinder;
-                rs = cliqueBinder.getRadarService();
+                rs = cliqueBinder.getCliqueService();
                 Log.i(TAG, "now registering Activity at Service");
                 rs.registerActivity(CliqueActivity.this);
                 rsBound = true;
-                CliqueActivity.this.onRadarServiceConnected();
+                CliqueActivity.this.onCliqueServiceConnected();
             }
 
             @Override
             public void onServiceDisconnected(ComponentName componentName) {
                 Log.i(TAG, "onServiceDisconnected");
                 rsBound = false;
-                CliqueActivity.this.onRadarServiceDisconnected();
+                CliqueActivity.this.onCliqueServiceDisconnected();
             }
         };
-        bindIfRunningRadarService();
+        bindIfRunningCliqueService();
         super.onStart();
     }
 
     /**
      * overload in derived class to handle this event
      */
-    protected void onRadarServiceConnected() {
+    protected void onCliqueServiceConnected() {
     }
 
     /**
      * overload in derived class to handle this event
      */
-    protected void onRadarServiceDisconnected() {
+    protected void onCliqueServiceDisconnected() {
     }
 
     /**
@@ -170,8 +170,8 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
      */
     @Override
     protected void onStop() {
-        Log.i(TAG, "onStop() : calling unBindRadarService();");
-        unBindRadarService();
+        Log.i(TAG, "onStop() : calling unBindCliqueService();");
+        unBindCliqueService();
         super.onStop();
     }
 

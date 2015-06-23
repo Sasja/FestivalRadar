@@ -278,7 +278,7 @@ public class RadarDatabase implements RadarDatabase_Interface {
 
     private class RadarDbHelper extends SQLiteOpenHelper{
         public static final String DATABASE_NAME = "FestivalRadarContacts.db";
-        public static final int DATABASE_VERSION = 2;   // 1->2  will give everyone a new random 4 digit id and discard contacts
+        public static final int DATABASE_VERSION = 4;   // increasing this give everyone a new random 4 digit id and discard contacts
 
         public RadarDbHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);

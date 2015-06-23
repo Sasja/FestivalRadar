@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar;
+package com.pollytronics.festivalradar.lib;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -11,6 +11,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.pollytronics.festivalradar.R;
+import com.pollytronics.festivalradar.RadarActivity_About;
+import com.pollytronics.festivalradar.RadarActivity_Debug;
+import com.pollytronics.festivalradar.RadarActivity_Settings;
+import com.pollytronics.festivalradar.lib.database.RadarDatabase;
+import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.lib.preferences.RadarPreferences;
+import com.pollytronics.festivalradar.lib.service.RadarService;
+import com.pollytronics.festivalradar.MVP_Activity_Contacts;
+import com.pollytronics.festivalradar.MVP_Activity_Groups;
+import com.pollytronics.festivalradar.lib.service.RadarService_interface4RadarActivity;
 
 /**
  * Base class for all Activities
@@ -30,7 +42,7 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
      * methods for ie SubServices and such
      * @return interface to instance of RadarService, if no bound service is running, it will return a spoof interface to nothing
      */
-    RadarService_interface4RadarActivity getBoundRadarService() {
+    protected RadarService_interface4RadarActivity getBoundRadarService() {
         if(rsBound){
             return rs;
         } else {
@@ -43,11 +55,11 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
         }
     }
 
-    RadarDatabase_Interface getRadarDatabase() {
+    public RadarDatabase_Interface getRadarDatabase() {
         return db;
     }
 
-    RadarPreferences getRadarPreferences() {
+    protected RadarPreferences getRadarPreferences() {
         return RadarPreferences.getInstance(getApplicationContext());
     }
 
@@ -61,7 +73,7 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
      * start RadarService if it is not started yet and bind to it
      * (activity will be registered at service in onServiceConnected callback)
      */
-    void startAndBindRadarService(){
+    protected void startAndBindRadarService(){
         if(!isMyServiceRunning(RadarService.class)){
             Log.i(TAG,"starting the service");
             startService(new Intent(RadarActivity.this, RadarService.class));
@@ -101,7 +113,7 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
     /**
      * unregister/unbind and stop service
      */
-    void unbindAndStopRadarService(){
+    protected void unbindAndStopRadarService(){
         unBindRadarService();
         if(isMyServiceRunning(RadarService.class)) {
             Log.i(TAG, "service found running, calling stopservice");
@@ -144,13 +156,13 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
     /**
      * overload in derived class to handle this event
      */
-    void onRadarServiceConnected() {
+    protected void onRadarServiceConnected() {
     }
 
     /**
      * overload in derived class to handle this event
      */
-    void onRadarServiceDisconnected() {
+    protected void onRadarServiceDisconnected() {
     }
 
     /**
@@ -189,13 +201,13 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
             startActivity(new Intent(this, RadarActivity_About.class));
             return true;
         } else if (id == R.id.action_contacts) {
-            startActivity(new Intent(this, ViewPagerActivity_Contacts.class));
+            startActivity(new Intent(this, MVP_Activity_Contacts.class));
             return true;
         } else if (id == R.id.action_debug) {
             startActivity(new Intent(this, RadarActivity_Debug.class));
             return true;
         } else if (id == R.id.action_groups) {
-            startActivity(new Intent(this, ViewPagerActivity_Groups.class));
+            startActivity(new Intent(this, MVP_Activity_Groups.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

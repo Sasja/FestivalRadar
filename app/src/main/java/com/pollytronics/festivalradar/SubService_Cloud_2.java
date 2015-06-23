@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.pollytronics.festivalradar.lib.service.RadarService;
+import com.pollytronics.festivalradar.lib.service.SubService;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetBlips;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallSetMyBlip;
 
@@ -70,17 +72,17 @@ public class SubService_Cloud_2 extends SubService {
     }
 
     @Override
-    protected void onRegister() {
+    public void onRegister() {
         Log.i(TAG,"onRegister");
     }
 
     @Override
-    protected void onUnregister() {
+    public void onUnregister() {
         Log.i(TAG, "onUnregister");
     }
 
     @Override
-    protected void onNewSettings() {
+    public void onNewSettings() {
         getMainHandler().removeCallbacks(cloudLoop);
         updateTime_ms = (int) getRadarPreferences().getCloudUpdateTime_ms();
         Log.i(TAG, "set updateTime to (ms) " + Integer.toString(updateTime_ms));

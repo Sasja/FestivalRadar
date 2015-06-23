@@ -25,7 +25,7 @@
         </activity>
 
         <service
-            android:name=".RadarService"
+            android:name=".lib.service.RadarService"
             android:enabled="true"
             android:exported="false" >
         </service>
@@ -54,14 +54,14 @@
                 android:value=".RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".RadarActivity_MyViewPagerAct"
+            android:name=".lib.RadarActivity_MyViewPagerAct"
             android:label="@string/title_activity_radar_activity__my_view_pager" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.festivalradar.RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".ViewPagerActivity_Groups"
+            android:name=".MVP_Activity_Groups"
             android:label="@string/title_activity_view_pager_activity__groups"
             android:parentActivityName=".RadarActivity_Main" >
             <meta-data
@@ -69,7 +69,7 @@
                 android:value="com.pollytronics.festivalradar.RadarActivity_Main" />
         </activity>
         <activity
-            android:name=".ViewPagerActivity_Contacts"
+            android:name=".MVP_Activity_Contacts"
             android:label="@string/title_activity_view_pager_activity__contacts"
             android:parentActivityName=".RadarActivity_Main" >
             <meta-data

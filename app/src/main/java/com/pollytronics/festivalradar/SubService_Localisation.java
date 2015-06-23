@@ -9,8 +9,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.pollytronics.festivalradar.lib.RadarBlip;
-import com.pollytronics.festivalradar.lib.RadarContact;
+import com.pollytronics.festivalradar.lib.service.RadarService;
+import com.pollytronics.festivalradar.lib.base.RadarBlip;
+import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.service.SubService;
 
 /**
  * Localisation subservice
@@ -69,17 +71,17 @@ public class SubService_Localisation extends SubService implements
     }
 
     @Override
-    protected void onRegister() {
+    public void onRegister() {
         Log.i(TAG,"onRegister");
     }
 
     @Override
-    protected void onUnregister() {
+    public void onUnregister() {
         Log.i(TAG,"onUnregister");
     }
 
     @Override
-    protected void onNewSettings() {
+    public void onNewSettings() {
         int updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();
         mLocationRequest.setInterval(updateTime_ms);
         Log.i(TAG, "set updateTime to (ms) "+Integer.toString(updateTime_ms));

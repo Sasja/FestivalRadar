@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.pollytronics.festivalradar.lib.RadarContact;
+import com.pollytronics.festivalradar.lib.base.RadarContact;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetPings;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.util.List;
  * TODO: some feedback when pinging is in progress
  *
  */
-public class Fragment_Contacts_Ping extends MyViewPager_Contacts_Fragment {
+public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
     @SuppressWarnings("unused")
     private static final String TAG = "Frag_Contacts_Ping";
 

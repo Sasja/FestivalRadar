@@ -15,7 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.pollytronics.festivalradar.lib.RadarContact;
+import com.pollytronics.festivalradar.lib.RadarActivity_MyViewPagerAct;
+import com.pollytronics.festivalradar.lib.base.RadarContact;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallDeleteContact;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetContactsISee;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetContactsSeeme;
@@ -31,7 +32,7 @@ import java.util.Set;
 /**
  * TODO: Study https://developer.android.com/training/sync-adapters/index.html and consider implementing such a thing
  */
-public class ViewPagerActivity_Contacts extends RadarActivity_MyViewPagerAct {
+public class MVP_Activity_Contacts extends RadarActivity_MyViewPagerAct {
     @SuppressWarnings("unused")
     private static final String TAG = "ViewPagerAct_Contacts";
 
@@ -163,7 +164,7 @@ public class ViewPagerActivity_Contacts extends RadarActivity_MyViewPagerAct {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Log.i(TAG, "calling deleteSelectedContact()");
-                            ((ViewPagerActivity_Contacts)getActivity()).deleteSelectedContact();
+                            ((MVP_Activity_Contacts)getActivity()).deleteSelectedContact();
                         }
                     })
                     .create();

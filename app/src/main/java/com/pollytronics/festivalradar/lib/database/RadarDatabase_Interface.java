@@ -1,6 +1,6 @@
-package com.pollytronics.festivalradar;
+package com.pollytronics.festivalradar.lib.database;
 
-import com.pollytronics.festivalradar.lib.RadarContact;
+import com.pollytronics.festivalradar.lib.base.RadarContact;
 
 import java.util.Collection;
 

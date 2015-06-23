@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar.lib;
+package com.pollytronics.festivalradar.lib.base;
 
 import android.location.Location;
 

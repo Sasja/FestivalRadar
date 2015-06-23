@@ -1,8 +1,8 @@
 package com.pollytronics.festivalradar.lib.api_v01;
 
-import com.pollytronics.festivalradar.RadarDatabase_Interface;
-import com.pollytronics.festivalradar.lib.RadarBlip;
-import com.pollytronics.festivalradar.lib.RadarContact;
+import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.lib.base.RadarBlip;
+import com.pollytronics.festivalradar.lib.base.RadarContact;
 
 import org.json.JSONArray;
 import org.json.JSONException;

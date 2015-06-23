@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar.lib;
+package com.pollytronics.festivalradar.lib.base;
 
 /**
  * Class to contain all data on a Contact, including location history

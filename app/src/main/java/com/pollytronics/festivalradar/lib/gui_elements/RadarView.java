@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar.lib;
+package com.pollytronics.festivalradar.lib.gui_elements;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,6 +11,9 @@ import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+
+import com.pollytronics.festivalradar.lib.base.RadarBlip;
+import com.pollytronics.festivalradar.lib.base.RadarContact;
 
 import java.util.HashMap;
 import java.util.Map;

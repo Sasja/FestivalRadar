@@ -5,6 +5,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.pollytronics.festivalradar.lib.RadarActivity;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -1,6 +1,6 @@
 package com.pollytronics.festivalradar.lib.api_v01;
 
-import com.pollytronics.festivalradar.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
 
 import org.json.JSONArray;
 import org.json.JSONException;

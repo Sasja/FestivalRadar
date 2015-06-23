@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar;
+package com.pollytronics.festivalradar.lib;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+
+import com.pollytronics.festivalradar.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

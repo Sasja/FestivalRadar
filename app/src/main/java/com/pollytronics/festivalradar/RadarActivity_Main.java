@@ -12,9 +12,10 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
-import com.pollytronics.festivalradar.lib.RadarBlip;
-import com.pollytronics.festivalradar.lib.RadarContact;
-import com.pollytronics.festivalradar.lib.RadarView;
+import com.pollytronics.festivalradar.lib.RadarActivity;
+import com.pollytronics.festivalradar.lib.base.RadarBlip;
+import com.pollytronics.festivalradar.lib.base.RadarContact;
+import com.pollytronics.festivalradar.lib.gui_elements.RadarView;
 
 import java.util.Collection;
 

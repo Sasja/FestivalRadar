@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar;
+package com.pollytronics.festivalradar.lib.service;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -8,6 +8,14 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.pollytronics.festivalradar.R;
+import com.pollytronics.festivalradar.RadarActivity_Main;
+import com.pollytronics.festivalradar.lib.database.RadarDatabase;
+import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.SubService_Cloud_2;
+import com.pollytronics.festivalradar.SubService_Localisation;
+import com.pollytronics.festivalradar.lib.RadarActivity_Interface4RadarService;
 
 /**
  * The RadarService class manages the connection to RadarActivity and derived classes
@@ -166,7 +174,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      * throwaway class for activity and services getting each others instances
      */
     public class RadarBinder extends Binder {
-        RadarService getRadarService(){
+        public RadarService getRadarService(){
             return RadarService.this;
         }
     }

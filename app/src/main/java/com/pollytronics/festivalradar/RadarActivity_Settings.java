@@ -14,7 +14,8 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.pollytronics.festivalradar.lib.RadarContact;
+import com.pollytronics.festivalradar.lib.RadarActivity;
+import com.pollytronics.festivalradar.lib.base.RadarContact;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.festivalradar.lib.api_v01.ApiCallPostProfile;
 

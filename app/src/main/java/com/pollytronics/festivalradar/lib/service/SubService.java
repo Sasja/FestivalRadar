@@ -1,7 +1,10 @@
-package com.pollytronics.festivalradar;
+package com.pollytronics.festivalradar.lib.service;
 
 import android.os.Handler;
 import android.os.Looper;
+
+import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
+import com.pollytronics.festivalradar.lib.preferences.RadarPreferences;
 
 /**
  * Created by pollywog on 9/20/14.
@@ -19,7 +22,7 @@ import android.os.Looper;
  *
  * a few methods need to be overridden to handle some events.
  */
-abstract class SubService {
+public abstract class SubService {
 
     @SuppressWarnings("unused")
     private final String TAG = "override this SubService TAG";
@@ -30,17 +33,17 @@ abstract class SubService {
      */
     private final Handler handler = new Handler(Looper.getMainLooper());
 
-    SubService(RadarService rs){
+    protected SubService(RadarService rs){
         this.rs = rs;
     }
 
-    RadarService_Interface4SubService getRadarService() { return rs; }
+    protected RadarService_Interface4SubService getRadarService() { return rs; }
 
-    RadarDatabase_Interface getRadarDatabase() { return rs.getRadarDataBase(); }
+    protected RadarDatabase_Interface getRadarDatabase() { return rs.getRadarDataBase(); }
 
-    RadarPreferences getRadarPreferences() {return RadarPreferences.getInstance(rs.getApplicationContext());}
+    protected RadarPreferences getRadarPreferences() {return RadarPreferences.getInstance(rs.getApplicationContext());}
 
-    Handler getMainHandler(){
+    protected Handler getMainHandler(){
         return handler;
     }
 

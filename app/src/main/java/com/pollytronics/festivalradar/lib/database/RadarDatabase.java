@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar;
+package com.pollytronics.festivalradar.lib.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
 
-import com.pollytronics.festivalradar.lib.RadarBlip;
-import com.pollytronics.festivalradar.lib.RadarContact;
+import com.pollytronics.festivalradar.lib.base.RadarBlip;
+import com.pollytronics.festivalradar.lib.base.RadarContact;
 
 import java.util.Collection;
 import java.util.HashSet;

@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pollytronics.festivalradar.lib.MyViewPagerFragment;
+
 
 public class Fragment_Groups_Nearby extends MyViewPagerFragment {
 

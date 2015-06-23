@@ -12,7 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.pollytronics.festivalradar.lib.RadarContact;
+import com.pollytronics.festivalradar.lib.MyViewPagerFragment;
+import com.pollytronics.festivalradar.lib.base.RadarContact;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +35,7 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.i(TAG, "onItemClick i=" + position + " id=" + id);
                 RadarContact selectedContact = (RadarContact) parent.getAdapter().getItem(position);
-                ((ViewPagerActivity_Contacts) getActivity()).confirmAndDeleteContact(selectedContact);
+                ((MVP_Activity_Contacts) getActivity()).confirmAndDeleteContact(selectedContact);
             }
         });
         fillListViewFromLocalDb(listView);
@@ -58,7 +59,7 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
      * Gets called on every viewpagerfragment when it is called on the parent activity.
      */
     @Override
-    protected void notifyDatabaseUpdate() {
+    public void notifyDatabaseUpdate() {
         super.notifyDatabaseUpdate();
         ListView listView = (ListView) getView().findViewById(R.id.listview_mycontacts);
         if (listView != null) {

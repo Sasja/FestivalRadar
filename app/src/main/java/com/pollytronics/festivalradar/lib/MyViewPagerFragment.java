@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar;
+package com.pollytronics.festivalradar.lib;
 
 
 import android.os.Bundle;
@@ -7,6 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.pollytronics.festivalradar.R;
+import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
 
 
 /**
@@ -29,7 +32,7 @@ public class MyViewPagerFragment extends Fragment {
         return ((RadarActivity) getActivity()).getRadarDatabase();
     }
 
-    protected void notifyDatabaseUpdate() {
+    public void notifyDatabaseUpdate() {
         Log.i(TAG, "received a notifyDatabaseUpdate");
     }
 }

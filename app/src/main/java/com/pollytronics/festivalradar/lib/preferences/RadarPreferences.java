@@ -1,4 +1,4 @@
-package com.pollytronics.festivalradar;
+package com.pollytronics.festivalradar.lib.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;

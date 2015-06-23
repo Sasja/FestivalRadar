@@ -7,17 +7,18 @@
     <string name="title_activity_about_radar">About</string>
     <string name="action_settings">Settings</string>
     <string name="text_about">
-        \nnot a release version
-        \nlast release below:
-        \n
-        \nClique (version 1.0.3.a)
+        <!--\nnot a release version-->
+        <!--\nlast release below:-->
+        <!--\n-->
+        \nClique (version 1.0.4.a)
         \nspecial release for awesome alpha testers like you!
         \n
-        \nupdates since 1.0.2.a:
-        \n - lots of small improvements under the hood (http routines, code cleanups, error handling...)
-        \n - esthetical improvements to the radarview with indications of scale
-        \n - enabled pinching for zooming in and out
-        \n - new name!
+        \nupdates since 1.0.3.a:
+        \n - rudimentary profile management: set your name in settings, and other users will be able to connect to you
+        \n - contacts -> ping to find and connect to other users (to be made location and time aware in the future)
+        \n - a provisional logo
+        \n
+        \nThere is no encryption yet so all your location updates are public as well as your username, but no other info such as real name, phone number, other profiles...
         \n
         \nLet me know whenever something doesn\'t work or just tell me what you like or dislike and what features you would like to see in the future.
         \n

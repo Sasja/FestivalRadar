@@ -66,6 +66,8 @@
     <string name="contacts_remote_placeholder">connect by userid or sms or whatever\n(not implemented)</string>
     <string name="button_ping">PING</string>
     <string name="settings_button_setname">set name</string>
+    <string name="settings_change_name_instruction">choose your profile name</string>
+    <string name="settings_change_id_instruction">can't touch this!</string>
 
 
 </resources>

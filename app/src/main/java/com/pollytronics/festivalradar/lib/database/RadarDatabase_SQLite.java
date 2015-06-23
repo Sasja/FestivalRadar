@@ -17,41 +17,42 @@ import java.util.Random;
 
 /**
  * Created by pollywog on 9/22/14.
- * This class should provide methods to store and retrieve data on...
- * A) contacts and metadata
- * B) location data
- * it is used by and has an interface for the RadarService and for RadarActivities
+ *
+ * A class that implements the RadarDatabase_Interface using a SQLite database on the mobile device
+ * This class should only be used directly for instantiation with getInstance(), use the interface for all other uses.
+ * the static (Class) method getInstance will return the available instance or create it when necessary.
  *
  * TODO: onUpgrade() and onDowngrade just discards all data at the moment
  * TODO: make method updateContacts(Collection<RadarContact> contacts) and use it from within SubService_Cloud_2
  * TODO: check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
  * TODO: is it okay to do all this database stuff sync?
  */
-public class RadarDatabase implements RadarDatabase_Interface {
+public class RadarDatabase_SQLite implements RadarDatabase_Interface {
 
-    private static final String TAG="RadarDatabase";
-    private static RadarDatabase instance=null;
-
+    public static final String DATABASE_NAME = "Clique.db";
+    public static final int DATABASE_VERSION = 1;   // increasing this give everyone a new random 4 digit id and discard contacts
+    private static final String TAG="RadarDatabase_SQLite";
+    private static RadarDatabase_SQLite instance=null;
     private final RadarDbHelper radarDbHelper;  // can be final as it is only assigned in the constructor, that is allowed apparently
 
-    private RadarDatabase(Context context){
+    private RadarDatabase_SQLite(Context context){
         radarDbHelper = new RadarDbHelper(context);
         Log.i(TAG,"initialised radarDbHelper");
     }
 
-    public static RadarDatabase getInstance(Context context){
+    public static RadarDatabase_SQLite getInstance(Context context){
         if(instance==null){
-            instance = new RadarDatabase(context);
+            instance = new RadarDatabase_SQLite(context);
         }
         return instance;
     }
 
     /**
-     * return an Iterable of contacts
+     * return an Collection of all strored contacts
      */
     @Override
     public Collection<RadarContact> getAllContacts() {
-        Collection<RadarContact> contacts = new HashSet<RadarContact>();
+        Collection<RadarContact> contacts = new HashSet<>();
         SQLiteDatabase db = radarDbHelper.getReadableDatabase();
         String[] projection = {
                 ContactEntry.COLUMN_NAME_GLOBAL_ID,
@@ -89,7 +90,7 @@ public class RadarDatabase implements RadarDatabase_Interface {
 
     @Override
     public Collection<Long> getAllContactIds() {
-        Collection<Long> contactIds = new HashSet<Long>();
+        Collection<Long> contactIds = new HashSet<>();
         SQLiteDatabase db = radarDbHelper.getReadableDatabase();
         String[] projection = {
                 ContactEntry.COLUMN_NAME_GLOBAL_ID,
@@ -277,9 +278,6 @@ public class RadarDatabase implements RadarDatabase_Interface {
     }
 
     private class RadarDbHelper extends SQLiteOpenHelper{
-        public static final String DATABASE_NAME = "FestivalRadarContacts.db";
-        public static final int DATABASE_VERSION = 4;   // increasing this give everyone a new random 4 digit id and discard contacts
-
         public RadarDbHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }

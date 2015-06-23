@@ -16,7 +16,7 @@ import com.pollytronics.festivalradar.R;
 import com.pollytronics.festivalradar.RadarActivity_About;
 import com.pollytronics.festivalradar.RadarActivity_Debug;
 import com.pollytronics.festivalradar.RadarActivity_Settings;
-import com.pollytronics.festivalradar.lib.database.RadarDatabase;
+import com.pollytronics.festivalradar.lib.database.RadarDatabase_SQLite;
 import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
 import com.pollytronics.festivalradar.lib.preferences.RadarPreferences;
 import com.pollytronics.festivalradar.lib.service.RadarService;
@@ -66,7 +66,7 @@ public abstract class RadarActivity extends AppCompatActivity implements RadarAc
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = RadarDatabase.getInstance(this);
+        db = RadarDatabase_SQLite.getInstance(this);
     }
 
     /**

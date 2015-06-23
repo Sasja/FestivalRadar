@@ -11,7 +11,7 @@ import android.util.Log;
 
 import com.pollytronics.festivalradar.R;
 import com.pollytronics.festivalradar.RadarActivity_Main;
-import com.pollytronics.festivalradar.lib.database.RadarDatabase;
+import com.pollytronics.festivalradar.lib.database.RadarDatabase_SQLite;
 import com.pollytronics.festivalradar.lib.database.RadarDatabase_Interface;
 import com.pollytronics.festivalradar.SubService_Cloud_2;
 import com.pollytronics.festivalradar.SubService_Localisation;
@@ -50,7 +50,7 @@ public class RadarService extends Service implements RadarService_Interface4SubS
      */
     @Override
     public void onCreate() {
-        db = RadarDatabase.getInstance(this);
+        db = RadarDatabase_SQLite.getInstance(this);
         Log.i(TAG, "onCreate, initialising sub services");
         subServiceLocalisation.onCreate();
         subServiceCloud.onCreate();

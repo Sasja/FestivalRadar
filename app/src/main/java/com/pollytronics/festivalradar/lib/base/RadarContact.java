@@ -4,7 +4,7 @@ package com.pollytronics.festivalradar.lib.base;
  * Class to contain all data on a Contact, including location history
  * there will also be a self instance to contain data on yourself
  * Each instance also holds an ID, this ID should be managed by the RadarDatabase class
- * methods that change the object should return themselves to calls can be chained.
+ * methods that change the object should return themselves so calls can be chained.
  * Created by pollywog on 9/22/14.
  */
 public class RadarContact implements Comparable<RadarContact>{
@@ -37,9 +37,6 @@ public class RadarContact implements Comparable<RadarContact>{
     public RadarBlip getLastBlip() { return lastBlip; }
 
     public RadarContact addBlip(RadarBlip blip) {
-        //if(lastBlip==null || blip.after(lastBlip)){
-        //    lastBlip = new RadarBlip(blip);
-        //}
         lastBlip = new RadarBlip(blip);
         return this;
     }

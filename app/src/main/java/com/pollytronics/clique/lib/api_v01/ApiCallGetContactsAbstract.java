@@ -23,7 +23,7 @@ public abstract class ApiCallGetContactsAbstract extends CliqueApiCall {
     private JSONArray contacts;
 
     public void collectData(CliqueDb_Interface db) {
-        selfId = db.getSelfContact().getID();
+        selfId = db.getSelfContact().getGlobalId();
     }
 
     @Override

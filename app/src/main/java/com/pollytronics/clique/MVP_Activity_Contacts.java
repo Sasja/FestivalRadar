@@ -23,6 +23,8 @@ import com.pollytronics.clique.lib.api_v01.ApiCallGetContactsSeeme;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostContact;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -123,7 +125,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         if (networkInfo != null && networkInfo.isConnected()){
             final ApiCallDeleteContact deleteContact = new ApiCallDeleteContact();
             deleteContact.collectData(getCliqueDatabase());
-            deleteContact.setContactId(selectedContact.getID());
+            deleteContact.setContactId(selectedContact.getGlobalId());
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() { // TODO: what to do when this fails?
@@ -134,9 +136,9 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                     }
                 }
             });
-            Log.i(TAG, "posting a delete request to api for contact id: " + selectedContact.getID());
+            Log.i(TAG, "posting a delete request to api for contact id: " + selectedContact.getGlobalId());
             thread.start();
-            Log.i(TAG, "deleting selected radar contact (id=" + selectedContact.getID() + ")");
+            Log.i(TAG, "deleting selected radar contact (id=" + selectedContact.getGlobalId() + ")");
             getCliqueDatabase().removeContact(selectedContact);
             Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contact_removed), Toast.LENGTH_SHORT);
             toast.show();
@@ -184,7 +186,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         protected void onPreExecute() {
             Log.i(TAG, "gathering own use id");
             postContact.collectData(getCliqueDatabase());
-            postContact.setContactId(contact.getID());
+            postContact.setContactId(contact.getGlobalId());
         }
 
         @Override
@@ -243,7 +245,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         private Set<Long> ics = new HashSet<>();
         private Set<Long> csm = new HashSet<>();
         private boolean apiCallsSucceeded = false;
-        private Map<Long, String> newContactNames= new HashMap<>();
+        private Map<Long, Contact> newContacts= new HashMap<>();
 
         @Override
         protected void onPreExecute() {
@@ -253,7 +255,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             apiCallGetContactsISee.collectData(getCliqueDatabase());
             // construct list of ids in local contacts
             for (Contact c : getCliqueDatabase().getAllContacts()) {
-                con.add(c.getID());
+                con.add(c.getGlobalId());
             }
         }
 
@@ -293,12 +295,15 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                     Log.i(TAG, "requesting remote name for new contact (id="+id+")");
                     apiCallGetProfile.setRequestedId(id);
                     apiCallGetProfile.callAndParse();
-                    newContactNames.put(id, apiCallGetProfile.getName());
+                    newContacts.put(id, apiCallGetProfile.getContact());
                 }
                 apiCallsSucceeded = true;
             } catch (IOException e) {
                 e.printStackTrace();
                 return "IOException: unable to complete all api requests";
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return "JSONExeption: unable to complete all api request";
             }
             return null;
         }
@@ -312,9 +317,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                     } else {
                         Log.i(TAG, "adding contact to local contacts (autoaccept): " + id);
                     }
-                    String contactName = newContactNames.get(id);
-                    Contact newContact = new Contact().setName(contactName).setID(id);
-                    getCliqueDatabase().addContact(newContact);
+                    getCliqueDatabase().addContact(newContacts.get(id));
                 }
                 for (long id : toDeleteFromCon) {
                     Log.i(TAG, "deleting contact from local list (triggered by remote delete): " + id);

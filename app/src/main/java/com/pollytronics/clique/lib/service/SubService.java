@@ -37,9 +37,9 @@ public abstract class SubService {
         this.rs = rs;
     }
 
-    protected CliqueService_Interface4SubService getRadarService() { return rs; }
+    protected CliqueService_Interface4SubService getCliqueService() { return rs; }
 
-    protected CliqueDb_Interface getRadarDatabase() { return rs.getRadarDataBase(); }
+    protected CliqueDb_Interface getCliqueDb() { return rs.getRadarDataBase(); }
 
     protected CliquePreferences getRadarPreferences() {return CliquePreferences.getInstance(rs.getApplicationContext());}
 

@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.database.CliqueDb_Interface;
-import com.pollytronics.clique.lib.base.Contact;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,9 +21,8 @@ public class ApiCallSetMyBlip extends CliqueApiCall {
     @Override
     public void collectData(CliqueDb_Interface db){
         Log.i(TAG, "collecting data for APICallSetMyBlip");
-        Contact selfContact = db.getSelfContact();
-        selfId = selfContact.getID();
-        Blip selfBlip = selfContact.getLastBlip();
+        selfId = db.getSelfContact().getGlobalId();
+        Blip selfBlip = db.getLastSelfBlip();
         try {
             selfBlipJSON.put("lat", selfBlip.getLatitude());
             selfBlipJSON.put("lon", selfBlip.getLongitude());

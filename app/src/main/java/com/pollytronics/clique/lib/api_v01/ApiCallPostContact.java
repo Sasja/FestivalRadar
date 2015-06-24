@@ -21,7 +21,7 @@ public class ApiCallPostContact extends CliqueApiCall {
     private JSONObject contactJSON;
 
     public void collectData(CliqueDb_Interface db) {
-        selfId = db.getSelfContact().getID();
+        selfId = db.getSelfContact().getGlobalId();
     }
 
     public void setContactId(long id) {

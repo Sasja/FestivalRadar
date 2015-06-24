@@ -20,7 +20,7 @@ public class ApiCallGetBlips extends CliqueApiCall {
     private long selfId = 0;
 
     public void collectData(CliqueDb_Interface db) {
-        selfId = db.getSelfContact().getID();
+        selfId = db.getSelfContact().getGlobalId();
     }
 
     @Override
@@ -44,28 +44,21 @@ public class ApiCallGetBlips extends CliqueApiCall {
 
     public void doTheWork(CliqueDb_Interface db) {
         JSONObject blipJSON;
-        Long id, time;
-        double lat, lon;
-        Blip blip = new Blip();
+        Long id;
+        Blip blip;
         Contact contact;
         for (int i = 0; i < blips.length(); i++) {
             try {
                 blipJSON = blips.getJSONObject(i);
+                blip = new Blip(blipJSON);
                 id = blipJSON.getLong("userid");
-                lat = blipJSON.getDouble("lat");
-                lon = blipJSON.getDouble("lon");
-                time = blipJSON.getLong("time");
             } catch (JSONException e) {
                 e.printStackTrace();
                 continue;
             }
-            blip.setLatitude(lat);
-            blip.setLongitude(lon);
-            blip.setTime(time);
-            contact = db.getContact(id);
+            contact = db.getContactById(id);
             if(contact != null) {   // check if contact is known locally on phone
-                contact.addBlip(blip);
-                db.updateContact(contact);
+                db.addBlip(blip,contact);
             }
         }
     }

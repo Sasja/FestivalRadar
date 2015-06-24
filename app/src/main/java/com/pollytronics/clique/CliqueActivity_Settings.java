@@ -19,6 +19,8 @@ import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostProfile;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 
 /**
@@ -87,7 +89,7 @@ public class CliqueActivity_Settings extends CliqueActivity {
             }
         });
 
-        setIdEditText.setHint(Long.toString(getCliqueDatabase().getSelfContact().getID()));
+        setIdEditText.setHint(Long.toString(getCliqueDatabase().getSelfContact().getGlobalId()));
 
         setIdButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +102,7 @@ public class CliqueActivity_Settings extends CliqueActivity {
                     return;
                 }
                 Contact selfContact = getCliqueDatabase().getSelfContact();
-                selfContact.setID(id);
+                selfContact.setGlobalId(id);
                 getCliqueDatabase().updateSelfContact(selfContact);
             }
         });
@@ -183,13 +185,12 @@ public class CliqueActivity_Settings extends CliqueActivity {
         private boolean apiCallSucceeded = false;
 
         @Override
-        protected void onPreExecute() { getProfile.setRequestedId(getCliqueDatabase().getSelfContact().getID()); }
+        protected void onPreExecute() { getProfile.setRequestedId(getCliqueDatabase().getSelfContact().getGlobalId()); }
 
         @Override
         protected String doInBackground(Void... params) {
             try {
                 getProfile.callAndParse();
-                remoteName = getProfile.getName();
                 apiCallSucceeded = true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -200,7 +201,13 @@ public class CliqueActivity_Settings extends CliqueActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            setNameEditText.setHint(remoteName);
+            if (apiCallSucceeded) {
+                try {
+                    setNameEditText.setHint(getProfile.getContact().getName());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

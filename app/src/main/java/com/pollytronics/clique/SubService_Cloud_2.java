@@ -34,7 +34,7 @@ public class SubService_Cloud_2 extends SubService {
         @Override
         public void run() {
             try{
-                ConnectivityManager connMgr = (ConnectivityManager) getRadarService().getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                ConnectivityManager connMgr = (ConnectivityManager) getCliqueService().getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
                     Log.i(TAG, "network available: syncing data");
@@ -109,8 +109,8 @@ public class SubService_Cloud_2 extends SubService {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering the data i need to send to webservice");
-            setMyBlip.collectData(getRadarDatabase());
-            getBlips.collectData(getRadarDatabase());
+            setMyBlip.collectData(getCliqueDb());
+            getBlips.collectData(getCliqueDb());
         }
 
         @Override
@@ -134,8 +134,8 @@ public class SubService_Cloud_2 extends SubService {
         protected void onPostExecute(String s) {
             if (apiCallsSucceeded) {         // only take action if all api calls were successful
                 Log.i(TAG, "using/aplying the responses of the webservice");
-                getBlips.doTheWork(getRadarDatabase());
-                getRadarService().notifyNewData();
+                getBlips.doTheWork(getCliqueDb());
+                getCliqueService().notifyNewData();
             } else {
                 Log.i(TAG, "the api call has failed, not calling doTheWork() methods for the calls");
             }

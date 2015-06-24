@@ -22,7 +22,7 @@ public class ApiCallGetPings extends CliqueApiCall {
     private JSONArray pings;
     private long selfId = 0;
 
-    public void collectData(CliqueDb_Interface db) {selfId = db.getSelfContact().getID(); }
+    public void collectData(CliqueDb_Interface db) {selfId = db.getSelfContact().getGlobalId(); }
 
     @Override
     public String getHttpMethod() { return "GET"; }
@@ -45,9 +45,7 @@ public class ApiCallGetPings extends CliqueApiCall {
         for(int i = 0; i < pings.length(); i++) {
             try {
                 pingJSON = pings.getJSONObject(i);
-                Contact rc = new Contact();
-                rc.setID(pingJSON.getLong("userid"));
-                rc.setName(pingJSON.getString("nick"));
+                Contact rc = new Contact(pingJSON);
                 pingContacts.add(rc);
             } catch (JSONException e) {
                 e.printStackTrace();

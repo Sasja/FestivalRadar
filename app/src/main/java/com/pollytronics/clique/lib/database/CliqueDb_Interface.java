@@ -1,5 +1,6 @@
 package com.pollytronics.clique.lib.database;
 
+import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
 
 import java.util.Collection;
@@ -11,23 +12,25 @@ public interface CliqueDb_Interface {
 
     Collection<Contact> getAllContacts();
 
-    @SuppressWarnings("unused")
-    Collection<Long> getAllContactIds();
-
     void removeContact(Contact contact);
 
     void removeContactById(long id);
 
-    @SuppressWarnings("unused")
     void updateContact(Contact contact);
 
     void addContact(Contact contact);
 
     Contact getSelfContact();
 
-    @SuppressWarnings("unused")
-    Contact getContact(Long id);
+    Contact getContactById(Long id);
 
     void updateSelfContact(Contact newSelfContact);
 
+    Blip getLastBlip(Contact contact);
+
+    void addSelfBlip(Blip blip);
+
+    Blip getLastSelfBlip();
+
+    void addBlip(Blip blip, Contact contact);
 }

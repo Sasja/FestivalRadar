@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.pollytronics.clique.lib.MyViewPagerFragment;
+import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
 
 import java.util.ArrayList;
@@ -86,7 +87,12 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
             View view = super.getView(position, convertView, parent);
             Contact contact = getItem(position);
             TextView tv_extra = (TextView) view.findViewById(R.id.textview_contact_extra);
-            tv_extra.setText(contact.getLastBlip().toString());
+            Blip lastBlip = getCligueDb().getLastBlip(contact);
+            if (lastBlip != null) {
+                tv_extra.setText(lastBlip.toString());
+            } else {
+                tv_extra.setText("no data");
+            }
             return view;
         }
     }

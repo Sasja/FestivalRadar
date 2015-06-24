@@ -32,7 +32,8 @@ public class RadarView extends View {
     static final String TAG = "RadarView";
     static final double earthRadius = 6371000.0;
     @SuppressLint("UseSparseArrays")
-    private final Map<Long, Contact> contacts = new HashMap<Long, Contact>();
+    private final Map<Long, Contact> contacts = new HashMap<>();
+    private final Map<Long, Blip> lastBlips = new HashMap<>();
     private final Paint paint = new Paint();
     private Blip centerLocation;
     private double bearing=0;
@@ -150,10 +151,12 @@ public class RadarView extends View {
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(width / 25);
         for(Contact c:contacts.values()) {
-            Pair<Float, Float> xy = calcScreenXY(c.getLastBlip(), centerLocation, width, height, bearing);
-            canvas.drawCircle(xy.first, xy.second, width / 100
-                    , paint);
-            canvas.drawText(c.getName(), xy.first, xy.second + width/25, paint);
+            if(lastBlips.get(c.getGlobalId()) != null ) {
+                Pair<Float, Float> xy = calcScreenXY(lastBlips.get(c.getGlobalId()), centerLocation, width, height, bearing);
+                canvas.drawCircle(xy.first, xy.second, width / 100
+                        , paint);
+                canvas.drawText(c.getName(), xy.first, xy.second + width / 25, paint);
+            }
         }
 
         paint.setStyle(Paint.Style.STROKE);
@@ -165,21 +168,13 @@ public class RadarView extends View {
 
 
 
-    public void addContact(Contact contact) {
-        if(contacts.containsKey(contact.getID())) {
+    public void addContact(Contact contact, Blip lastBlip) {
+        if(contacts.containsKey(contact.getGlobalId())) {
             //throw new IllegalArgumentException("contact to add is allready present in RadarView");
             Log.i(TAG, "WARNING: contact ID is allready present in RaderView, duplicate ID's?");
         } else {
-            contacts.put(contact.getID(),contact);
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public void updateContact(Contact contact) {
-        if(contacts.containsKey(contact.getID())) {
-            throw new IllegalArgumentException("contact to update not present in RadarView!");
-        } else {
-            contacts.put(contact.getID(), contact);
+            contacts.put(contact.getGlobalId(),contact);
+            lastBlips.put(contact.getGlobalId(), lastBlip);
         }
     }
 

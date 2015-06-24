@@ -9,9 +9,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.pollytronics.clique.lib.base.Contact;
-import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.lib.base.Blip;
+import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.lib.service.SubService;
 
 /**
@@ -37,7 +36,7 @@ public class SubService_Localisation extends SubService implements
     }
 
     private synchronized void buildGoogleApiClient() {
-        Context theContext = getRadarService().getContext();
+        Context theContext = getCliqueService().getContext();
         mGoogleApiClient = new GoogleApiClient.Builder(theContext)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -95,10 +94,11 @@ public class SubService_Localisation extends SubService implements
     //-------------------------------------------------
 
     private void addBlipFromLocation(Location location) {
-        Contact selfContact = getRadarDatabase().getSelfContact();
-        selfContact.addBlip(new Blip(location));
-        getRadarDatabase().updateSelfContact(selfContact);
-        getRadarService().notifyNewData();
+        //Contact selfContact = getCliqueDb().getSelfContact();
+        //selfContact.addBlip(new Blip(location));
+        //getCliqueDb().updateSelfContact(selfContact);
+        getCliqueDb().addSelfBlip(new Blip(location));
+        getCliqueService().notifyNewData();
     }
 
     @Override

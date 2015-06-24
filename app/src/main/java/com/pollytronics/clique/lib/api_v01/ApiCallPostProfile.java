@@ -18,7 +18,7 @@ public class ApiCallPostProfile extends CliqueApiCall {
     private long selfId = 0;
     private JSONObject profileJSON;
 
-    public void collectData(CliqueDb_Interface db) { selfId = db.getSelfContact().getID();}
+    public void collectData(CliqueDb_Interface db) { selfId = db.getSelfContact().getGlobalId();}
 
     public void setName(String name) {
         try {

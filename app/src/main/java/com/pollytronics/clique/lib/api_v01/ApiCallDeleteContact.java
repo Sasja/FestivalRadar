@@ -18,7 +18,7 @@ public class ApiCallDeleteContact extends CliqueApiCall {
 
     @Override
     public void collectData(CliqueDb_Interface db) {
-        selfId = db.getSelfContact().getID();
+        selfId = db.getSelfContact().getGlobalId();
     }
 
     public void setContactId(long id) {

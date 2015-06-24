@@ -2,6 +2,7 @@ package com.pollytronics.clique.lib.api_v01;
 
 import android.util.Log;
 
+import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.database.CliqueDb_Interface;
 
 import org.json.JSONException;
@@ -23,6 +24,7 @@ public class ApiCallGetProfile extends CliqueApiCall {
     @Override
     protected String getApiQueryString() { return baseUrl+apiResourceName+"?userid="+requestedID; }
 
+    //TODO: shouldn't this just throw instead of returning null?
     protected void parseContent(String content) {
         try {
             Log.i(TAG, content);
@@ -38,16 +40,7 @@ public class ApiCallGetProfile extends CliqueApiCall {
 
     public void setRequestedId(long id) { this.requestedID = id; }
 
-    public String getName() {
-        String name = "anon";
-        try {
-            name = profileJSON.getString("nick");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            name = "anon";
-        } catch (NullPointerException e) {
-            name = "anon";
-        }
-        return name;
+    public Contact getContact() throws JSONException {
+        return new Contact(profileJSON);
     }
 }

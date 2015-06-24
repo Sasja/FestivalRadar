@@ -33,9 +33,9 @@
     <string name="action_debug">Debug</string>
     <string name="settings_localisation_update_rate">Localisation Update Rate</string>
     <string name="settings_cloud_update_rate">Network Connection Rate</string>
-    <string name="settings_button_setid">set ID</string>
+    <string name="settings_button_setid">set globalId</string>
     <string name="edittext_add_contact_name_hint">Name</string>
-    <string name="edittext_add_contact_id_hint">ID</string>
+    <string name="edittext_add_contact_id_hint">globalId</string>
     <string name="title_activity_add_contact_by_username">Add Contact</string>
     <string name="action_add_contact_by_username">add by name</string>
     <string name="dialog_delete_contact">Delete this contact?</string>

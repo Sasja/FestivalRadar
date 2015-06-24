@@ -112,12 +112,12 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     }
 
     private void feedDataToRadarView(){
-        Blip centerLocation = getCliqueDatabase().getSelfContact().getLastBlip();
+        Blip centerLocation = getCliqueDatabase().getLastSelfBlip();
         radarView.setCenterLocation(centerLocation);
         radarView.removeAllContacts();
         Collection<Contact> contacts = getCliqueDatabase().getAllContacts();
         for(Contact c:contacts){
-            radarView.addContact(c);
+            radarView.addContact(c, getCliqueDatabase().getLastBlip(c));
         }
         radarView.invalidate();
     }

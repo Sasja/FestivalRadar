@@ -52,4 +52,8 @@ public class Blip extends Location{
     public double getUtc_s() {
         return ((double)getTime() / 1000.0);
     }
+
+    public double getAge_s() {
+        return (double)(System.currentTimeMillis()-getTime()) / 1000.0;
+    }
 }

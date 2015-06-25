@@ -147,12 +147,13 @@ public class RadarView extends View {
 
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.argb(150, 0, 0, 250));
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(width / 25);
         for(Contact c:contacts.values()) {
             if(lastBlips.get(c.getGlobalId()) != null ) {
                 Pair<Float, Float> xy = calcScreenXY(lastBlips.get(c.getGlobalId()), centerLocation, width, height, bearing);
+                double ageFactor = Math.exp(-lastBlips.get(c.getGlobalId()).getAge_s() / 120.0);  // 120 sec oud is 1/e en exponentieel verval verder
+                paint.setColor(Color.argb((int)(255 * ageFactor), 0, 0, 250));
                 canvas.drawCircle(xy.first, xy.second, width / 100
                         , paint);
                 canvas.drawText(c.getName(), xy.first, xy.second + width / 25, paint);

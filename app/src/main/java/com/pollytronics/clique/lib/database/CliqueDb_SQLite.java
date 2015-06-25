@@ -185,15 +185,15 @@ public class CliqueDb_SQLite implements CliqueDb_Interface {
         }
         c.close();
         db.close();
-        if (selfContact==null) selfContact = insertRandomSelfContact(); //TODO: remove this shit, it inserts a random contact in db and returns it also
+//        if (selfContact==null) selfContact = insertRandomSelfContact(); //TODO: remove this shit, it inserts a random contact in db and returns it also
         return selfContact;
     }
 
     /**
-     * TODO: get rid of this
+     * TODO: get rid of this contraption
      * @return
      */
-    private Contact insertRandomSelfContact() {
+    public Contact insertRandomSelfContact() {
         Log.i(TAG, "WARNING: generating and inserting a stub self contact into the local database");
         SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -211,23 +211,21 @@ public class CliqueDb_SQLite implements CliqueDb_Interface {
 
     @Override
     public void updateSelfContact(Contact newSelfContact) {
-        if(newSelfContact.getGlobalId() != getSelfContact().getGlobalId()) {
-            Log.i(TAG, "WARNING: updating self contact global id!");
-        }
         SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(SelfContactEntry.COLUMN_NAME_NAME, newSelfContact.getName());
         values.put(SelfContactEntry.COLUMN_NAME_GLOBAL_ID, newSelfContact.getGlobalId());
-
-        int n = db.update(
-                ContactEntry.TABLE_NAME,        // table
-                values,                         // values
-                null,                           // whereClause
-                null                            // whereArgs
+        Log.i(TAG, "updating selfContact");
+        db.delete(
+                SelfContactEntry.TABLE_NAME,
+                null,
+                null
         );
-        if(n!=1) {
-            Log.i(TAG, "WARNING: updateSelfContact(): n selfcontacts updated = "+n+"?!");
-        }
+        db.insertOrThrow(
+                    SelfContactEntry.TABLE_NAME,
+                    null,
+                    values
+        );
         db.close();
     }
 
@@ -293,17 +291,17 @@ public class CliqueDb_SQLite implements CliqueDb_Interface {
      * @param nEntries
      */
     private void keepNEntries(String tableName, String orderColumnName, int nEntries) {
-        Log.i(TAG, "keepNEntries("+tableName+", "+orderColumnName+", "+nEntries+") called");
+        Log.i(TAG, "keepNEntries(" + tableName + ", " + orderColumnName + ", " + nEntries + ") called");
         SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
         db.execSQL(
                 "DELETE FROM " + tableName + " " +
-                    "WHERE " + BaseColumns._ID + " NOT in ( " +
+                        "WHERE " + BaseColumns._ID + " NOT in ( " +
                         "SELECT " + BaseColumns._ID + " FROM ( " +
-                            "SELECT " + BaseColumns._ID + " FROM " + tableName + " " +
-                            "ORDER BY " + orderColumnName + " DESC " +
-                            "LIMIT " + nEntries + " "+
+                        "SELECT " + BaseColumns._ID + " FROM " + tableName + " " +
+                        "ORDER BY " + orderColumnName + " DESC " +
+                        "LIMIT " + nEntries + " " +
                         ") foo " +
-                    ")"
+                        ")"
         );
         db.close();
     }

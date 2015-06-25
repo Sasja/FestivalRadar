@@ -1,5 +1,6 @@
 package com.pollytronics.clique;
 
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -66,6 +67,11 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         super.onResume();
         if (mRotation != null) {
             mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_GAME);  // motoG reports 7mA batt drain for mRotation.getPower()
+        }
+        if(getCliqueDatabase().getSelfContact() == null) {
+            Log.i(TAG, "selfContact == null, so starting welcome activity");
+            Intent intent = new Intent(this, CliqueActivity_Welcome.class);
+            startActivity(intent);
         }
     }
 

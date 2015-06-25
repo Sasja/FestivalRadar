@@ -13,25 +13,24 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.pollytronics.clique.CliqueActivity_Main"
+            android:name=".CliqueActivity_Main"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
-            android:name="com.pollytronics.clique.lib.service.CliqueService"
+            android:name=".lib.service.CliqueService"
             android:enabled="true"
             android:exported="false" >
         </service>
 
         <activity
-            android:name="com.pollytronics.clique.CliqueActivity_About"
+            android:name=".CliqueActivity_About"
             android:label="@string/title_activity_about"
             android:launchMode="singleTop" >
             <meta-data
@@ -39,7 +38,7 @@
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
         </activity>
         <activity
-            android:name="com.pollytronics.clique.CliqueActivity_Settings"
+            android:name=".CliqueActivity_Settings"
             android:label="@string/title_activity_settings"
             android:launchMode="singleTop" >
             <meta-data
@@ -47,31 +46,39 @@
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
         </activity>
         <activity
-            android:name="com.pollytronics.clique.CliqueActivity_Debug"
+            android:name=".CliqueActivity_Debug"
             android:label="@string/title_activity_debug" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
         </activity>
         <activity
-            android:name="com.pollytronics.clique.lib.CliqueActivity_MyViewPagerAct"
+            android:name=".lib.CliqueActivity_MyViewPagerAct"
             android:label="@string/title_activity_my_view_pager" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
         </activity>
         <activity
-            android:name="com.pollytronics.clique.MVP_Activity_Groups"
+            android:name=".MVP_Activity_Groups"
             android:label="@string/title_activity_view_pager_activity__groups"
-            android:parentActivityName="com.pollytronics.clique.CliqueActivity_Main" >
+            android:parentActivityName=".CliqueActivity_Main" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
         </activity>
         <activity
-            android:name="com.pollytronics.clique.MVP_Activity_Contacts"
+            android:name=".MVP_Activity_Contacts"
             android:label="@string/title_activity_view_pager_activity__contacts"
-            android:parentActivityName="com.pollytronics.clique.CliqueActivity_Main" >
+            android:parentActivityName=".CliqueActivity_Main" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.pollytronics.clique.CliqueActivity_Main" />
+        </activity>
+        <activity
+            android:name=".CliqueActivity_Welcome"
+            android:label="@string/title_activity_clique_activity__welcome_choose_username"
+            android:parentActivityName=".CliqueActivity_Main" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />

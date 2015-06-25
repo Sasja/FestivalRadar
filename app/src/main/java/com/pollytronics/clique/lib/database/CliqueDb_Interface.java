@@ -33,4 +33,6 @@ public interface CliqueDb_Interface {
     Blip getLastSelfBlip();
 
     void addBlip(Blip blip, Contact contact);
+
+    Contact insertRandomSelfContact();
 }

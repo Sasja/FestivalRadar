@@ -42,7 +42,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.viewpageractivity_contacts, menu);
+        getMenuInflater().inflate(R.menu.contacts, menu);
         return true;
     }
 

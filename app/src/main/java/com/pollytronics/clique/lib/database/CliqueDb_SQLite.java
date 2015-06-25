@@ -285,25 +285,26 @@ public class CliqueDb_SQLite implements CliqueDb_Interface {
      * thanks to Alex Barret
      * http://stackoverflow.com/questions/578867/sql-query-delete-all-records-from-the-table-except-latest-n
      * (see answer of NickC for optimisation for large tables)
-     * TODO: test this properly, it seems to do the job at first sight
+     * TODO: addapt code to delete from one contact only
      * @param tableName
      * @param orderColumnName
      * @param nEntries
      */
     private void keepNEntries(String tableName, String orderColumnName, int nEntries) {
         Log.i(TAG, "keepNEntries(" + tableName + ", " + orderColumnName + ", " + nEntries + ") called");
-        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
-        db.execSQL(
-                "DELETE FROM " + tableName + " " +
-                        "WHERE " + BaseColumns._ID + " NOT in ( " +
-                        "SELECT " + BaseColumns._ID + " FROM ( " +
-                        "SELECT " + BaseColumns._ID + " FROM " + tableName + " " +
-                        "ORDER BY " + orderColumnName + " DESC " +
-                        "LIMIT " + nEntries + " " +
-                        ") foo " +
-                        ")"
-        );
-        db.close();
+        Log.i(TAG, "WARNING: keepNEntries is not implemented so database will keep growing");
+//        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
+//        db.execSQL(
+//                "DELETE FROM " + tableName + " " +
+//                        "WHERE " + BaseColumns._ID + " NOT in ( " +
+//                        "SELECT " + BaseColumns._ID + " FROM ( " +
+//                        "SELECT " + BaseColumns._ID + " FROM " + tableName + " " +
+//                        "ORDER BY " + orderColumnName + " DESC " +
+//                        "LIMIT " + nEntries + " " +
+//                        ") foo " +
+//                        ")"
+//        );
+//        db.close();
     }
 
     @Override

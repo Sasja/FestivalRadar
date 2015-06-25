@@ -129,10 +129,12 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         }
         SunRelativePosition sunRelativePosition = new SunRelativePosition();
         Blip position = getCliqueDatabase().getLastSelfBlip();
-        sunRelativePosition.setCoordinate(position.getLongitude(), position.getLatitude());
-        sunRelativePosition.setDate(new Date());
-        radarView.setSunAzimuth(sunRelativePosition.getAzimuth());
-        radarView.setSunElevation(sunRelativePosition.getElevation());
+        if(position != null) {
+            sunRelativePosition.setCoordinate(position.getLongitude(), position.getLatitude());
+            sunRelativePosition.setDate(new Date());
+            radarView.setSunAzimuth(sunRelativePosition.getAzimuth());
+            radarView.setSunElevation(sunRelativePosition.getElevation());
+        }
         radarView.invalidate();
     }
 

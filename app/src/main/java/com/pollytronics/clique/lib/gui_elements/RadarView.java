@@ -37,8 +37,12 @@ public class RadarView extends View {
     private final Paint paint = new Paint();
     private Blip centerLocation;
     private double bearing=0;
+    private double sunAzimuth = 0;
+    private double sunElevation = -90;
+    private boolean sunIconEnabled = true;
     private double zoomLevel = 1000.0;     // means its that much meters to the left or right edge of screen
     private ScaleGestureDetector mScaleGestureDetector;
+
     // TODO: zoomlevel should not be initialised here but from some stored value in preferences or smth
 
     public RadarView(Context context) {
@@ -83,6 +87,13 @@ public class RadarView extends View {
         return new Pair<>(
                 (float) (screenWidth/2 + Math.cos(bearingRad) * dXPixels - Math.sin(bearingRad) * dYPixels),
                 (float) (screenHeight/2 - Math.sin(bearingRad) * dXPixels - Math.cos(bearingRad) * dYPixels)
+        );
+    }
+
+    private Pair<Float, Float> calcSunXY(double width, double height, double bearing, double sunAzimuth) {
+        return new Pair<>(
+                (float) (width/2  - Math.sin((bearing-sunAzimuth)*3.1415/180.0) * width/2.1),
+                (float) (height/2 - Math.cos((bearing-sunAzimuth)*3.1415/180.0) * width/2.1)
         );
     }
 
@@ -160,6 +171,20 @@ public class RadarView extends View {
             }
         }
 
+        if(sunIconEnabled) {
+            if(sunElevation < -3) {
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setColor(Color.BLACK);
+                paint.setStrokeWidth(1);
+            } else {
+                paint.setStyle(Paint.Style.FILL);
+                int green = (int)(Math.max(0,(Math.min(sunElevation, 20) * 10)));   //200 max and declining to 0 from 20° above horizon
+                paint.setColor(Color.argb(150, 200, green, green/10));
+            }
+            Pair<Float, Float> sunXy = calcSunXY(width, height, bearing, sunAzimuth);
+            canvas.drawCircle(sunXy.first, sunXy.second, width / 20, paint);
+        }
+
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(false);
         paint.setColor(Color.rgb(0, 0, 0));
@@ -190,6 +215,10 @@ public class RadarView extends View {
     public void setBearing(double bearing) {
         this.bearing = bearing;
     }
+
+    public void setSunAzimuth(double sunAzimuth) {this.sunAzimuth = sunAzimuth; }
+
+    public void setSunElevation(double sunElevation) {this.sunElevation = sunElevation; }
 
     public void zoomPercent(double zoomPercent) {
         this.zoomLevel = Math.pow(10, 5-zoomPercent/25);  // 0 -> 100km and 100 -> 10m

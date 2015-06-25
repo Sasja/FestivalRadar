@@ -17,8 +17,10 @@ import com.pollytronics.clique.lib.CliqueActivity;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.gui_elements.RadarView;
+import com.pollytronics.clique.lib.tools.nature.SunRelativePosition;
 
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
@@ -125,6 +127,12 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         for(Contact c:contacts){
             radarView.addContact(c, getCliqueDatabase().getLastBlip(c));
         }
+        SunRelativePosition sunRelativePosition = new SunRelativePosition();
+        Blip position = getCliqueDatabase().getLastSelfBlip();
+        sunRelativePosition.setCoordinate(position.getLongitude(), position.getLatitude());
+        sunRelativePosition.setDate(new Date());
+        radarView.setSunAzimuth(sunRelativePosition.getAzimuth());
+        radarView.setSunElevation(sunRelativePosition.getElevation());
         radarView.invalidate();
     }
 

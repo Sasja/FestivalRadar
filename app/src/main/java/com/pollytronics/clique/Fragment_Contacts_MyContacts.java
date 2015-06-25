@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.pollytronics.clique.lib.MyViewPagerFragment;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.tools.TimeFormatting;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -89,9 +90,9 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
             TextView tv_extra = (TextView) view.findViewById(R.id.textview_contact_extra);
             Blip lastBlip = getCligueDb().getLastBlip(contact);
             if (lastBlip != null) {
-                tv_extra.setText(lastBlip.toString());
+                tv_extra.setText(TimeFormatting.ageStringFromSeconds(lastBlip.getAge_s())+ " old");
             } else {
-                tv_extra.setText("no data");
+                tv_extra.setText("no data yet");
             }
             return view;
         }

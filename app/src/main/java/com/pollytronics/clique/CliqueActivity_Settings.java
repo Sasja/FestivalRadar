@@ -25,11 +25,6 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-/**
- * TODO: the location update does not do a thing anymore as the update rate is set once in the google play service at the moment
- */
-
-
 public class CliqueActivity_Settings extends CliqueActivity implements AdapterView.OnItemSelectedListener{
 
     private static final String TAG = "CliqueActivity_Settings";

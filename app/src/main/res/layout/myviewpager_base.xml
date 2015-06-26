@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#997790"
-        android:padding="4dp"
+        android:padding="16dp"
         android:textColor="#FFFFFF" />
 
 </android.support.v4.view.ViewPager>

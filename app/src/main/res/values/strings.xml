@@ -66,12 +66,15 @@
     <string name="contacts_remote_placeholder">connect by userid or sms or whatever\n(not implemented)</string>
     <string name="button_ping">PING</string>
     <string name="settings_button_setname">set name</string>
-    <string name="settings_change_name_instruction">choose your profile name</string>
+    <string name="settings_change_name_instruction">change your profile name</string>
     <string name="settings_change_id_instruction">can\'t touch this!</string>
     <string name="title_activity_clique_activity__welcome_choose_username">Welcome</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="welcome">Welcome brave alpha testing adventurer!\nplease choose a user name (again)</string>
+    <string name="update_rate">update rate:</string>
+
+
 
 
 </resources>

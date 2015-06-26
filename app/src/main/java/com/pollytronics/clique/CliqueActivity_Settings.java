@@ -9,15 +9,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.pollytronics.clique.lib.CliqueActivity;
-import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostProfile;
+import com.pollytronics.clique.lib.base.Contact;
 
 import org.json.JSONException;
 
@@ -28,13 +30,12 @@ import java.io.IOException;
  */
 
 
-public class CliqueActivity_Settings extends CliqueActivity {
+public class CliqueActivity_Settings extends CliqueActivity implements AdapterView.OnItemSelectedListener{
 
     private static final String TAG = "CliqueActivity_Settings";
 
     private EditText setIdEditText;
     private EditText setNameEditText;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,52 +43,17 @@ public class CliqueActivity_Settings extends CliqueActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cliqueactivity_settings);
 
-        SeekBar localisationSeekBar = (SeekBar) findViewById(R.id.seekbar_localisation_update_rate);
-        localisationSeekBar.setProgress(getCliquePreferences().getLocalisationUpdateTime_percent());
-        SeekBar cloudSeekBar = (SeekBar) findViewById(R.id.seekbar_cloud_update_rate);
-        cloudSeekBar.setProgress(getCliquePreferences().getCloudUpdateTime_percent());
+        Spinner spinner = (Spinner) findViewById(R.id.spinner_update_rate);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.update_rate_choices, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setSelection(getCliquePreferences().getUpdateRate());
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
         setIdEditText = (EditText) findViewById(R.id.edittext_setid);
         Button setIdButton = (Button) findViewById(R.id.button_setid);
         Button setNameButton = (Button) findViewById(R.id.button_setname);
         setNameEditText = (EditText) findViewById(R.id.edittext_setname);
-
-        localisationSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                getCliquePreferences().setLocalisationUpdateRate_percent(seekBar.getProgress());
-                Log.i(TAG, "setting Localisation update rate to " + Integer.toString(seekBar.getProgress()));
-                getBoundCliqueService().notifyNewSettings();
-            }
-        });
-
-        cloudSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                getCliquePreferences().setCloudUpdateRate_percent(seekBar.getProgress());
-                Log.i(TAG, "setting Cloud update rate to " + Integer.toString(seekBar.getProgress()));
-                getBoundCliqueService().notifyNewSettings();
-            }
-        });
 
         setIdEditText.setHint(Long.toString(getCliqueDatabase().getSelfContact().getGlobalId()));
 
@@ -124,6 +90,18 @@ public class CliqueActivity_Settings extends CliqueActivity {
         new getRemoteProfileNameIntoHintTask().execute();
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.i(TAG, String.format("onItemSelected() position=%d id=%d",position, id));
+        Log.i(TAG, String.format("set update rate to %d", position));
+        getCliquePreferences().setUpdateRate(position);
+        getBoundCliqueService().notifyNewSettings();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Log.i(TAG, "onNothingSelected()");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

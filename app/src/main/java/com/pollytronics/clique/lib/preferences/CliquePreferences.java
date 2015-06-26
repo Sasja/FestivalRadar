@@ -10,12 +10,14 @@ import android.preference.PreferenceManager;
  */
 public class CliquePreferences {
 
+    public static final int UPDATE_RATE_LO_BAT = 0;
+    public static final int UPDATE_RATE_BALANCED = 1;
+    public static final int UPDATE_RATE_HI_PERFORMANCE = 2;
     @SuppressWarnings("unused")
     static final String TAG = "CliquePreferences";
-    private static final String LOCALISATION_UPDATE_PCT = "localisationUpdateTime_percent";
-    private static final String CLOUD_UPDATE_PCT = "cloudUpdateTime_percent";
-    private static final int LOCALISATION_UPDATE_PCT_INIT = 75;
-    private static final int CLOUD_UPDATE_PCT_INIT = 25;
+    private static final String UPDATE_RATE = "updateRate";
+    private static final int UPDATE_RATE_DEFAULT = UPDATE_RATE_BALANCED;
+
     @SuppressWarnings("CanBeFinal")
     private static CliquePreferences instance = null;
     private final SharedPreferences preferences;
@@ -33,27 +35,37 @@ public class CliquePreferences {
     }
 
     public long getLocalisationUpdateTime_ms(){
-        double pct = preferences.getInt(LOCALISATION_UPDATE_PCT,LOCALISATION_UPDATE_PCT_INIT);
-        double min_ms = 1000;
-        double max_ms = 60000;
-        return (long) (min_ms * Math.pow((max_ms/min_ms),(1.0-pct/100.0)));
+        int setting = preferences.getInt(UPDATE_RATE, UPDATE_RATE_DEFAULT);
+        switch (setting) {
+            case UPDATE_RATE_LO_BAT:
+                return 30 * 1000;
+            case UPDATE_RATE_BALANCED:
+                return 15 * 1000;
+            case UPDATE_RATE_HI_PERFORMANCE:
+                return 1 * 1000;
+            default:
+                return 15 * 1000;
+        }
     }
     public long getCloudUpdateTime_ms(){
-        double pct = preferences.getInt(CLOUD_UPDATE_PCT,CLOUD_UPDATE_PCT_INIT);
-        double min_ms = 1000;
-        double max_ms = 60000;
-        return (long) (min_ms * Math.pow((max_ms/min_ms),(1.0-pct/100.0)));
+        int setting = preferences.getInt(UPDATE_RATE, UPDATE_RATE_DEFAULT);
+        switch (setting) {
+            case UPDATE_RATE_LO_BAT:
+                return 120 * 1000;
+            case UPDATE_RATE_BALANCED:
+                return 30 * 1000;
+            case UPDATE_RATE_HI_PERFORMANCE:
+                return 5 * 1000;
+            default:
+                return 30 * 1000;
+        }
     }
-    public int getLocalisationUpdateTime_percent(){
-        return preferences.getInt(LOCALISATION_UPDATE_PCT, LOCALISATION_UPDATE_PCT_INIT);
+
+    public int getUpdateRate() {
+        return preferences.getInt(UPDATE_RATE, UPDATE_RATE_DEFAULT);
     }
-    public int getCloudUpdateTime_percent(){
-        return preferences.getInt(CLOUD_UPDATE_PCT,CLOUD_UPDATE_PCT_INIT);
-    }
-    public void setLocalisationUpdateRate_percent(double percent){
-        preferences.edit().putInt(LOCALISATION_UPDATE_PCT, (int) percent).apply();
-    }
-    public void setCloudUpdateRate_percent(double percent){
-        preferences.edit().putInt(CLOUD_UPDATE_PCT, (int) percent).apply();
+
+    public void setUpdateRate(int setting) {
+        preferences.edit().putInt(UPDATE_RATE, setting).apply();
     }
 }

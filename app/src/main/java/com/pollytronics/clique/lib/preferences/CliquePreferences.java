@@ -3,6 +3,7 @@ package com.pollytronics.clique.lib.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * Created by pollywog on 9/23/14.
@@ -66,6 +67,7 @@ public class CliquePreferences {
     }
 
     public void setUpdateRate(int setting) {
+        Log.i(TAG, "setting update rate to " + String.valueOf(setting));
         preferences.edit().putInt(UPDATE_RATE, setting).apply();
     }
 }

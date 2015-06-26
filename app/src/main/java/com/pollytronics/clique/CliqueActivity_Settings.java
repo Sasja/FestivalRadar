@@ -41,9 +41,9 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         Spinner spinner = (Spinner) findViewById(R.id.spinner_update_rate);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.update_rate_choices, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setSelection(getCliquePreferences().getUpdateRate());
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+        spinner.setSelection(getCliquePreferences().getUpdateRate());   // call this at the end or it will not work
 
         setIdEditText = (EditText) findViewById(R.id.edittext_setid);
         Button setIdButton = (Button) findViewById(R.id.button_setid);

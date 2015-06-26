@@ -11,12 +11,16 @@ import android.util.Log;
  */
 public class CliquePreferences {
 
+    public static final String COMPASS_ENABLED = "compassEnabled";
+    public static final String SUN_ENABLED = "sunEnabled";
     public static final int UPDATE_RATE_LO_BAT = 0;
     public static final int UPDATE_RATE_BALANCED = 1;
     public static final int UPDATE_RATE_HI_PERFORMANCE = 2;
     @SuppressWarnings("unused")
     static final String TAG = "CliquePreferences";
     private static final String UPDATE_RATE = "updateRate";
+    private static final boolean COMPASS_ENABLED_DEFAULT = true;
+    private static final boolean SUN_ENABLED_DEFAULT = false;
     private static final int UPDATE_RATE_DEFAULT = UPDATE_RATE_BALANCED;
 
     @SuppressWarnings("CanBeFinal")
@@ -70,4 +74,12 @@ public class CliquePreferences {
         Log.i(TAG, "setting update rate to " + String.valueOf(setting));
         preferences.edit().putInt(UPDATE_RATE, setting).apply();
     }
+
+    public boolean getCompassEnabled() { return preferences.getBoolean(COMPASS_ENABLED, COMPASS_ENABLED_DEFAULT); }
+
+    public void setCompassEnabled(Boolean enabled) { preferences.edit().putBoolean(COMPASS_ENABLED, enabled).apply(); }
+
+    public boolean getSunEnabled() { return preferences.getBoolean(SUN_ENABLED, SUN_ENABLED_DEFAULT); }
+
+    public void setSunEnabled(Boolean enabled) { preferences.edit().putBoolean(SUN_ENABLED, enabled).apply();}
 }

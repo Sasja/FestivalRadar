@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -49,6 +50,10 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         Button setIdButton = (Button) findViewById(R.id.button_setid);
         Button setNameButton = (Button) findViewById(R.id.button_setname);
         setNameEditText = (EditText) findViewById(R.id.edittext_setname);
+        CheckBox enableCompassCheckBox = (CheckBox) findViewById(R.id.checkbox_enable_compass);
+        enableCompassCheckBox.setChecked(getCliquePreferences().getCompassEnabled());
+        CheckBox enableSunChechBox = (CheckBox) findViewById(R.id.checkbox_enable_sun);
+        enableSunChechBox.setChecked(getCliquePreferences().getSunEnabled());
 
         setIdEditText.setHint(Long.toString(getCliqueDatabase().getSelfContact().getGlobalId()));
 
@@ -79,6 +84,20 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
                 } else {
                     Toast.makeText(getApplicationContext(), "no network", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        enableCompassCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCliquePreferences().setCompassEnabled(((CheckBox)v).isChecked());
+            }
+        });
+
+        enableSunChechBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCliquePreferences().setSunEnabled(((CheckBox)v).isChecked());
             }
         });
 

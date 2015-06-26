@@ -73,8 +73,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="welcome">Welcome brave alpha testing adventurer!\nplease choose a user name (again)</string>
     <string name="update_rate">update rate:</string>
-
-
+    <string name="checkbox_enable_compas">enable compass</string>
+    <string name="checkbox_enable_sun">show current sun position</string>
 
 
 </resources>

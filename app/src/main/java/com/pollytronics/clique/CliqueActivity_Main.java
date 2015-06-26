@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
-import android.widget.SeekBar;
 import android.widget.Switch;
 
 import com.pollytronics.clique.lib.CliqueActivity;
@@ -34,9 +33,10 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     private static final String TAG = "CliqueActivity_Main";
     private Switch toggleService;
     private RadarView radarView;
-    private SeekBar zoomSeekBar;
     private SensorManager mSensorManager;
     private Sensor mRotation;
+    private boolean compassEnabled = false;
+    private boolean sunEnabled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +67,15 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     @Override
     protected void onResume() {
         super.onResume();
-        if (mRotation != null) {
+        compassEnabled = getCliquePreferences().getCompassEnabled();
+        if (compassEnabled && (mRotation != null)) {
             mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_GAME);  // motoG reports 7mA batt drain for mRotation.getPower()
         }
+        if(!compassEnabled) { radarView.setBearing(0); }
+
+        sunEnabled = getCliquePreferences().getSunEnabled();
+        radarView.setSunEnabled(sunEnabled);
+
         if(getCliqueDatabase().getSelfContact() == null) {
             Log.i(TAG, "selfContact == null, so starting welcome activity");
             Intent intent = new Intent(this, CliqueActivity_Welcome.class);
@@ -127,13 +133,15 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         for(Contact c:contacts){
             radarView.addContact(c, getCliqueDatabase().getLastBlip(c));
         }
-        SunRelativePosition sunRelativePosition = new SunRelativePosition();
-        Blip position = getCliqueDatabase().getLastSelfBlip();
-        if(position != null) {
-            sunRelativePosition.setCoordinate(position.getLongitude(), position.getLatitude());
-            sunRelativePosition.setDate(new Date());
-            radarView.setSunAzimuth(sunRelativePosition.getAzimuth());
-            radarView.setSunElevation(sunRelativePosition.getElevation());
+        if(sunEnabled) {
+            SunRelativePosition sunRelativePosition = new SunRelativePosition();
+            Blip position = getCliqueDatabase().getLastSelfBlip();
+            if (position != null) {
+                sunRelativePosition.setCoordinate(position.getLongitude(), position.getLatitude());
+                sunRelativePosition.setDate(new Date());
+                radarView.setSunAzimuth(sunRelativePosition.getAzimuth());
+                radarView.setSunElevation(sunRelativePosition.getElevation());
+            }
         }
         radarView.invalidate();
     }
@@ -141,7 +149,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         // You're not supposed to do to much work  in this callback but this seems reasonable
-        if(sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+        if(compassEnabled && (sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR)) {
             //Log.i(TAG, "sensor event received! : " + sensorEvent.toString());
             float[] rotMat = new float[16];
             float[] orient = new float[3];

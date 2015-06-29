@@ -13,6 +13,8 @@ import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.lib.service.SubService;
 
+import java.util.Random;
+
 /**
  * Localisation subservice
  * requests location updates from the google play services on creation
@@ -64,9 +66,11 @@ public class SubService_Localisation extends SubService implements
 
     @Override
     public void onDestroy() {
-        Log.i(TAG,"onDestroy");
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        mGoogleApiClient.disconnect();
+        Log.i(TAG, "onDestroy");
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override
@@ -76,14 +80,14 @@ public class SubService_Localisation extends SubService implements
 
     @Override
     public void onUnregister() {
-        Log.i(TAG,"onUnregister");
+        Log.i(TAG, "onUnregister");
     }
 
     @Override
     public void onNewSettings() {
         int updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();
         mLocationRequest.setInterval(updateTime_ms);
-        Log.i(TAG, "set updateTime to (ms) "+Integer.toString(updateTime_ms));
+        Log.i(TAG, "set updateTime to (ms) " + Integer.toString(updateTime_ms));
         if(mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -119,9 +123,15 @@ public class SubService_Localisation extends SubService implements
         Log.i(TAG, "shit, connection to google location services suspended!");
     }
 
+    /**
+     * TODO: remove this testing location faking
+     * @param connectionResult
+     */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.i(TAG, "Connection to google location services failed!: "+connectionResult.toString());
+        Log.i(TAG, "Connection to google location services failed!: "+connectionResult.toString() + " will fake location for testing");
+        mLastLocation = new Blip(51.072478 + (new Random().nextDouble()-.5)*.003, 3.709913 + (new Random().nextDouble()-.5)*.003, System.currentTimeMillis()/1000);
+        addBlipFromLocation(mLastLocation);
     }
 
     @Override

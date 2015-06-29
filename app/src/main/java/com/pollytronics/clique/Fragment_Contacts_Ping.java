@@ -19,6 +19,7 @@ import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetPings;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,7 +76,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
     /**
      * this class  will try to update aListview after it has
      * queried the webservice for other contacts. It should only display contacts
-     * that aren't known yet. (that is a responsability of api)
+     * that aren't known yet.
      *
      * 1) do the api call for POST ping
      * 2) wait a few seconds, then do the GET ping api call
@@ -110,8 +111,18 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         @Override
         protected void onPostExecute(String s) {
             if(apiCallSucceeded) {
-                Log.i(TAG,"using/aplying the responses of the webservice");
-                fillListViewFromList(listView, getPings.getAllPingContacts());
+                Log.i(TAG, "using/aplying the responses of the webservice");
+                List<Contact> apiContacts = getPings.getAllPingContacts();
+                List<Contact> allReadyKnown = new ArrayList<Contact>();
+                for (Contact c : apiContacts) {
+                    Log.i(TAG, String.format("checking if contact %s is allready known",c.getName()));
+                    if(getCligueDb().getContactById(c.getGlobalId()) != null) {
+                        allReadyKnown.add(c);
+                        Log.i(TAG, String.format("yup %s is allready known", c.getName()));
+                    }
+                }
+                apiContacts.removeAll(allReadyKnown);
+                fillListViewFromList(listView, apiContacts);
             } else {
                 Log.i(TAG, "the api call has failed, not doing anything in onPostExcecute");
             }

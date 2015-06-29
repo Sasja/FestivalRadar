@@ -75,7 +75,7 @@ public class SubService_Localisation extends SubService implements
 
     @Override
     public void onRegister() {
-        Log.i(TAG,"onRegister");
+        Log.i(TAG, "onRegister");
     }
 
     @Override
@@ -105,6 +105,10 @@ public class SubService_Localisation extends SubService implements
         getCliqueService().notifyNewData();
     }
 
+    /**
+     * TODO: remove ths testing location faking
+     * @param connectionHint
+     */
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.i(TAG, "woohoo Connected to google location services");
@@ -114,6 +118,9 @@ public class SubService_Localisation extends SubService implements
             addBlipFromLocation(mLastLocation);
         } else {
             Log.i(TAG, "could not obtain last location from google location service");
+            Log.i(TAG, "will use fake location for testing on emulator");
+            mLastLocation = new Blip(51.072478 + (new Random().nextDouble()-.5)*.003, 3.709913 + (new Random().nextDouble()-.5)*.003, System.currentTimeMillis()/1000);
+            addBlipFromLocation(mLastLocation);
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
    }

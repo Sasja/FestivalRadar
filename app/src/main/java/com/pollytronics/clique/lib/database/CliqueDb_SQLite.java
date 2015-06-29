@@ -145,6 +145,10 @@ public class CliqueDb_SQLite implements CliqueDb_Interface {
 
     @Override
     public void addContact(Contact contact) {
+        if (getContactById(contact.getGlobalId()) != null) {
+            Log.i(TAG, "addContact() called with an allready known user id, not doing anything!");
+            return;
+        }
         SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, contact.getGlobalId());

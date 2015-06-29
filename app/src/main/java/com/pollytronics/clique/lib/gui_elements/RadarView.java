@@ -123,10 +123,10 @@ public class RadarView extends View {
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(true);
         paint.setStrokeWidth(5);
-        paint.setColor(Color.rgb(200, 100, 100));
+        paint.setColor(Color.argb(150, 200, 100, 100));
         canvas.drawLine(width / 2, -width / 2, width / 2, height / 2, paint);
         paint.setStrokeWidth(3);
-        paint.setColor(Color.rgb(200, 200, 200));
+        paint.setColor(Color.argb(100, 150, 150, 150));
         canvas.drawLine(width / 2, height / 2, width / 2, height - 1 + width / 2, paint);
         canvas.drawLine(-height / 2, height / 2, width - 1 + height / 2, height / 2, paint);
 
@@ -145,7 +145,8 @@ public class RadarView extends View {
             circleStepMeter = 1 * (int) Math.pow(10, nulls+1);
         }
         paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(width / 30);
+        paint.setTextSize(width / 25);
+        paint.setColor(Color.argb(100, 150, 150, 150));
         for (int i = 1; i*circleStepMeter < zoomLevel * 2; ++i) {
             float radius = (float) (i*circleStepMeter/zoomLevel*width/2);
             paint.setStrokeWidth(3);

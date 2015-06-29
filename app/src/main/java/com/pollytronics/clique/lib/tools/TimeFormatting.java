@@ -11,9 +11,15 @@ public class TimeFormatting {
         int mins = secs/60;
         if (mins < 60) return String.valueOf(mins) + " min";
         int hours = mins / 60;
-        if (hours < 24) return String.valueOf(hours) + " hours";
+        if (hours < 24) {
+            if (hours == 1) return "one hour";
+            else return String.valueOf(hours) + " hours";
+        }
         int days = hours/24;
-        if (days < 7) return String.valueOf(hours) + " days";
+        if (days < 7) {
+            if (days == 1) return "one day";
+            else return String.valueOf(days) + " days";
+        }
         return "over a week";
     }
 }

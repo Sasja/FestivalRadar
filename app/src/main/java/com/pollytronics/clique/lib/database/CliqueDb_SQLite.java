@@ -143,6 +143,10 @@ public class CliqueDb_SQLite implements CliqueDb_Interface {
         db.close();
     }
 
+    /**
+     * TODO: shouldn't this be atomic?
+     * @param contact
+     */
     @Override
     public void addContact(Contact contact) {
         if (getContactById(contact.getGlobalId()) != null) {

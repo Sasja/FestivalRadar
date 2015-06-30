@@ -33,7 +33,6 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
 
     private static final String TAG = "CliqueActivity";
     private CliqueService rs;        //needs access to more methods than just the interface, for handshaking,
-    private CliqueDb_Interface db;
     private boolean rsBound = false;
     private ServiceConnection rsConn;
 
@@ -55,8 +54,8 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
         }
     }
 
-    public CliqueDb_Interface getCliqueDatabase() {
-        return db;
+    public CliqueDb_Interface getCliqueDb() {
+        return CliqueDb_SQLite.getInstance(getApplicationContext());
     }
 
     protected CliquePreferences getCliquePreferences() {
@@ -66,7 +65,6 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = CliqueDb_SQLite.getInstance(this);
     }
 
     /**

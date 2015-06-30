@@ -29,7 +29,7 @@ public class MyViewPagerFragment extends Fragment {
     }
 
     protected CliqueDb_Interface getCligueDb() {
-        return ((CliqueActivity) getActivity()).getCliqueDatabase();
+        return ((CliqueActivity) getActivity()).getCliqueDb();
     }
 
     public void notifyDatabaseUpdate() {

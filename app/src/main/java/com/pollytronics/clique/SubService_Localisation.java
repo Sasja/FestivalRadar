@@ -49,7 +49,7 @@ public class SubService_Localisation extends SubService implements
     private void createLocationRequest() {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         mLocationRequest = new LocationRequest();
-        int updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();
+        int updateTime_ms = (int) getCliquePreferences().getLocalisationUpdateTime_ms();
         mLocationRequest.setInterval(updateTime_ms);
         Log.i(TAG, "location request created with update time = " + Integer.toString(updateTime_ms));
         mLocationRequest.setFastestInterval(2500);
@@ -85,7 +85,7 @@ public class SubService_Localisation extends SubService implements
 
     @Override
     public void onNewSettings() {
-        int updateTime_ms = (int) getRadarPreferences().getLocalisationUpdateTime_ms();
+        int updateTime_ms = (int) getCliquePreferences().getLocalisationUpdateTime_ms();
         mLocationRequest.setInterval(updateTime_ms);
         Log.i(TAG, "set updateTime to (ms) " + Integer.toString(updateTime_ms));
         if(mGoogleApiClient.isConnected()) {

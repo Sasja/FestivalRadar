@@ -55,7 +55,7 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         CheckBox enableSunChechBox = (CheckBox) findViewById(R.id.checkbox_enable_sun);
         enableSunChechBox.setChecked(getCliquePreferences().getSunEnabled());
 
-        setIdEditText.setHint(Long.toString(getCliqueDatabase().getSelfContact().getGlobalId()));
+        setIdEditText.setHint(Long.toString(getCliqueDb().getSelfContact().getGlobalId()));
 
         setIdButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,9 +67,9 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
                     Log.i(TAG, "thats not a number, cant set this ID");
                     return;
                 }
-                Contact selfContact = getCliqueDatabase().getSelfContact();
+                Contact selfContact = getCliqueDb().getSelfContact();
                 selfContact.setGlobalId(id);
-                getCliqueDatabase().updateSelfContact(selfContact);
+                getCliqueDb().updateSelfContact(selfContact);
             }
         });
 
@@ -136,7 +136,7 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         private boolean apiCallSucceeded = false;
 
         public setRemoteProfileNameTask(String name) {
-            Contact myProfile = getCliqueDatabase().getSelfContact();
+            Contact myProfile = getCliqueDb().getSelfContact();
             myProfile.setName(name);
             try {
                 postProfile = new ApiCallPostProfile(myProfile);
@@ -187,7 +187,7 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
 
         @Override
         protected void onPreExecute() {
-            getProfile = new ApiCallGetProfile(getCliqueDatabase().getSelfContact().getGlobalId());
+            getProfile = new ApiCallGetProfile(getCliqueDb().getSelfContact().getGlobalId());
         }
 
         @Override

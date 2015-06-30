@@ -102,7 +102,7 @@ public class CliqueActivity_Welcome extends CliqueActivity {
             if(apiCallSucceeded) {
                 Log.i(TAG, "posting new profile and retrieving userid succeeded");
                 Log.i(TAG, "received userid="+newUserProfile.getGlobalId()+" now storing in locally");
-                getCliqueDatabase().updateSelfContact(newUserProfile);
+                getCliqueDb().updateSelfContact(newUserProfile);
                 Toast.makeText(getApplicationContext(), "profile updated", Toast.LENGTH_SHORT).show();
                 finish();
             } else {

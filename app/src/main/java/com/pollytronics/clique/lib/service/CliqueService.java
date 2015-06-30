@@ -31,7 +31,6 @@ public class CliqueService extends Service implements CliqueService_Interface4Su
     private final SubService_Localisation subServiceLocalisation = new SubService_Localisation(this);
     private final SubService_Cloud_2 subServiceCloud = new SubService_Cloud_2(this);
     private CliqueActivity_Interface4CliqueService ra;
-    private CliqueDb_Interface db;
     private Boolean raRegistered = false;
 
     /*
@@ -41,8 +40,8 @@ public class CliqueService extends Service implements CliqueService_Interface4Su
     public CliqueService() {
     }
 
-    public CliqueDb_Interface getRadarDataBase(){
-        return db;
+    public CliqueDb_Interface getCliqueDb(){
+        return CliqueDb_SQLite.getInstance(this);
     }
 
     /**
@@ -50,7 +49,6 @@ public class CliqueService extends Service implements CliqueService_Interface4Su
      */
     @Override
     public void onCreate() {
-        db = CliqueDb_SQLite.getInstance(this);
         Log.i(TAG, "onCreate, initialising sub services");
         subServiceLocalisation.onCreate();
         subServiceCloud.onCreate();

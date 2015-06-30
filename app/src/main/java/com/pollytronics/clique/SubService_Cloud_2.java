@@ -65,7 +65,7 @@ public class SubService_Cloud_2 extends SubService {
     @Override
     public void onCreate() {
         Log.i(TAG, "onCreate");
-        updateTime_ms = (int) getRadarPreferences().getCloudUpdateTime_ms();
+        updateTime_ms = (int) getCliquePreferences().getCloudUpdateTime_ms();
         Log.i(TAG, "set updateTime to (ms) " + Integer.toString(updateTime_ms));
         getMainHandler().post(cloudLoop);
     }
@@ -90,7 +90,7 @@ public class SubService_Cloud_2 extends SubService {
     @Override
     public void onNewSettings() {
         getMainHandler().removeCallbacks(cloudLoop);
-        updateTime_ms = (int) getRadarPreferences().getCloudUpdateTime_ms();
+        updateTime_ms = (int) getCliquePreferences().getCloudUpdateTime_ms();
         Log.i(TAG, "set updateTime to (ms) " + Integer.toString(updateTime_ms));
         getMainHandler().post(cloudLoop);
     }

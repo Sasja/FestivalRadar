@@ -76,7 +76,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         sunEnabled = getCliquePreferences().getSunEnabled();
         radarView.setSunEnabled(sunEnabled);
 
-        if(getCliqueDatabase().getSelfContact() == null) {
+        if(getCliqueDb().getSelfContact() == null) {
             Log.i(TAG, "selfContact == null, so starting welcome activity");
             Intent intent = new Intent(this, CliqueActivity_Welcome.class);
             startActivity(intent);
@@ -126,16 +126,16 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     }
 
     private void feedDataToRadarView(){
-        Blip centerLocation = getCliqueDatabase().getLastSelfBlip();
+        Blip centerLocation = getCliqueDb().getLastSelfBlip();
         radarView.setCenterLocation(centerLocation);
         radarView.removeAllContacts();
-        Collection<Contact> contacts = getCliqueDatabase().getAllContacts();
+        Collection<Contact> contacts = getCliqueDb().getAllContacts();
         for(Contact c:contacts){
-            radarView.addContact(c, getCliqueDatabase().getLastBlip(c));
+            radarView.addContact(c, getCliqueDb().getLastBlip(c));
         }
         if(sunEnabled) {
             SunRelativePosition sunRelativePosition = new SunRelativePosition();
-            Blip position = getCliqueDatabase().getLastSelfBlip();
+            Blip position = getCliqueDb().getLastSelfBlip();
             if (position != null) {
                 sunRelativePosition.setCoordinate(position.getLongitude(), position.getLatitude());
                 sunRelativePosition.setDate(new Date());

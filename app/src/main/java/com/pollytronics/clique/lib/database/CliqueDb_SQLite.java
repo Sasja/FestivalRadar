@@ -13,36 +13,46 @@ import com.pollytronics.clique.lib.base.Contact;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Random;
 
 /**
- * Created by pollywog on 9/22/14.
- *
  * A class that implements the CliqueDb_Interface using a SQLite database on the mobile device
  * This class should only be used directly for instantiation with getInstance(), use the interface for all other uses.
  * the static (Class) method getInstance will return the available instance or create it when necessary.
+ * It uses the singleton design pattern: http://www.javaworld.com/article/2073352/core-java/simply-singleton.html
  *
- * TODO: onUpgrade() and onDowngrade just discards all data at the moment
+ * it is not threadsafe so should only be accessed from one thread (the main thread or UI thread)
+ *
+ * TODO: onUpgrade() and onDowngrade() simply discards all data at the moment
  * TODO: make method updateContacts(Collection<Contact> contacts) and use it from within SubService_Cloud_2
  * TODO: check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
- * TODO: is it okay to do all this database stuff sync?
+ * TODO: is it still okay to do all this database stuff sync on the main thread?
  */
-public class CliqueDb_SQLite implements CliqueDb_Interface {
-
+public final class CliqueDb_SQLite implements CliqueDb_Interface {
     public static final String DATABASE_NAME = "Clique.db";
-    public static final int DATABASE_VERSION = 2;   // increasing this give everyone a new random 4 digit id and discards all data
+    public static final int DATABASE_VERSION = 2;   // increasing this will wipe all local databases on update
     private static final String TAG="CliqueDb_SQLite";
+    private static CliqueDb_SQLite instance = null;
+    private final CliqueDbHelper cliqueDbHelper;
 
-    private static CliqueDb_SQLite instance=null;
-    private final CliqueDbHelper cliqueDbHelper;  // can be final as it is only assigned in the constructor, that is allowed apparently
-
+    /**
+     * private constructor to make sure only one object is ever created, the object should be obtained through getInstance instead.
+     * @param context
+     */
     private CliqueDb_SQLite(Context context){
+        Log.i(TAG, "instanciating CliqueDb_SQLite object");
         cliqueDbHelper = new CliqueDbHelper(context);
-        Log.i(TAG,"initialised cliqueDbHelper");
     }
 
+    /**
+     * This is used instead of a constructor to ensure only one instance of this class is ever created (singleton design pattern)
+     *
+     * Note: Java doesn't allow static methods in interfaces (yet) so we cant just
+     *
+     * @param context
+     * @return
+     */
     public static CliqueDb_SQLite getInstance(Context context){
-        if(instance==null){
+        if(instance == null) {
             instance = new CliqueDb_SQLite(context);
         }
         return instance;
@@ -195,26 +205,6 @@ public class CliqueDb_SQLite implements CliqueDb_Interface {
         db.close();
 //        if (selfContact==null) selfContact = insertRandomSelfContact(); //TODO: remove this shit, it inserts a random contact in db and returns it also
         return selfContact;
-    }
-
-    /**
-     * TODO: get rid of this contraption
-     * @return
-     */
-    public Contact insertRandomSelfContact() {
-        Log.i(TAG, "WARNING: generating and inserting a stub self contact into the local database");
-        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        long randomId = Math.abs((new Random()).nextLong() % 10000);       // generate a random number
-        values.put(SelfContactEntry.COLUMN_NAME_GLOBAL_ID, randomId);
-        values.put(SelfContactEntry.COLUMN_NAME_NAME, "anon");
-        db.insertOrThrow(
-                SelfContactEntry.TABLE_NAME,
-                null,
-                values
-        );
-        db.close();
-        return new Contact(randomId, "anon");
     }
 
     @Override

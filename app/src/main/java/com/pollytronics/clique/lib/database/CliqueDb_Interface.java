@@ -6,9 +6,16 @@ import com.pollytronics.clique.lib.base.Contact;
 import java.util.Collection;
 
 /**
- * Created by pollywog on 9/22/14.
+ * Using the singleton design pattern with a interface is a bit annoying as the static getInstance method
+ * cannot be put in the interface being static (for now).
+ *
+ * Therefore retrieving an instance of the interface would go something like
+ * (CliqueDb_Interface) CliqueDb_SQLite.getInstance();
+ * Some base classes provide convenience for this through getCliqueDb()
  */
 public interface CliqueDb_Interface {
+
+    // Contacts --------------------
 
     Collection<Contact> getAllContacts();
 
@@ -16,15 +23,17 @@ public interface CliqueDb_Interface {
 
     void removeContactById(long id);
 
-    void updateContact(Contact contact);
-
     void addContact(Contact contact);
+
+    void updateContact(Contact contact);
 
     Contact getSelfContact();
 
     Contact getContactById(Long id);
 
     void updateSelfContact(Contact newSelfContact);
+
+    // Blips -----------------------
 
     Blip getLastBlip(Contact contact);
 
@@ -33,6 +42,4 @@ public interface CliqueDb_Interface {
     Blip getLastSelfBlip();
 
     void addBlip(Blip blip, Contact contact);
-
-    Contact insertRandomSelfContact();
 }

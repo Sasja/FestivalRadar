@@ -106,7 +106,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
      */
     public void addNewContact(Contact contact) {
         Log.i(TAG, "adding contact locally");
-        getCliqueDatabase().addContact(contact);
+        getCliqueDb().addContact(contact);
         notifyDatabaseUpdate();
         Log.i(TAG, "launching task to add contact remotely");
         new postNewContactTask(contact).execute();
@@ -123,7 +123,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         final ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()){
-            long selfId = getCliqueDatabase().getSelfContact().getGlobalId();
+            long selfId = getCliqueDb().getSelfContact().getGlobalId();
             long deleteId = selectedContact.getGlobalId();
             final ApiCallDeleteContact deleteContact = new ApiCallDeleteContact(selfId, deleteId);
             Thread thread = new Thread(new Runnable() {
@@ -141,7 +141,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             Log.i(TAG, "posting a delete request to api for contact id: " + deleteId);
             thread.start();
             Log.i(TAG, "deleting selected radar contact (id=" + deleteId + ")");
-            getCliqueDatabase().removeContact(selectedContact);
+            getCliqueDb().removeContact(selectedContact);
             Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contact_removed), Toast.LENGTH_SHORT);
             toast.show();
             notifyDatabaseUpdate();         // TODO: this shouldn't be called here but happen autamatically
@@ -187,7 +187,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering own use id");
-            long selfId = getCliqueDatabase().getSelfContact().getGlobalId();
+            long selfId = getCliqueDb().getSelfContact().getGlobalId();
             long contactId = contact.getGlobalId();
             try {
                 postContact = new ApiCallPostContact(selfId, contactId);
@@ -259,12 +259,12 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         @Override
         protected void onPreExecute() {
             // get selfId (into ApiCall objects)
-            long selfId = getCliqueDatabase().getSelfContact().getGlobalId();
+            long selfId = getCliqueDb().getSelfContact().getGlobalId();
             apiCallPostContact = new ApiCallPostContact(selfId);
             apiCallGetContactsSeeme = new ApiCallGetContactIdsSeeme(selfId);
             apiCallGetContactsISee = new ApiCallGetContactIdsISee(selfId);
             // construct list of ids in local contacts
-            for (Contact c : getCliqueDatabase().getAllContacts()) {
+            for (Contact c : getCliqueDb().getAllContacts()) {
                 con.add(c.getGlobalId());
             }
         }
@@ -327,11 +327,11 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                     } else {
                         Log.i(TAG, "adding contact to local contacts (autoaccept): " + id);
                     }
-                    getCliqueDatabase().addContact(newContacts.get(id));
+                    getCliqueDb().addContact(newContacts.get(id));
                 }
                 for (long id : toDeleteFromCon) {
                     Log.i(TAG, "deleting contact from local list (triggered by remote delete): " + id);
-                    getCliqueDatabase().removeContactById(id);
+                    getCliqueDb().removeContactById(id);
                 }
                 notifyDatabaseUpdate();             // TODO: not sure this needs to be called
                 Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contacts_synced), Toast.LENGTH_SHORT);

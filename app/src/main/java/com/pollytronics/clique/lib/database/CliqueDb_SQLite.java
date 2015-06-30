@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -11,8 +12,8 @@ import android.util.Log;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class that implements the CliqueDb_Interface using a SQLite database on the mobile device
@@ -25,7 +26,10 @@ import java.util.HashSet;
  * TODO: onUpgrade() and onDowngrade() simply discards all data at the moment
  * TODO: make method updateContacts(Collection<Contact> contacts) and use it from within SubService_Cloud_2
  * TODO: check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
- * TODO: is it still okay to do all this database stuff sync on the main thread?
+ * TODO: is it still okay to do all this database stuff sync on the main thread? not really according to developer.android.com but it works fine in practice
+ * TODO: i put try catch everywhere in the code where the interface methods are used to get it working for now, take a day to clean up and do proper error handling
+ * TODO: deleting a contact from the database should probably also get rid of the associated blips
+ * TODO: clean up the database now and then to maintain a maximum number of blips per user
  */
 public final class CliqueDb_SQLite implements CliqueDb_Interface {
     public static final String DATABASE_NAME = "Clique.db";
@@ -46,7 +50,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     /**
      * This is used instead of a constructor to ensure only one instance of this class is ever created (singleton design pattern)
      *
-     * Note: Java doesn't allow static methods in interfaces (yet) so we cant just
+     * Note: Java doesn't allow static methods in interfaces (yet) so we cant put this in the interface sadly :(
      *
      * @param context
      * @return
@@ -58,232 +62,208 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         return instance;
     }
 
+    //------------------------------- SQL METHOD WRAPPERS ----------------------------------------------------------
+
+    /**
+     * @return all contacts in the contact table in no particular order
+     * @throws CliqueDbException
+     */
     @Override
-    public Collection<Contact> getAllContacts() {
-        Collection<Contact> contacts = new HashSet<>();
-        SQLiteDatabase db = cliqueDbHelper.getReadableDatabase();
-        String[] projection = {
-                ContactEntry.COLUMN_NAME_GLOBAL_ID,
-                ContactEntry.COLUMN_NAME_NAME,
+    public List<Contact> getAllContacts() throws CliqueDbException{
+        final List<Contact> contacts = new ArrayList<>();
+
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            void parseCursor(Cursor c) {
+                for(int i=0; i < c.getCount(); i++) {
+                    c.moveToPosition(i);
+                    long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_GLOBAL_ID));
+                    String name = c.getString(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_NAME));
+                    contacts.add(new Contact(id, name));
+                }
+            }
         };
-        String sortOrder = ContactEntry.COLUMN_NAME_NAME + " DESC";
-        Cursor c = db.query(
-                ContactEntry.TABLE_NAME,    // table
-                projection,                 // columns
-                null,                       // selection
-                null,                       // selectionArgs
-                null,                       // groupBy
-                null,                       // having
-                sortOrder                   // orderBy
-        );
-        for(int i = 0; i < c.getCount();i++){
-            c.moveToPosition(i);
-            long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_GLOBAL_ID));
-            String name = c.getString(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_NAME));
-            Contact aContact = new Contact(id, name);
-            contacts.add(aContact);
-        }
-        c.close();
-        db.close();
+        query.setTable(ContactEntry.TABLE_NAME);
+        query.setProjection(new String[]{ContactEntry.COLUMN_NAME_GLOBAL_ID, ContactEntry.COLUMN_NAME_NAME});
+        query.execute();
         return contacts;
     }
 
     @Override
-    public Contact getContactById(Long id) {
-        Contact contact;
-        SQLiteDatabase db = cliqueDbHelper.getReadableDatabase();
-        String[] projection = {
-                ContactEntry.COLUMN_NAME_GLOBAL_ID,
-                ContactEntry.COLUMN_NAME_NAME,
+    public Contact getContactById(final Long id) throws CliqueDbException {
+        final Contact[] contact = new Contact[1];   // hack to allow access from CliqueDbQuery object
+
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            void parseCursor(Cursor c) throws CliqueDbException{
+                if(c.getCount() == 1) {
+                    c.moveToPosition(0);
+                    String name = c.getString(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_NAME));
+                    contact[0] = new Contact(id, name); // hack to allow this object to write to calling method attribute
+                } else if(c.getCount() == 0) {
+                    contact[0] = null;
+                } else if(c.getCount() > 1) {
+                    throw new CliqueDbException("more than one contact found on global id!");
+                }
+            }
         };
-        String selection = ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + "'" + Long.toString(id) + "'";
-        Cursor c = db.query(
-                ContactEntry.TABLE_NAME,
-                projection,
-                selection,
-                null,
-                null,
-                null,
-                null
-        );
-        if(c.getCount() > 0) {
-            c.moveToPosition(0);
-            String name = c.getString(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_NAME));
-            contact = new Contact(id,name);
-        } else {
-            contact = null;
-        }
-        c.close();
-        db.close();
-        return contact;
+        query.setTable(ContactEntry.TABLE_NAME);
+        query.setProjection(new String[]{ContactEntry.COLUMN_NAME_GLOBAL_ID, ContactEntry.COLUMN_NAME_NAME});
+        query.setSelection(ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + "'" + Long.toString(id) + "'");
+        query.execute();
+        return contact[0];
     }
 
     @Override
-    public void removeContact(Contact contact) {
+    public void removeContact(Contact contact) throws CliqueDbException {
         removeContactById(contact.getGlobalId());
     }
 
-    @Override
-    public void removeContactById(long id) {
-        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
-        String selection = ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + Long.toString(id);
-        int n = db.delete(
-                ContactEntry.TABLE_NAME,
-                selection,
-                null
-        );
-        Log.i(TAG, "removed " + Integer.toString(n) + " contact(s) from database");
-        db.close();
-    }
+    //----------------------------------- PUBLIC METHODS ----------------------------------------------------
 
     @Override
-    public void updateContact(Contact contact) {               //TODO: this updates one contact at a time, should not be used over all contacts
-        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(ContactEntry.COLUMN_NAME_NAME, contact.getName());
-
-        String selection = ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + Long.toString(contact.getGlobalId());
-        int n = db.update(
-                ContactEntry.TABLE_NAME,        // table
-                values,                         // values
-                selection,                      // whereClause
-                null                            // whereArgs
-        );
-        Log.i(TAG, "updated " + Integer.toString(n) + " contact(s), better not use this for looping over all contacts");
-        db.close();
+    public void removeContactById(long id) throws CliqueDbException {
+        CliqueDbDelete delete = new CliqueDbDelete();
+        delete.setTable(ContactEntry.TABLE_NAME);
+        delete.setWhere(ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + Long.toString(id));
+        delete.execute();
+        Log.i(TAG, String.format("deleted %d contact(s) from local contacts table", delete.getnDeleted()));
     }
 
     /**
-     * TODO: shouldn't this be atomic?
-     * @param contact
+     * If the contact (or a contact with the same global id) is not present allready adds the contact to the db.
+     * It's okay to do it in two sql operations as this database is accessed from one thread only
+     * @param contact contact to be added to the database
+     * @throws CliqueDbException*
      */
+
     @Override
-    public void addContact(Contact contact) {
+    public void addContact(Contact contact) throws CliqueDbException {
         if (getContactById(contact.getGlobalId()) != null) {
-            Log.i(TAG, "addContact() called with an allready known user id, not doing anything!");
+            Log.i(TAG, "WARNING: addContact() called with contact with allready used global id, not doing anything");
             return;
         }
-        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, contact.getGlobalId());
-        values.put(ContactEntry.COLUMN_NAME_NAME, contact.getName());
-        long newRowId = db.insertOrThrow(
-                ContactEntry.TABLE_NAME,
-                null,
-                values
-        );
-        Log.i(TAG, "inserted new contact in database in row_id " + Long.toString(newRowId));
-        db.close();
+        CliqueDbInsert insert = new CliqueDbInsert();
+        insert.setTable(ContactEntry.TABLE_NAME);
+        ContentValues content = new ContentValues();
+        content.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, contact.getGlobalId());
+        content.put(ContactEntry.COLUMN_NAME_NAME, contact.getName());
+        insert.setValues(content);
+        insert.execute();
+        Log.i(TAG, "new contact inserted into the local database");
     }
 
+    /**
+     * this method returns the self contact that is stored in a table of its own. It will throw CliqueDbExceptions
+     * if there is more than one entry in that table. If there is no entry it will return null.
+     * @return the self contact or null
+     * @throws CliqueDbException
+     */
     @Override
-    public Contact getSelfContact() {
-        Contact selfContact;
-        SQLiteDatabase db = cliqueDbHelper.getReadableDatabase();
-        String[] projection = {
-                SelfContactEntry.COLUMN_NAME_GLOBAL_ID,
-                SelfContactEntry.COLUMN_NAME_NAME,
+    public Contact getSelfContact() throws CliqueDbException {
+        final Contact[] selfContact = new Contact[1]; // hack to allow access from CliqueDbQuery object
+
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            void parseCursor(Cursor c) throws CliqueDbException {
+                int nFound = c.getCount();
+                if (nFound == 1) {
+                    c.moveToPosition(0);
+                    long id = c.getLong(c.getColumnIndexOrThrow(SelfContactEntry.COLUMN_NAME_GLOBAL_ID));
+                    String name = c.getString(c.getColumnIndexOrThrow(SelfContactEntry.COLUMN_NAME_NAME));
+                    selfContact[0] = new Contact(id, name);
+                } else if (nFound == 0) {
+                    Log.i(TAG, "no selfcontact was found in the database on getSelfContact(), returning null");
+                    selfContact[0] = null;
+                } else {
+                    throw new CliqueDbException(String.format("more than one selfconact was found in the database!? (n=%d)",nFound));
+                }
+            }
         };
-        Cursor c = db.query(
-                SelfContactEntry.TABLE_NAME,
-                projection,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        if(c.getCount() > 0) {
-            c.moveToPosition(0);
-            String name = c.getString(c.getColumnIndexOrThrow(SelfContactEntry.COLUMN_NAME_NAME));
-            long id = c.getLong(c.getColumnIndexOrThrow(SelfContactEntry.COLUMN_NAME_GLOBAL_ID));
-            selfContact = new Contact(id, name);
-        } else {
-            selfContact = null;
-        }
-        c.close();
-        db.close();
-//        if (selfContact==null) selfContact = insertRandomSelfContact(); //TODO: remove this shit, it inserts a random contact in db and returns it also
-        return selfContact;
+        query.setTable(SelfContactEntry.TABLE_NAME);
+        query.setProjection(new String[]{SelfContactEntry.COLUMN_NAME_GLOBAL_ID, SelfContactEntry.COLUMN_NAME_NAME});
+        query.execute();
+        return selfContact[0];
     }
 
+    /**
+     * removes the selfContact if any and inserts a new one in it's dedicated table
+     * this is done in two steps so in theory the database could end up without a selfContact
+     * if no SelfContact is present it will just create one
+     * TODO: figure out how to do this in one step to prevent erasure of the selfContact
+     * @param newSelfContact the new self contact
+     * @throws CliqueDbException
+     */
     @Override
-    public void updateSelfContact(Contact newSelfContact) {
-        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(SelfContactEntry.COLUMN_NAME_NAME, newSelfContact.getName());
-        values.put(SelfContactEntry.COLUMN_NAME_GLOBAL_ID, newSelfContact.getGlobalId());
+    public void updateSelfContact(Contact newSelfContact) throws CliqueDbException {
         Log.i(TAG, "updating selfContact");
-        db.delete(
-                SelfContactEntry.TABLE_NAME,
-                null,
-                null
-        );
-        db.insertOrThrow(
-                    SelfContactEntry.TABLE_NAME,
-                    null,
-                    values
-        );
-        db.close();
+        CliqueDbDelete delete = new CliqueDbDelete();
+        delete.setTable(SelfContactEntry.TABLE_NAME);
+        delete.execute();
+        CliqueDbInsert insert = new CliqueDbInsert();
+        insert.setTable(SelfContactEntry.TABLE_NAME);
+        ContentValues content = new ContentValues();
+        content.put(SelfContactEntry.COLUMN_NAME_GLOBAL_ID, newSelfContact.getGlobalId());
+        content.put(SelfContactEntry.COLUMN_NAME_NAME, newSelfContact.getName());
+        insert.setValues(content);
+        insert.execute();
     }
 
+    /**
+     * @param contact is only used for it's global id
+     * @return the latest Blip corresponding to the global_id of contact
+     */
     @Override
-    public Blip getLastBlip(Contact contact) {
-        Blip lastBlip;
-        SQLiteDatabase db = cliqueDbHelper.getReadableDatabase();
-        String[] projection = {
-                BlipEntry.COLUMN_NAME_LAT,
-                BlipEntry.COLUMN_NAME_LON,
-                BlipEntry.COLUMN_NAME_UTC_S
+    public Blip getLastBlip(Contact contact) throws CliqueDbException {
+        final Blip[] blip = new Blip[1];
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            void parseCursor(Cursor c) throws CliqueDbException {
+                if(c.getCount() >= 1) {
+                    c.moveToPosition(0);
+                    Double lat = c.getDouble(c.getColumnIndexOrThrow(BlipEntry.COLUMN_NAME_LAT));
+                    Double lon = c.getDouble(c.getColumnIndexOrThrow(BlipEntry.COLUMN_NAME_LON));
+                    Double utc_s = c.getDouble(c.getColumnIndexOrThrow(BlipEntry.COLUMN_NAME_UTC_S));
+                    blip[0] = new Blip(lat, lon, utc_s);
+                } else {
+                    blip[0] = null;
+                }
+            }
         };
-        String selection = BlipEntry.COLUMN_NAME_GLOBAL_ID + "=" + "'" + Long.toString(contact.getGlobalId()) + "'";
-        String sortOrder = BlipEntry.COLUMN_NAME_UTC_S + " DESC";
-        Cursor c = db.query(
-                BlipEntry.TABLE_NAME,   // table
-                projection,             // columns
-                selection,              // selection
-                null,                   // selectionArgs
-                null,                   // groupBy
-                null,                   // having
-                sortOrder               // orderBy
-        );
-        if(c.getCount() > 0) {
-            c.moveToPosition(0);
-            Double lat = c.getDouble(c.getColumnIndexOrThrow(BlipEntry.COLUMN_NAME_LAT));
-            Double lon = c.getDouble(c.getColumnIndexOrThrow(BlipEntry.COLUMN_NAME_LON));
-            Double utc_s = c.getDouble(c.getColumnIndexOrThrow(BlipEntry.COLUMN_NAME_UTC_S));
-            lastBlip = new Blip(lat, lon, utc_s);
-        } else {
-            lastBlip = null;
-        }
-        c.close();
-        db.close();
-        return lastBlip;
+        query.setTable(BlipEntry.TABLE_NAME);
+        query.setProjection(new String[]{BlipEntry.COLUMN_NAME_LAT, BlipEntry.COLUMN_NAME_LON, BlipEntry.COLUMN_NAME_UTC_S});
+        query.setSelection(BlipEntry.COLUMN_NAME_GLOBAL_ID + "=" + "'" + Long.toString(contact.getGlobalId()) + "'");
+        query.setOrderBy(BlipEntry.COLUMN_NAME_UTC_S + " DESC");
+        query.execute();
+        return blip[0];
     }
 
+    /**
+     * Adds a blip to the local database. The table has a column to store the owners id
+     * TODO: check if it is there allready to prevent duplicates
+     * @param blip the blip to add, duh
+     * @param contact contact used for the global_id that the blip belongs to
+     */
     @Override
-    public void addBlip(Blip blip, Contact contact) {
-        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(BlipEntry.COLUMN_NAME_GLOBAL_ID, contact.getGlobalId());
-        values.put(BlipEntry.COLUMN_NAME_LAT, blip.getLatitude());
-        values.put(BlipEntry.COLUMN_NAME_LON, blip.getLongitude());
-        values.put(BlipEntry.COLUMN_NAME_UTC_S, blip.getUtc_s());
-        long newRowId = db.insertOrThrow(
-                BlipEntry.TABLE_NAME,
-                null,
-                values
-        );
-        Log.i(TAG, "inserted new blip in database in row_id " + Long.toString(newRowId));
-        db.close();
-        keepNEntries(BlipEntry.TABLE_NAME, BlipEntry.COLUMN_NAME_UTC_S, 10);
+    public void addBlip(Blip blip, Contact contact) throws CliqueDbException {
+        Log.i(TAG, "inserting new blip in database");
+        CliqueDbInsert insert = new CliqueDbInsert();
+        insert.setTable(BlipEntry.TABLE_NAME);
+        ContentValues content = new ContentValues();
+        content.put(BlipEntry.COLUMN_NAME_GLOBAL_ID, contact.getGlobalId());
+        content.put(BlipEntry.COLUMN_NAME_LAT, blip.getLatitude());
+        content.put(BlipEntry.COLUMN_NAME_LON, blip.getLongitude());
+        content.put(BlipEntry.COLUMN_NAME_UTC_S, blip.getUtc_s());
+        insert.setValues(content);
+        insert.execute();
     }
 
     /**
      * thanks to Alex Barret
      * http://stackoverflow.com/questions/578867/sql-query-delete-all-records-from-the-table-except-latest-n
      * (see answer of NickC for optimisation for large tables)
-     * TODO: addapt code to delete from one contact only
+     * TODO: implement it right, make sure to keep n entries per contact, use some kind of wrapper as above
+     * TODO: apply it right, when should this cleaning be performed?
      * @param tableName
      * @param orderColumnName
      * @param nEntries
@@ -306,53 +286,41 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     }
 
     @Override
-    public void addSelfBlip(Blip blip) {
-        SQLiteDatabase db = cliqueDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(SelfBlipEntry.COLUMN_NAME_LAT, blip.getLatitude());      // There is no GLOBAL_ID in this table
-        values.put(SelfBlipEntry.COLUMN_NAME_LON, blip.getLongitude());
-        values.put(SelfBlipEntry.COLUMN_NAME_UTC_S, blip.getUtc_s());
-        long newRowId = db.insertOrThrow(
-                SelfBlipEntry.TABLE_NAME,
-                null,
-                values
-        );
-        Log.i(TAG, "inserted new selfBlip in database in row_id " + Long.toString(newRowId));
-        db.close();
-        keepNEntries(SelfBlipEntry.TABLE_NAME, SelfBlipEntry.COLUMN_NAME_UTC_S, 10);
+    public void addSelfBlip(Blip blip) throws CliqueDbException {
+        Log.i(TAG, "inserting a new selfblip in database");
+        CliqueDbInsert insert = new CliqueDbInsert();
+        insert.setTable(SelfBlipEntry.TABLE_NAME);
+        ContentValues content = new ContentValues();
+        content.put(SelfBlipEntry.COLUMN_NAME_LAT, blip.getLatitude());
+        content.put(SelfBlipEntry.COLUMN_NAME_LON, blip.getLongitude());
+        content.put(SelfBlipEntry.COLUMN_NAME_UTC_S, blip.getUtc_s());
+        // notice there is no GLOBAL_ID in column in this table
+        insert.setValues(content);
+        insert.execute();
     }
 
     @Override
-    public Blip getLastSelfBlip() {
-        Blip lastSelfBlip;
-        SQLiteDatabase db = cliqueDbHelper.getReadableDatabase();
-        String[] projection = {
-                SelfBlipEntry.COLUMN_NAME_LAT,
-                SelfBlipEntry.COLUMN_NAME_LON,
-                SelfBlipEntry.COLUMN_NAME_UTC_S
+    public Blip getLastSelfBlip() throws CliqueDbException {
+        final Blip[] blip = new Blip[1];
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            void parseCursor(Cursor c) throws CliqueDbException {
+                if(c.getCount() >= 1) {
+                    c.moveToPosition(0);
+                    Double lat = c.getDouble(c.getColumnIndexOrThrow(SelfBlipEntry.COLUMN_NAME_LAT));
+                    Double lon = c.getDouble(c.getColumnIndexOrThrow(SelfBlipEntry.COLUMN_NAME_LON));
+                    Double utc_s = c.getDouble(c.getColumnIndexOrThrow(SelfBlipEntry.COLUMN_NAME_UTC_S));
+                    blip[0] = new Blip(lat, lon, utc_s);
+                } else {
+                    blip[0] = null;
+                }
+            }
         };
-        String sortOrder = SelfBlipEntry.COLUMN_NAME_UTC_S + " DESC";
-        Cursor c = db.query(
-                SelfBlipEntry.TABLE_NAME,   // table
-                projection,                 // columns
-                null,                       // selection
-                null,                       // selectionArgs
-                null,                       // groupBy
-                null,                       // having
-                sortOrder                   // orderBy
-        );
-        if(c.getCount() > 0) {
-            c.moveToPosition(0);
-            Double lat = c.getDouble(c.getColumnIndexOrThrow(SelfBlipEntry.COLUMN_NAME_LAT));
-            Double lon = c.getDouble(c.getColumnIndexOrThrow(SelfBlipEntry.COLUMN_NAME_LON));
-            Double utc_s = c.getDouble(c.getColumnIndexOrThrow(SelfBlipEntry.COLUMN_NAME_UTC_S));
-            lastSelfBlip = new Blip(lat, lon, utc_s);
-        } else {
-            lastSelfBlip = null;
-        }
-        c.close();
-        db.close();
-        return lastSelfBlip;
+        query.setTable(SelfBlipEntry.TABLE_NAME);
+        query.setProjection(new String[]{SelfBlipEntry.COLUMN_NAME_LAT, SelfBlipEntry.COLUMN_NAME_LON, SelfBlipEntry.COLUMN_NAME_UTC_S});
+        query.setOrderBy(SelfBlipEntry.COLUMN_NAME_UTC_S + " DESC");
+        query.execute();
+        return blip[0];
     }
 
     private static class ContactEntry implements BaseColumns {
@@ -377,11 +345,129 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         public static final String COLUMN_NAME_VLON="vLon";
     }
 
+    //-------------------------------- DATABASE STRUCTURE -------------------------------------------------
+
     private static class SelfBlipEntry extends BlipEntry {
         public static final String TABLE_NAME = "selfBlips";
     }
 
-    private class CliqueDbHelper extends SQLiteOpenHelper{
+    /**
+     * this abstract class wraps database queries to the database in order to make sure SQLExceptions are checked and handled and resources are released
+     */
+    private abstract class CliqueDbQuery {
+
+        private String table = null;
+        private String[] projection = null;
+        private String selection = null;
+        private String[] selectionArgs = null;
+        private String groupBy = null;
+        private String having = null;
+        private String orderBy = null;
+
+        public CliqueDbQuery() {}
+
+        public void setTable(String table) { this.table = table; }
+        public void setProjection(String[] projection) { this.projection = projection; }
+        public void setSelection(String selection) { this.selection = selection; }
+        public void setSelectionArgs(String[] selectionArgs) { this.selectionArgs = selectionArgs; }
+        public void setGroupBy(String groupBy) { this.groupBy = groupBy; }
+        public void setHaving(String having) { this.having = having; }
+        public void setOrderBy(String orderBy) { this.orderBy = orderBy; }
+
+        /**
+         * Implement this method to extract necessary data from your cursor, throw a CliqueDbException with a message when something unexpected happens
+         * @param c Cursor instance returned by the database query.
+         * @throws CliqueDbException
+         */
+        abstract void parseCursor(Cursor c) throws CliqueDbException;
+
+        /**
+         * executes the sql operation, extracts the results, translates errors and releases resources
+         * because an SQLiteException is a RunTimeException it is not checked, Catching and rethrowing makes them checked.
+         * @throws CliqueDbException
+         */
+        void execute() throws CliqueDbException {
+            SQLiteDatabase db = null;
+            Cursor c = null;
+            try {
+                db = cliqueDbHelper.getReadableDatabase();
+                c = db.query(table, projection, selection, selectionArgs, groupBy, having, orderBy);
+                parseCursor(c);
+            } catch (SQLiteException e) {
+                e.printStackTrace();
+                throw new CliqueDbException();
+            } finally {
+                if (c != null) c.close();
+                if (db != null) db.close();
+            }
+        }
+    }
+
+    /**
+     * this class wraps database deletes in order to make sure SQLExceptions are checked and handled and resources are released
+     */
+    private class CliqueDbDelete {
+        private String table = null;
+        private String where = null;
+        private String[] whereArgs = null;
+
+        private int nDeleted = 0;
+
+        public CliqueDbDelete() {}
+
+        public void setTable(String table) { this.table = table; }
+        public void setWhere(String where) { this.where = where; }
+        public void setWhereArgs(String[] whereArgs) { this.whereArgs = whereArgs; }
+
+        /**
+         * executes the sql operation translates errors and releases resources
+         * because an SQLiteException is a RunTimeException it is not checked, Catching and rethrowing makes them checked.
+         * @throws CliqueDbException
+         */
+        void execute() throws CliqueDbException {
+            SQLiteDatabase db = null;
+            try {
+                db = cliqueDbHelper.getWritableDatabase();
+                nDeleted = db.delete(table, where, whereArgs);
+            } catch (SQLiteException e) {
+                e.printStackTrace();
+                throw new CliqueDbException();
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+
+        public int getnDeleted() { return nDeleted; }
+    }
+
+    /**
+     * this class wraps database inserts in order to make sure SQLExceptions are checked and handled and resources are released
+     */
+    private class CliqueDbInsert {
+        private String table = null;
+        private ContentValues values = null;
+
+        public CliqueDbInsert() {}
+
+        public void setTable(String table) { this.table = table; }
+        public void setValues(ContentValues values) { this.values = values; }
+
+        void execute() throws CliqueDbException {
+            SQLiteDatabase db = null;
+            try {
+                db = cliqueDbHelper.getWritableDatabase();
+                long result = db.insertOrThrow(table, null, values);
+                if (result == -1) throw new CliqueDbException("insertOrThrow returned -1");
+            } catch (SQLiteException e) {
+                e.printStackTrace();
+                throw new CliqueDbException();
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+    }
+
+    private class CliqueDbHelper extends SQLiteOpenHelper {
         public CliqueDbHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
@@ -433,4 +519,13 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
             onUpgrade(db, oldVersion, newVersion);
         }
     }
+
+    public class CliqueDbException extends Exception {
+        public CliqueDbException() {
+            super();
+        }
+        public CliqueDbException(String detailMessage) { super(detailMessage); }
+    }
+
+
 }

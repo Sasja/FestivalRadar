@@ -15,9 +15,9 @@ import android.widget.TextView;
 import com.pollytronics.clique.lib.MyViewPagerFragment;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
 import com.pollytronics.clique.lib.tools.TimeFormatting;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -46,7 +46,12 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
     }
     
     private void fillListViewFromLocalDb(ListView listView) {
-        List<Contact> localContacts = new ArrayList<>(getCligueDb().getAllContacts());
+        List<Contact> localContacts = null;
+        try {
+            localContacts = getCligueDb().getAllContacts();
+        } catch (CliqueDb_SQLite.CliqueDbException e) {
+            e.printStackTrace();
+        }
         sortContactListByName(localContacts);
         CliqueContactAdapter adapter = (CliqueContactAdapter) listView.getAdapter();
         if(adapter == null) {   // there is no adapter yet
@@ -100,7 +105,12 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
             View view = super.getView(position, convertView, parent);
             Contact contact = getItem(position);
             TextView tv_extra = (TextView) view.findViewById(R.id.textview_contact_extra);
-            Blip lastBlip = getCligueDb().getLastBlip(contact);
+            Blip lastBlip = null;
+            try {
+                lastBlip = getCligueDb().getLastBlip(contact);
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
             if (lastBlip != null) {
                 tv_extra.setText(TimeFormatting.ageStringFromSeconds(lastBlip.getAge_s())+ " old");
             } else {

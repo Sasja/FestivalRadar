@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetPings;
+import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
 
 import org.json.JSONException;
 
@@ -94,7 +95,11 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering own user id");
-            getPings = new ApiCallGetPings(getCligueDb().getSelfContact().getGlobalId());
+            try {
+                getPings = new ApiCallGetPings(getCligueDb().getSelfContact().getGlobalId());
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -120,9 +125,13 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
                 List<Contact> allReadyKnown = new ArrayList<Contact>();
                 for (Contact c : apiContacts) {
                     Log.i(TAG, String.format("checking if contact %s is allready known",c.getName()));
-                    if(getCligueDb().getContactById(c.getGlobalId()) != null) {
-                        allReadyKnown.add(c);
-                        Log.i(TAG, String.format("yup %s is allready known", c.getName()));
+                    try {
+                        if(getCligueDb().getContactById(c.getGlobalId()) != null) {
+                            allReadyKnown.add(c);
+                            Log.i(TAG, String.format("yup %s is allready known", c.getName()));
+                        }
+                    } catch (CliqueDb_SQLite.CliqueDbException e) {
+                        e.printStackTrace();
                     }
                 }
                 apiContacts.removeAll(allReadyKnown);

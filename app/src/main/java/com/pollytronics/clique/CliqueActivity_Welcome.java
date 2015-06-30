@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.pollytronics.clique.lib.CliqueActivity;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostProfile;
 import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
 
 import org.json.JSONException;
 
@@ -102,7 +103,11 @@ public class CliqueActivity_Welcome extends CliqueActivity {
             if(apiCallSucceeded) {
                 Log.i(TAG, "posting new profile and retrieving userid succeeded");
                 Log.i(TAG, "received userid="+newUserProfile.getGlobalId()+" now storing in locally");
-                getCliqueDb().updateSelfContact(newUserProfile);
+                try {
+                    getCliqueDb().updateSelfContact(newUserProfile);
+                } catch (CliqueDb_SQLite.CliqueDbException e) {
+                    e.printStackTrace();
+                }
                 Toast.makeText(getApplicationContext(), "profile updated", Toast.LENGTH_SHORT).show();
                 finish();
             } else {

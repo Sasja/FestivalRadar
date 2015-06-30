@@ -21,11 +21,15 @@ import com.pollytronics.clique.lib.CliqueActivity;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostProfile;
 import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 
+/**
+ * TODO: changing your name does not update the local database
+ */
 public class CliqueActivity_Settings extends CliqueActivity implements AdapterView.OnItemSelectedListener{
 
     private static final String TAG = "CliqueActivity_Settings";
@@ -55,7 +59,11 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         CheckBox enableSunChechBox = (CheckBox) findViewById(R.id.checkbox_enable_sun);
         enableSunChechBox.setChecked(getCliquePreferences().getSunEnabled());
 
-        setIdEditText.setHint(Long.toString(getCliqueDb().getSelfContact().getGlobalId()));
+        try {
+            setIdEditText.setHint(Long.toString(getCliqueDb().getSelfContact().getGlobalId()));
+        } catch (CliqueDb_SQLite.CliqueDbException e) {
+            e.printStackTrace();
+        }
 
         setIdButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,9 +75,18 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
                     Log.i(TAG, "thats not a number, cant set this ID");
                     return;
                 }
-                Contact selfContact = getCliqueDb().getSelfContact();
+                Contact selfContact = null;
+                try {
+                    selfContact = getCliqueDb().getSelfContact();
+                } catch (CliqueDb_SQLite.CliqueDbException e) {
+                    e.printStackTrace();
+                }
                 selfContact.setGlobalId(id);
-                getCliqueDb().updateSelfContact(selfContact);
+                try {
+                    getCliqueDb().updateSelfContact(selfContact);
+                } catch (CliqueDb_SQLite.CliqueDbException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -136,7 +153,12 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         private boolean apiCallSucceeded = false;
 
         public setRemoteProfileNameTask(String name) {
-            Contact myProfile = getCliqueDb().getSelfContact();
+            Contact myProfile = null;
+            try {
+                myProfile = getCliqueDb().getSelfContact();
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
             myProfile.setName(name);
             try {
                 postProfile = new ApiCallPostProfile(myProfile);
@@ -187,7 +209,11 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
 
         @Override
         protected void onPreExecute() {
-            getProfile = new ApiCallGetProfile(getCliqueDb().getSelfContact().getGlobalId());
+            try {
+                getProfile = new ApiCallGetProfile(getCliqueDb().getSelfContact().getGlobalId());
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override

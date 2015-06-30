@@ -10,6 +10,7 @@ import com.pollytronics.clique.lib.api_v01.ApiCallGetBlips;
 import com.pollytronics.clique.lib.api_v01.ApiCallSetMyBlip;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
 import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.lib.service.SubService;
 
@@ -115,8 +116,18 @@ public class SubService_Cloud_2 extends SubService {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering the data i need to send to webservice");
-            long selfId = getCliqueDb().getSelfContact().getGlobalId();
-            Blip lastBlip = getCliqueDb().getLastSelfBlip();
+            long selfId = 0;
+            try {
+                selfId = getCliqueDb().getSelfContact().getGlobalId();
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
+            Blip lastBlip = null;
+            try {
+                lastBlip = getCliqueDb().getLastSelfBlip();
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
             try {
                 setMyBlip = new ApiCallSetMyBlip(lastBlip, selfId);
                 getBlips  = new ApiCallGetBlips(selfId);
@@ -150,9 +161,18 @@ public class SubService_Cloud_2 extends SubService {
                 Log.i(TAG, "using/aplying the responses of the webservice");
                 List<Blip> blips = getBlips.getBlipList();
                 for(Blip b : blips) {
-                    Contact contact = getCliqueDb().getContactById(b.getOwnerId());
+                    Contact contact = null;
+                    try {
+                        contact = getCliqueDb().getContactById(b.getOwnerId());
+                    } catch (CliqueDb_SQLite.CliqueDbException e) {
+                        e.printStackTrace();
+                    }
                     if(contact != null) {   // check if it is known locally on device
-                        getCliqueDb().addBlip(b, contact);
+                        try {
+                            getCliqueDb().addBlip(b, contact);
+                        } catch (CliqueDb_SQLite.CliqueDbException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 getCliqueService().notifyNewData();

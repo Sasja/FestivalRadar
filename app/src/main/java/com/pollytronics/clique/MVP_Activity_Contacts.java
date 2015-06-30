@@ -22,6 +22,7 @@ import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.api_v01.ApiCallDeleteContact;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostContact;
+import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
 
 import org.json.JSONException;
 
@@ -106,7 +107,11 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
      */
     public void addNewContact(Contact contact) {
         Log.i(TAG, "adding contact locally");
-        getCliqueDb().addContact(contact);
+        try {
+            getCliqueDb().addContact(contact);
+        } catch (CliqueDb_SQLite.CliqueDbException e) {
+            e.printStackTrace();
+        }
         notifyDatabaseUpdate();
         Log.i(TAG, "launching task to add contact remotely");
         new postNewContactTask(contact).execute();
@@ -123,7 +128,12 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         final ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()){
-            long selfId = getCliqueDb().getSelfContact().getGlobalId();
+            long selfId = 0;
+            try {
+                selfId = getCliqueDb().getSelfContact().getGlobalId();
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
             long deleteId = selectedContact.getGlobalId();
             final ApiCallDeleteContact deleteContact = new ApiCallDeleteContact(selfId, deleteId);
             Thread thread = new Thread(new Runnable() {
@@ -141,7 +151,11 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             Log.i(TAG, "posting a delete request to api for contact id: " + deleteId);
             thread.start();
             Log.i(TAG, "deleting selected radar contact (id=" + deleteId + ")");
-            getCliqueDb().removeContact(selectedContact);
+            try {
+                getCliqueDb().removeContact(selectedContact);
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
             Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contact_removed), Toast.LENGTH_SHORT);
             toast.show();
             notifyDatabaseUpdate();         // TODO: this shouldn't be called here but happen autamatically
@@ -187,7 +201,12 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering own use id");
-            long selfId = getCliqueDb().getSelfContact().getGlobalId();
+            long selfId = 0;
+            try {
+                selfId = getCliqueDb().getSelfContact().getGlobalId();
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
             long contactId = contact.getGlobalId();
             try {
                 postContact = new ApiCallPostContact(selfId, contactId);
@@ -259,13 +278,22 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         @Override
         protected void onPreExecute() {
             // get selfId (into ApiCall objects)
-            long selfId = getCliqueDb().getSelfContact().getGlobalId();
+            long selfId = 0;
+            try {
+                selfId = getCliqueDb().getSelfContact().getGlobalId();
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
             apiCallPostContact = new ApiCallPostContact(selfId);
             apiCallGetContactsSeeme = new ApiCallGetContactIdsSeeme(selfId);
             apiCallGetContactsISee = new ApiCallGetContactIdsISee(selfId);
             // construct list of ids in local contacts
-            for (Contact c : getCliqueDb().getAllContacts()) {
-                con.add(c.getGlobalId());
+            try {
+                for (Contact c : getCliqueDb().getAllContacts()) {
+                    con.add(c.getGlobalId());
+                }
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
             }
         }
 
@@ -327,11 +355,19 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                     } else {
                         Log.i(TAG, "adding contact to local contacts (autoaccept): " + id);
                     }
-                    getCliqueDb().addContact(newContacts.get(id));
+                    try {
+                        getCliqueDb().addContact(newContacts.get(id));
+                    } catch (CliqueDb_SQLite.CliqueDbException e) {
+                        e.printStackTrace();
+                    }
                 }
                 for (long id : toDeleteFromCon) {
                     Log.i(TAG, "deleting contact from local list (triggered by remote delete): " + id);
-                    getCliqueDb().removeContactById(id);
+                    try {
+                        getCliqueDb().removeContactById(id);
+                    } catch (CliqueDb_SQLite.CliqueDbException e) {
+                        e.printStackTrace();
+                    }
                 }
                 notifyDatabaseUpdate();             // TODO: not sure this needs to be called
                 Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contacts_synced), Toast.LENGTH_SHORT);

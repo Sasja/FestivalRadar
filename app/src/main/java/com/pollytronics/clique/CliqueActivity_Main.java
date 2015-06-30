@@ -15,11 +15,12 @@ import android.widget.Switch;
 import com.pollytronics.clique.lib.CliqueActivity;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
 import com.pollytronics.clique.lib.gui_elements.RadarView;
 import com.pollytronics.clique.lib.tools.nature.SunRelativePosition;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
@@ -76,10 +77,14 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         sunEnabled = getCliquePreferences().getSunEnabled();
         radarView.setSunEnabled(sunEnabled);
 
-        if(getCliqueDb().getSelfContact() == null) {
-            Log.i(TAG, "selfContact == null, so starting welcome activity");
-            Intent intent = new Intent(this, CliqueActivity_Welcome.class);
-            startActivity(intent);
+        try {
+            if(getCliqueDb().getSelfContact() == null) {
+                Log.i(TAG, "selfContact == null, so starting welcome activity");
+                Intent intent = new Intent(this, CliqueActivity_Welcome.class);
+                startActivity(intent);
+            }
+        } catch (CliqueDb_SQLite.CliqueDbException e) {
+            e.printStackTrace();
         }
     }
 
@@ -126,16 +131,35 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     }
 
     private void feedDataToRadarView(){
-        Blip centerLocation = getCliqueDb().getLastSelfBlip();
+        Blip centerLocation = null;
+        try {
+            centerLocation = getCliqueDb().getLastSelfBlip();
+        } catch (CliqueDb_SQLite.CliqueDbException e) {
+            e.printStackTrace();
+        }
         radarView.setCenterLocation(centerLocation);
         radarView.removeAllContacts();
-        Collection<Contact> contacts = getCliqueDb().getAllContacts();
+        List<Contact> contacts = null;
+        try {
+            contacts = getCliqueDb().getAllContacts();
+        } catch (CliqueDb_SQLite.CliqueDbException e) {
+            e.printStackTrace();
+        }
         for(Contact c:contacts){
-            radarView.addContact(c, getCliqueDb().getLastBlip(c));
+            try {
+                radarView.addContact(c, getCliqueDb().getLastBlip(c));
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
         }
         if(sunEnabled) {
             SunRelativePosition sunRelativePosition = new SunRelativePosition();
-            Blip position = getCliqueDb().getLastSelfBlip();
+            Blip position = null;
+            try {
+                position = getCliqueDb().getLastSelfBlip();
+            } catch (CliqueDb_SQLite.CliqueDbException e) {
+                e.printStackTrace();
+            }
             if (position != null) {
                 sunRelativePosition.setCoordinate(position.getLongitude(), position.getLatitude());
                 sunRelativePosition.setDate(new Date());

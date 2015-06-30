@@ -19,6 +19,7 @@ import com.pollytronics.clique.lib.tools.TimeFormatting;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -46,7 +47,7 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
     
     private void fillListViewFromLocalDb(ListView listView) {
         List<Contact> localContacts = new ArrayList<>(getCligueDb().getAllContacts());
-        Collections.sort(localContacts);
+        sortContactListByName(localContacts);
         CliqueContactAdapter adapter = (CliqueContactAdapter) listView.getAdapter();
         if(adapter == null) {   // there is no adapter yet
             adapter = new CliqueContactAdapter(getActivity(), localContacts);
@@ -55,6 +56,17 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
             for(Contact c : localContacts) adapter.add(c);
         }
         listView.setAdapter(adapter);
+    }
+
+    private void sortContactListByName(List<Contact> cList) {
+        Collections.sort(cList, new Comparator<Contact>() {
+            @Override
+            public int compare(Contact lhs, Contact rhs) {
+                int result = lhs.getName().compareTo(rhs.getName());
+                if (result == 0) result = lhs.getGlobalId()>rhs.getGlobalId()?1:-1;
+                return result;
+            }
+        });
     }
 
     /**

@@ -6,14 +6,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Class that holds information on a Contact and its Profile, is also used for own profile info
- * methods that change the object should return themselves so calls can be chained.
- * Created by pollywog on 9/22/14.
- * TODO: remove that Comparable interface, it doesn't belong here
+ * Class that holds information on a Contact and its Profile, is also used for own profile info.
+ * Methods that change the object should return the object so calls can be chained.
+ *
  * TODO: add marker icon and color stuff
- * Updated on 23/6/15
  */
-public class Contact implements Comparable<Contact>{
+public class Contact{
 
     private static final String TAG="Contact";
 
@@ -21,7 +19,7 @@ public class Contact implements Comparable<Contact>{
     private long globalId;
 
     public Contact(JSONObject profileJSON) throws JSONException {
-        if (profileJSON==null) throw new JSONException("null JSONObject passed to Contact(JSONObject constructor)");
+        if (profileJSON == null) throw new JSONException("null JSONObject passed to Contact constructor)");
         name = profileJSON.getString("nick");
         globalId = profileJSON.getLong("userid");
     }
@@ -48,15 +46,6 @@ public class Contact implements Comparable<Contact>{
         Log.i(TAG, "WARNING: setGlobalId(), should only be called for testing purposes");
         this.globalId = globalId;
         return this;
-    }
-
-    @Override
-    public int compareTo(Contact another) {
-        int result = getName().toUpperCase().compareTo(another.getName().toUpperCase());
-        if (result == 0) {
-            result = ((Long) getGlobalId()).compareTo(another.getGlobalId());
-        }
-        return result;
     }
 
     @Override

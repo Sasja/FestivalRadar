@@ -2,13 +2,11 @@ package com.pollytronics.clique.lib.api_v01;
 
 import android.util.Log;
 
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by pollywog on 6/3/15.
+ * adds a link in the api that allows contactId to see you
  */
 public class ApiCallPostContact extends CliqueApiCall {
     @SuppressWarnings("FieldCanBeLocal")
@@ -17,19 +15,27 @@ public class ApiCallPostContact extends CliqueApiCall {
     @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "contacts";
 
-    private long selfId = 0;
-    private JSONObject contactJSON;
+    private long selfId;
+    private String body;
+    private boolean fullyInitialized = false;
 
-    public void collectData(CliqueDb_Interface db) {
-        selfId = db.getSelfContact().getGlobalId();
+    public ApiCallPostContact(long selfId) {
+        this.selfId = selfId;
     }
 
-    public void setContactId(long id) {
-        try {
-            contactJSON = new JSONObject().put("id", id);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public ApiCallPostContact(long selfId, long contactId) throws JSONException {
+        this.selfId = selfId;
+        setContactId(contactId);
+    }
+
+    public void setContactId(long contactId) throws JSONException {
+        this.body = new JSONObject().put("id", contactId).toString();
+        this.fullyInitialized = true;
+    }
+
+    @Override
+    protected boolean isFullyInitialized() {
+        return fullyInitialized;
     }
 
     @Override
@@ -38,7 +44,7 @@ public class ApiCallPostContact extends CliqueApiCall {
     }
 
     @Override
-    protected String getApiBodyString() {return contactJSON.toString();}
+    protected String getApiBodyString() {return body;}
 
     @Override
     public String getHttpMethod() {

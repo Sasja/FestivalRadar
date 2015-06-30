@@ -16,10 +16,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.pollytronics.clique.lib.CliqueActivity_MyViewPagerAct;
+import com.pollytronics.clique.lib.api_v01.ApiCallGetContactIdsISee;
+import com.pollytronics.clique.lib.api_v01.ApiCallGetContactIdsSeeme;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.api_v01.ApiCallDeleteContact;
-import com.pollytronics.clique.lib.api_v01.ApiCallGetContactsISee;
-import com.pollytronics.clique.lib.api_v01.ApiCallGetContactsSeeme;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostContact;
 
@@ -120,12 +120,12 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
 
     //TODO: still super ugly, but it works for now
     private void deleteSelectedContact() {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()){
-            final ApiCallDeleteContact deleteContact = new ApiCallDeleteContact();
-            deleteContact.collectData(getCliqueDatabase());
-            deleteContact.setContactId(selectedContact.getGlobalId());
+            long selfId = getCliqueDatabase().getSelfContact().getGlobalId();
+            long deleteId = selectedContact.getGlobalId();
+            final ApiCallDeleteContact deleteContact = new ApiCallDeleteContact(selfId, deleteId);
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() { // TODO: what to do when this fails?
@@ -133,12 +133,14 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                         deleteContact.callAndParse();
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             });
-            Log.i(TAG, "posting a delete request to api for contact id: " + selectedContact.getGlobalId());
+            Log.i(TAG, "posting a delete request to api for contact id: " + deleteId);
             thread.start();
-            Log.i(TAG, "deleting selected radar contact (id=" + selectedContact.getGlobalId() + ")");
+            Log.i(TAG, "deleting selected radar contact (id=" + deleteId + ")");
             getCliqueDatabase().removeContact(selectedContact);
             Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contact_removed), Toast.LENGTH_SHORT);
             toast.show();
@@ -174,7 +176,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     }
 
     private class postNewContactTask extends AsyncTask<Void, Void, String> {
-        private final ApiCallPostContact postContact = new ApiCallPostContact();
+        private ApiCallPostContact postContact;
         private boolean apiCallSucceeded = false;
         private Contact contact;
 
@@ -185,8 +187,13 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering own use id");
-            postContact.collectData(getCliqueDatabase());
-            postContact.setContactId(contact.getGlobalId());
+            long selfId = getCliqueDatabase().getSelfContact().getGlobalId();
+            long contactId = contact.getGlobalId();
+            try {
+                postContact = new ApiCallPostContact(selfId, contactId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -198,6 +205,8 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             } catch (IOException e) {
                 Log.i(TAG, "IOException: unable to complete API requests");
                 return "IOException: unable to complete API requests";
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
             return null;
         }
@@ -234,14 +243,14 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
      *      CON && !(ICS || CSM)        delete from CON
      **/
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
-        private final ApiCallPostContact apiCallPostContact = new ApiCallPostContact();
-        private final ApiCallGetContactsSeeme apiCallGetContactsSeeme = new ApiCallGetContactsSeeme();
-        private final ApiCallGetContactsISee apiCallGetContactsISee = new ApiCallGetContactsISee();
-        private final ApiCallGetProfile apiCallGetProfile = new ApiCallGetProfile();
         private final Set<Long> con = new HashSet<>();
         private final Set<Long> toDeleteFromCon = new HashSet<>();
         private final Set<Long> toAddToCon = new HashSet<>();
         private final Set<Long> toPostToCsm = new HashSet<>();
+        private ApiCallPostContact apiCallPostContact;
+        private ApiCallGetContactIdsSeeme apiCallGetContactsSeeme;
+        private ApiCallGetContactIdsISee apiCallGetContactsISee;
+        private ApiCallGetProfile apiCallGetProfile;
         private Set<Long> ics = new HashSet<>();
         private Set<Long> csm = new HashSet<>();
         private boolean apiCallsSucceeded = false;
@@ -250,9 +259,10 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         @Override
         protected void onPreExecute() {
             // get selfId (into ApiCall objects)
-            apiCallPostContact.collectData(getCliqueDatabase());
-            apiCallGetContactsSeeme.collectData(getCliqueDatabase());
-            apiCallGetContactsISee.collectData(getCliqueDatabase());
+            long selfId = getCliqueDatabase().getSelfContact().getGlobalId();
+            apiCallPostContact = new ApiCallPostContact(selfId);
+            apiCallGetContactsSeeme = new ApiCallGetContactIdsSeeme(selfId);
+            apiCallGetContactsISee = new ApiCallGetContactIdsISee(selfId);
             // construct list of ids in local contacts
             for (Contact c : getCliqueDatabase().getAllContacts()) {
                 con.add(c.getGlobalId());
@@ -265,8 +275,8 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             try {
                 apiCallGetContactsISee.callAndParse();
                 apiCallGetContactsSeeme.callAndParse();
-                ics = apiCallGetContactsISee.getCollection();
-                csm = apiCallGetContactsSeeme.getCollection();
+                ics = new HashSet<Long>(apiCallGetContactsISee.getContactIds());
+                csm = new HashSet<Long>(apiCallGetContactsSeeme.getContactIds());
                 Log.i(TAG, "successfully loaded all contact lists local and remote");
                 Log.i(TAG, String.format("nCON=%d nICS=%d nCSM=%d" ,con.size(), ics.size(), csm.size()));
                 // find contacts i need to add to local contacts (do in onPostExecute)
@@ -293,7 +303,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                 // now gather the names of the contacts i need to add locally
                 for(long id:toAddToCon) {
                     Log.i(TAG, "requesting remote name for new contact (id="+id+")");
-                    apiCallGetProfile.setRequestedId(id);
+                    apiCallGetProfile = new ApiCallGetProfile(id);
                     apiCallGetProfile.callAndParse();
                     newContacts.put(id, apiCallGetProfile.getContact());
                 }

@@ -2,140 +2,134 @@ package com.pollytronics.clique.lib.api_v01;
 
 import android.util.Log;
 
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by pollywog on 6/3/15.
+ * This Class and subclasses are meant as an abstraction layer between the app and the api,
+ * small api modifications should only demand small changes here and nowhere else.
  *
- * This class implements the httprequests needed to perform api calls and provides a framework for derived api call classes
- * work is separated into four domains
- * 1) preparing the call by gathering necessary data (must be called on main thread for threadsafety)
- *      this will put all necessary data into attributes local to the object
- * 2) the actual call (method must be called from async thread or exception will be thrown)
- *      this will use the gathered data to construct the right api call and return the body to the parser
- * 2') parsing the api call result body (this could be done on main thread but is done async to allow
- * doing a few consecutive call's that depend on previous call results in one thread)
- *      this parses the api call reply body and stores the information in attributes local to the object
- * 3) methods to retrieve the results from the object after a call (main thread or async thread)
- *      this can then be used to construct following api calls in the same async thread
- * 4) optionally methods that use the final results can be implemented here (main thread)
+ * An object of this class is used with a AsyncTadk and handles communication with the api as follows:
+ * 1) It is initiated with some parameters
+ * 2) then optionally some extra calls can be made to set a few extra attributes,
+ * 3) then callAndParse needs to be called on an Async thread to start interacting with the api
+ * 4) finally results can be retrieved from this object with getters.
  *
+ * only 3) needs to be called on an async thread (exception will be thrown otherwise)
+ * the other steps can be called also on the async thread but just make sure not to access the db from another thread
  *
- * 1) is done through collectData()                                     abstract
- *    optionally some setSomething() methods can be provided
- * 2+2') is done through callAndParse()                                 abstract
- * 3) is done through optional getSomething()
- * 4) is done throug doTheWork() methods
+ * These classes should take care of all the JSON stuff and just throw JSONExceptions to be handled higher up.
+ *
+ * TODO: optimise server connection for multiple api calls, when to call disconnect, how long are connections kept open, ...
+ * TODO: allow connecting to a testing api by changing baseUrl
  *
  */
 abstract public class CliqueApiCall {
-    final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
+    protected final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
     private final String TAG = "CliqueApiCall";
     //protected final String baseUrl = "http://192.168.0.5:8080/api/v1/";
 
-    public abstract void collectData(CliqueDb_Interface db);
+    /**
+     * override this method to return true only when all necessary attributes are initialized in the api call object.
+     * Normally you can assure it is initialized in the only available constructor so then the implementation will be trivial
+     * @return true if and only if the object is ready for callAndParse() on background of an asyncTask
+     */
+    protected abstract boolean isFullyInitialized();
 
+    //public void collectData(CliqueDb_Interface db) {}
+
+    /**
+     * must return "GET" or "POST" or any implemented other http method
+     * @return "GET" or "POST" or "DELETE"
+     */
     public abstract String getHttpMethod();
+
+    /**
+     * must return the full url that needs to be called, use the baseUrl attribute to construct it
+     * @return full url
+     */
     protected abstract String getApiQueryString();
+
+    /**
+     * Override this one if you need to post application/json data to the api
+     * @return string to post to api
+     */
     protected String getApiBodyString() { return ""; }
 
-    protected abstract void parseContent(String content);
+    /**
+     * this method needs to interpret the api reply and store it in the object in a way that can be retrieved later,
+     * this could be just as a string or jsonobject but better parse further down to lists of Contacts or Blips and such.
+     * @param content
+     */
+    protected abstract void parseContent(String content) throws JSONException;
 
-    final public void callAndParse() throws IOException {
+    final public void callAndParse() throws IOException, JSONException {
+        if(!isFullyInitialized()) throw new RuntimeException(TAG + " CliqueApiCall object not fully initialized");
         parseContent(myHttpRequest(getHttpMethod(), getApiQueryString(), getApiBodyString()));
     }
 
     /**
      * This method will throw an IOException when having any problems with the httprequest including any non 200 http status code.
-     * It assumes there is a connection
+     * It does not check for network connection.
      * TODO: figure out what would happen if called without a connection?
-     * @param method
-     * @param myUrl
-     * @param myBody
-     * @return
+     * @param method must be "GET" or "POST" or "DELETE"
+     * @param myUrl the full url of the http request
+     * @param myBody the json string of the body
+     * @return the body of the http reply
      * @throws IOException
      */
     private String myHttpRequest(String method, String myUrl, String myBody) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
         URL url = new URL(myUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setReadTimeout(5000);
+        conn.setConnectTimeout(10000);
+        if(!(method.equals("GET") || method.equals("POST") || method.equals("DELETE"))) throw new RuntimeException(method + " http method not supported yet");
+        conn.setRequestMethod(method);
+        conn.setDoInput(true);
+        Log.i(TAG, method + " " + myUrl);
+        if(method.equals("POST")) {
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            Log.i(TAG, "BODY = " + myBody);
+            OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+            osw.write(myBody);
+            osw.close();
+        }
+        conn.connect();
+        int response = conn.getResponseCode();
+        if(response!=200) throw new IOException(String.format("HTTP RESPONSE CODE = %d", response));
+        InputStream is = conn.getInputStream();
         try {
-            conn.setReadTimeout(1000);
-            conn.setConnectTimeout(10000);
-            conn.setRequestMethod(getHttpMethod());
-            conn.setDoInput(true);
-            Log.i(TAG, getHttpMethod() + " " + myUrl);
-            if(getHttpMethod().equals("POST")) {
-                conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type", "application/json");
-                Log.i(TAG, "BODY = " + myBody);
-                os = conn.getOutputStream();
-                writeToOutputStream(os, myBody);
-            }
-            conn.connect();
-            int response = conn.getResponseCode();
-            Log.i(TAG, "HTTP RESPONSE CODE: " + response);
-            if(response!=200) throw new IOException();
-            is = conn.getInputStream();
             return readInputStream(is);
         } finally {
-            if (is != null) is.close();
-            if (os != null) os.close();
-            conn.disconnect();
+            is.close();
+            //conn.disconnect();    // This should be called once when no other calls to the server will be made in the near future (put it at the end of a sync routine maybe)
+            // see http://docs.oracle.com/javase/7/docs/api/java/net/HttpURLConnection.html#disconnect%28%29
         }
     }
 
     /**
-     * helper method to convert input stream to string
-     * http://stackoverflow.com/questions/2492076/android-reading-from-an-input-stream-efficiently
-     *
-     * study this code, it might remove all newlines
-     */
-    /*private String readInputStream_bak(InputStream is) throws IOException {
-        BufferedReader r = new BufferedReader(new InputStreamReader(is));
-        StringBuilder total = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            total.append(line);
-        }
-        return total.toString();
-    }*/
-
-    /**
      * This method will read up to 8KB bytes from a stream of UTF-8 and return a string of it.
-     * @param is
-     * @return
-     * @throws IOException
+     * @param is inputStream
+     * @return String
+     * @throws IOException when more than 8KB was in the stream
      */
-    private String readInputStream(InputStream is) throws IOException {     // Failure to read this stream will be handled on a higher level
+    private String readInputStream(InputStream is) throws IOException {
         final int bufferSize = 8 * 1024;
-        Reader reader = null;
-        reader = new InputStreamReader(is, "UTF-8");
+        Reader reader = new InputStreamReader(is, "UTF-8");
         char[] buffer = new char[bufferSize];
         int charsRead = reader.read(buffer);
         int theresMore = reader.read();
         if (theresMore != -1) { // this happens when the response was longer than the buffer
-            Log.i(TAG, "api response longer than expected (bufferSize = " + bufferSize + " ), throwing IOException");
-            throw new IOException();
+            throw new IOException(String.format("api response longer than expected (buffersize = %d)", bufferSize));
         }
         return new String(buffer, 0, charsRead);
-    }
-
-    /** helper method to write string into an output stream
-     * TODO: study this code
-     * http://stackoverflow.com/questions/9623158/curl-and-httpurlconnection-post-json-data
-     */
-    private void writeToOutputStream(OutputStream os, String data) throws IOException {
-        byte[] buffer = data.getBytes("UTF-8");
-        os.write(buffer);
     }
 }

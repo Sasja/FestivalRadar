@@ -62,20 +62,22 @@ public class CliqueActivity_Welcome extends CliqueActivity {
      * duplicate code alert... just need to cram this feature in, will clean up later... hehe
      */
     private class requestNewProfileTask extends AsyncTask<Void, Void, String> {
-        private final ApiCallPostProfile postProfile = new ApiCallPostProfile();
+        private ApiCallPostProfile postProfile;
 
         private boolean apiCallSucceeded = false;
 
         private Contact newUserProfile;
 
         public requestNewProfileTask(String name) {
-            postProfile.setName(name);
+            try {
+                postProfile = new ApiCallPostProfile(new Contact(0, name));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         protected void onPreExecute() {
-            Log.i(TAG, "setting selfId=0");
-            postProfile.setSelfId(0);
         }
 
         @Override

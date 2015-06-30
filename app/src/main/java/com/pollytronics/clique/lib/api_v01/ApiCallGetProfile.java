@@ -1,22 +1,32 @@
 package com.pollytronics.clique.lib.api_v01;
 
-import android.util.Log;
+import android.support.annotation.Nullable;
 
 import com.pollytronics.clique.lib.base.Contact;
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by pollywog on 6/22/15.
+ * retrieves a profile from the api for a specified global id
  */
 public class ApiCallGetProfile extends CliqueApiCall {
     protected final String TAG = "ApiCallGetProfile";
 
     private final String apiResourceName = "profiles";
-    private JSONObject profileJSON;
+    private Contact profile;
     private long requestedID;
+    private boolean fullyInitialized = false;
+
+    public ApiCallGetProfile(long requestedID) {
+        this.requestedID = requestedID;
+        this.fullyInitialized = true;
+    }
+
+    @Override
+    protected boolean isFullyInitialized() {
+        return fullyInitialized;
+    }
 
     @Override
     public String getHttpMethod() { return "GET"; }
@@ -24,23 +34,13 @@ public class ApiCallGetProfile extends CliqueApiCall {
     @Override
     protected String getApiQueryString() { return baseUrl+apiResourceName+"?userid="+requestedID; }
 
-    //TODO: shouldn't this just throw instead of returning null?
-    protected void parseContent(String content) {
-        try {
-            Log.i(TAG, content);
-            profileJSON = new JSONObject(content).getJSONObject("profiles");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            profileJSON = null;
-        }
+    @Override
+    protected void parseContent(String content) throws JSONException {
+        profile = new Contact((new JSONObject(content)).getJSONObject("profiles"));
     }
 
-    @Override
-    public void collectData(CliqueDb_Interface db) { }
-
-    public void setRequestedId(long id) { this.requestedID = id; }
-
-    public Contact getContact() throws JSONException {
-        return new Contact(profileJSON);
+    @Nullable
+    public Contact getContact() {
+        return profile;
     }
 }

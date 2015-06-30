@@ -1,36 +1,37 @@
 package com.pollytronics.clique.lib.api_v01;
 
-import android.util.Log;
-
 import com.pollytronics.clique.lib.base.Contact;
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by pollywog on 6/23/15.
+ * create a new profile or update an existing one
+ * when user id is set to 0 the api will create a new profile and return the profile with its appointed id
+ *
+ * TODO: post profile will only use the name and id at the moment and set other attributes to constants...
  */
 public class ApiCallPostProfile extends CliqueApiCall {
     private final String TAG = "ApiCallPostProfile";
 
     private final String apiResourceName = "profiles";
 
-    private long selfId = 0;
-    private JSONObject profileJSONsend, profileJSONreceive;
+    private long selfId;
+    private Contact profileReceive;
+    private String body;
+    private boolean fullyInitialized = false;
 
-    public void collectData(CliqueDb_Interface db) { selfId = db.getSelfContact().getGlobalId();}
-
-    public void setName(String name) {
-        try {
-            JSONObject markerJSON = new JSONObject().put("color","#808080").put("icon","dot");
-            profileJSONsend = new JSONObject().put("nick", name).put("marker",markerJSON);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public ApiCallPostProfile(Contact profile) throws JSONException {
+        this.selfId = profile.getGlobalId();
+        JSONObject markerJSON = new JSONObject().put("color","#808080").put("icon","dot");
+        this.body = new JSONObject().put("nick", profile.getName()).put("marker", markerJSON).toString();
+        this.fullyInitialized = true;
     }
 
-    public void setSelfId(long id) { selfId = id; }
+    @Override
+    protected boolean isFullyInitialized() {
+        return fullyInitialized;
+    }
 
     @Override
     protected String getApiQueryString() { return baseUrl+apiResourceName+"?userid="+selfId; }
@@ -39,20 +40,14 @@ public class ApiCallPostProfile extends CliqueApiCall {
     public String getHttpMethod() { return "POST"; }
 
     @Override
-    protected String getApiBodyString() { return profileJSONsend.toString(); }
+    protected String getApiBodyString() { return body; }
 
     @Override
-    protected void parseContent(String content) {
-        Log.i(TAG, "api reply = " + content);
-        try {
-            profileJSONreceive = new JSONObject(content).getJSONObject("profiles");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            profileJSONreceive = null;
-        }
+    protected void parseContent(String content) throws JSONException {
+        this.profileReceive = new Contact(new JSONObject(content).getJSONObject("profiles"));
     }
 
     public Contact getContact() throws JSONException {
-        return new Contact(profileJSONreceive);
+        return this.profileReceive;
     }
 }

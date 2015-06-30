@@ -1,26 +1,37 @@
 package com.pollytronics.clique.lib.api_v01;
 
 import com.pollytronics.clique.lib.base.Blip;
-import com.pollytronics.clique.lib.base.Contact;
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Created by pollywog on 6/3/15.
+ * Simply requests all latest blips i have access to (api might give you more than that)
+ * result can be obtained by getBlipList()
+ * using this api call the response will contain "userid" fields that will be stored in the optional ownerId attribute of the Blips
  */
 public class ApiCallGetBlips extends CliqueApiCall {
     @SuppressWarnings("unused")
     protected final String TAG = "ApiCallGetBlips";
+
     @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "blips";
-    private JSONArray blips;
-    private long selfId = 0;
+    private List<Blip> blips = new ArrayList<>();
+    private long selfId;
+    private boolean fullyInitialized = false;
 
-    public void collectData(CliqueDb_Interface db) {
-        selfId = db.getSelfContact().getGlobalId();
+    public ApiCallGetBlips(long selfId) {
+        this.selfId = selfId;
+        this.fullyInitialized = true;
+    }
+
+    @Override
+    protected boolean isFullyInitialized() {
+        return fullyInitialized;
     }
 
     @Override
@@ -33,33 +44,21 @@ public class ApiCallGetBlips extends CliqueApiCall {
         return baseUrl+apiResourceName+"?userid="+selfId;
     }
 
-    protected void parseContent(String content) {
-        try {
-            JSONObject jsonObject = new JSONObject(content);
-            blips = jsonObject.getJSONArray("blips");
-        } catch (JSONException e) {
-            e.printStackTrace();
+    /**
+     * fills the blips List with blips created from the api response
+     * @param content
+     * @throws JSONException
+     */
+    @Override
+    protected void parseContent(String content) throws JSONException {
+        JSONArray jsonBlipArray = (new JSONObject(content)).getJSONArray("blips");
+        for(int i = 0; i< jsonBlipArray.length(); i++) {
+            blips.add(new Blip(jsonBlipArray.getJSONObject(i)));
         }
     }
 
-    public void doTheWork(CliqueDb_Interface db) {
-        JSONObject blipJSON;
-        Long id;
-        Blip blip;
-        Contact contact;
-        for (int i = 0; i < blips.length(); i++) {
-            try {
-                blipJSON = blips.getJSONObject(i);
-                blip = new Blip(blipJSON);
-                id = blipJSON.getLong("userid");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                continue;
-            }
-            contact = db.getContactById(id);
-            if(contact != null) {   // check if contact is known locally on phone
-                db.addBlip(blip,contact);
-            }
-        }
-    }
+    /**
+     * @return a list of Blip's retrieved from the api, it's up to the caller to decide what to do with it
+     */
+    public List<Blip> getBlipList() { return blips; }
 }

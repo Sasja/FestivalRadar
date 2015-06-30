@@ -6,12 +6,17 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.pollytronics.clique.lib.service.CliqueService;
-import com.pollytronics.clique.lib.service.SubService;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetBlips;
 import com.pollytronics.clique.lib.api_v01.ApiCallSetMyBlip;
+import com.pollytronics.clique.lib.base.Blip;
+import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.service.CliqueService;
+import com.pollytronics.clique.lib.service.SubService;
+
+import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Cloud SubService 2
@@ -21,6 +26,7 @@ import java.io.IOException;
  *
  * TODO: minimize tcp connection lifetime to minimize load on server
  * TODO: figure out how time is to be stored in backend db and into local phone-db, now its broken but not used
+ * TODO: look for printStacktrace try catch blocks everywhere and fix it
  * http://developer.android.com/training/basics/network-ops/connecting.html
  *
  * Created by pollywog on 26/5/2015.
@@ -100,8 +106,8 @@ public class SubService_Cloud_2 extends SubService {
      * TODO: also look for other uses similar to this
      */
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
-        private final ApiCallSetMyBlip setMyBlip = new ApiCallSetMyBlip();
-        private final ApiCallGetBlips getBlips = new ApiCallGetBlips();
+        private ApiCallSetMyBlip setMyBlip;
+        private ApiCallGetBlips getBlips;
         private boolean apiCallsSucceeded = false;
         /**
          * Gathers all the data needed to perform the api calls
@@ -109,8 +115,14 @@ public class SubService_Cloud_2 extends SubService {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering the data i need to send to webservice");
-            setMyBlip.collectData(getCliqueDb());
-            getBlips.collectData(getCliqueDb());
+            long selfId = getCliqueDb().getSelfContact().getGlobalId();
+            Blip lastBlip = getCliqueDb().getLastSelfBlip();
+            try {
+                setMyBlip = new ApiCallSetMyBlip(lastBlip, selfId);
+                getBlips  = new ApiCallGetBlips(selfId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -123,6 +135,8 @@ public class SubService_Cloud_2 extends SubService {
             } catch (IOException e) {
                 Log.i(TAG, "IOException: unable to complete all API requests");
                 return "IOExcepion: unable to complete all API requests";
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
             return null;
         }
@@ -134,7 +148,13 @@ public class SubService_Cloud_2 extends SubService {
         protected void onPostExecute(String s) {
             if (apiCallsSucceeded) {         // only take action if all api calls were successful
                 Log.i(TAG, "using/aplying the responses of the webservice");
-                getBlips.doTheWork(getCliqueDb());
+                List<Blip> blips = getBlips.getBlipList();
+                for(Blip b : blips) {
+                    Contact contact = getCliqueDb().getContactById(b.getOwnerId());
+                    if(contact != null) {   // check if it is known locally on device
+                        getCliqueDb().addBlip(b, contact);
+                    }
+                }
                 getCliqueService().notifyNewData();
             } else {
                 Log.i(TAG, "the api call has failed, not calling doTheWork() methods for the calls");

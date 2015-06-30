@@ -2,10 +2,8 @@ package com.pollytronics.clique.lib.api_v01;
 
 import android.util.Log;
 
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
-
 /**
- * Created by pollywog on 6/4/15.
+ * requests deletion of the link between a user and his contact
  */
 public class ApiCallDeleteContact extends CliqueApiCall {
     @SuppressWarnings("FieldCanBeLocal")
@@ -13,16 +11,19 @@ public class ApiCallDeleteContact extends CliqueApiCall {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "contacts";
-    private long selfId = 0;
-    private long deleteId = 0;
+    boolean fullyInitialized = false;
+    private long selfId;
+    private long deleteId;
 
-    @Override
-    public void collectData(CliqueDb_Interface db) {
-        selfId = db.getSelfContact().getGlobalId();
+    public ApiCallDeleteContact(long selfId, long deleteId) {
+        this.selfId = selfId;
+        this.deleteId = deleteId;
+        this.fullyInitialized = true;
     }
 
-    public void setContactId(long id) {
-        deleteId = id;
+    @Override
+    protected boolean isFullyInitialized() {
+        return fullyInitialized;
     }
 
     @Override
@@ -35,5 +36,12 @@ public class ApiCallDeleteContact extends CliqueApiCall {
         return baseUrl+apiResourceName+"?userid="+selfId+"&contactid="+deleteId;
     }
 
-    protected void parseContent(String content) { Log.i(TAG, "api reply = " + content);}
+    /**
+     * does not have to do anything as there is only a "ok" response when succesfull. and callAndParse() throws an error when fails.
+     * @param content
+     */
+    @Override
+    protected void parseContent(String content) {
+        Log.i(TAG, "api reply = " + content);
+    }
 }

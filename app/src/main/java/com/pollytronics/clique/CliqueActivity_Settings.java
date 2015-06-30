@@ -131,25 +131,34 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
     }
 
     private class setRemoteProfileNameTask extends AsyncTask<Void, Void, String> {
-        private final ApiCallPostProfile postProfile = new ApiCallPostProfile();
+        private ApiCallPostProfile postProfile;
 
         private boolean apiCallSucceeded = false;
 
         public setRemoteProfileNameTask(String name) {
-            postProfile.setName(name);
+            Contact myProfile = getCliqueDatabase().getSelfContact();
+            myProfile.setName(name);
+            try {
+                postProfile = new ApiCallPostProfile(myProfile);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         protected void onPreExecute() {
-            Log.i(TAG, "gathering selfId");
-            postProfile.collectData(getCliqueDatabase());
+            Log.i(TAG, "nothing to do on onPreExecute");
         }
 
         @Override
         protected String doInBackground(Void... params) {
             Log.i(TAG, "calling api from setRemoteProfileNameTask");
             try {
-                postProfile.callAndParse();
+                try {
+                    postProfile.callAndParse();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 apiCallSucceeded = true;
             } catch (IOException e) {
                 Log.i(TAG,"IOException: unable to complete all API requests");
@@ -171,13 +180,15 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
     }
 
     private class getRemoteProfileNameIntoHintTask extends AsyncTask<Void, Void, String> {
-        private final ApiCallGetProfile getProfile = new ApiCallGetProfile();
+        private ApiCallGetProfile getProfile;
 
         private String remoteName = "";
         private boolean apiCallSucceeded = false;
 
         @Override
-        protected void onPreExecute() { getProfile.setRequestedId(getCliqueDatabase().getSelfContact().getGlobalId()); }
+        protected void onPreExecute() {
+            getProfile = new ApiCallGetProfile(getCliqueDatabase().getSelfContact().getGlobalId());
+        }
 
         @Override
         protected String doInBackground(Void... params) {
@@ -187,6 +198,8 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
             } catch (IOException e) {
                 e.printStackTrace();
                 return "IOException: unable to complete api requests";
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
             return null;
         }
@@ -194,11 +207,7 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         @Override
         protected void onPostExecute(String s) {
             if (apiCallSucceeded) {
-                try {
-                    setNameEditText.setHint(getProfile.getContact().getName());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                setNameEditText.setHint(getProfile.getContact().getName());
             }
         }
     }

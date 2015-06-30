@@ -18,6 +18,8 @@ import android.widget.Toast;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetPings;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,13 +88,13 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
      *
      */
     private class PingTask extends AsyncTask<Void, Void, String> {
-        private final ApiCallGetPings getPings = new ApiCallGetPings();
+        private ApiCallGetPings getPings;
         private boolean apiCallSucceeded = false;
 
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering own user id");
-            getPings.collectData(getCligueDb());
+            getPings = new ApiCallGetPings(getCligueDb().getSelfContact().getGlobalId());
         }
 
         @Override
@@ -104,6 +106,8 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
             } catch (IOException e) {
                 Log.i(TAG, "IOException: unable to complete API requests");
                 return "IOException: unable to complete API requests";
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
             return null;
         }

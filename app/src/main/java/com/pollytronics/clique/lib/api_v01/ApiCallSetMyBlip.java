@@ -3,32 +3,32 @@ package com.pollytronics.clique.lib.api_v01;
 import android.util.Log;
 
 import com.pollytronics.clique.lib.base.Blip;
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by pollywog on 6/3/15.
+ * posts your last blip to the api
  */
 public class ApiCallSetMyBlip extends CliqueApiCall {
     private final String TAG = "ApiCallSetMyBlip";
     @SuppressWarnings("FieldCanBeLocal")
+
     private final String apiResourceName = "blips";
-    private final JSONObject selfBlipJSON = new JSONObject();
-    private long selfId = 0;
+
+    private String body;
+    private long selfId;
+    private boolean fullyInitialized = false;
+
+    public ApiCallSetMyBlip(Blip selfBlip, long selfId) throws JSONException {
+        this.selfId = selfId;
+        this.body = new JSONObject().put("lat", selfBlip.getLatitude()).put("lon", selfBlip.getLongitude()).toString();
+        this.fullyInitialized = true;
+    }
 
     @Override
-    public void collectData(CliqueDb_Interface db){
-        Log.i(TAG, "collecting data for APICallSetMyBlip");
-        selfId = db.getSelfContact().getGlobalId();
-        Blip selfBlip = db.getLastSelfBlip();
-        try {
-            selfBlipJSON.put("lat", selfBlip.getLatitude());
-            selfBlipJSON.put("lon", selfBlip.getLongitude());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    protected boolean isFullyInitialized() {
+        return fullyInitialized;
     }
 
     @Override
@@ -43,13 +43,11 @@ public class ApiCallSetMyBlip extends CliqueApiCall {
 
     @Override
     protected String getApiBodyString(){
-        return selfBlipJSON.toString();
+        return body;
     }
 
     @Override
     protected void parseContent(String content) {
         Log.i(TAG, "api reply = " + content);
     }
-
-
 }

@@ -6,8 +6,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by pollywog on 9/22/14.
  * extension of the Location class for use within clique
+ * it contains an optional ownerId attribute that is used for identifying owners of blips provided by the api
+ * if the owner is set to 0 the owner is not known
  */
 
 public class Blip extends Location{
@@ -17,8 +18,11 @@ public class Blip extends Location{
     @SuppressWarnings("FieldCanBeLocal")
     private static final String PROVIDER = "Blip";
 
+    private long ownerId = 0;
+
     /**
      * contstructor made to work according to the api/v1 JSON specs
+     * if the JSON contains a "userid" field, ownerId will be set accordingly
      * @param blipJSON
      * @throws JSONException
      */
@@ -27,8 +31,19 @@ public class Blip extends Location{
         setLatitude(blipJSON.getDouble("lat"));
         setLongitude(blipJSON.getDouble("lon"));
         setTime((long)(blipJSON.getDouble("utc_s")*1000));    // Location class uses milliseconds
+        try {
+            this.ownerId = blipJSON.getLong("userid");
+        } catch (JSONException e) {
+            this.ownerId = 0;
+        }
     }
 
+    /**
+     * Constructor that does not set the optional ownerId attribute
+     * @param lat
+     * @param lon
+     * @param utc_s
+     */
     public Blip(double lat, double lon, double utc_s) {
         super(PROVIDER);
         setLatitude(lat);
@@ -55,5 +70,13 @@ public class Blip extends Location{
 
     public double getAge_s() {
         return (double)(System.currentTimeMillis()-getTime()) / 1000.0;
+    }
+
+    /**
+     * returns the optional ownerId attribute
+     * @return
+     */
+    public long getOwnerId() {
+        return ownerId;
     }
 }

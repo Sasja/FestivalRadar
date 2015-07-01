@@ -34,49 +34,6 @@ public class RadarView_Painter {
     }
 
     /**
-     * Helper method to calculate screen coordinates of blips
-     * @param blip blip to be displayed
-     * @param centerLocation own location
-     * @param screenWidth width of drawing area (pixels or whatever)
-     * @param screenHeight height of drawing area (pixels or whatever)
-     * @param bearing bearing the device is held at in degrees
-     * @return x and y screen coordinates to draw the blip to in same units as screenWidth and screenHeigt
-     */
-    static private Pair<Float, Float> calcScreenXY(Blip blip,
-                                            Blip centerLocation,
-                                            double screenWidth,
-                                            double screenHeight,
-                                            double zoomLevel,
-                                            double bearing) {
-        double dLat = blip.getLatitude() - centerLocation.getLatitude();
-        double dLon = blip.getLongitude() - centerLocation.getLongitude();
-        double dLatMeters = dLat * 3.1415 / 180 * earthRadius;
-        double dLonMeters = dLon * 3.1415 / 180 * earthRadius * Math.cos(centerLocation.getLatitude() * 3.1415 / 180);
-        double dXPixels = (screenWidth / 2 / zoomLevel * dLonMeters);
-        double dYPixels = (screenWidth / 2 / zoomLevel * dLatMeters);
-        double bearingRad = (bearing * 3.1415 / 180.0);
-        return new Pair<>(
-                (float) (screenWidth/2 + Math.cos(bearingRad) * dXPixels - Math.sin(bearingRad) * dYPixels),
-                (float) (screenHeight/2 - Math.sin(bearingRad) * dXPixels - Math.cos(bearingRad) * dYPixels)
-        );
-    }
-
-    /**
-     * Helper method to calculate where to draw the sun on the screen
-     * @param width width of drawing area (pixels or whatever)
-     * @param height height of drawing area (pixels or whatever)
-     * @param bearing bearing device is held at in degrees
-     * @param sunAzimuth Azimuth of the sun in degrees
-     * @return x and y screen coordinate to draw the sun at
-     */
-    static private Pair<Float, Float> calcSunXY(double width, double height, double bearing, double sunAzimuth) {
-        return new Pair<>(
-                (float) (width/2  - Math.sin((bearing-sunAzimuth)*3.1415/180.0) * width/2.1),
-                (float) (height/2 - Math.cos((bearing-sunAzimuth)*3.1415/180.0) * width/2.1)
-        );
-    }
-
-    /**
      * Helper method to produce a user readable String for a distance expressed in meters
      * It uses m or km and only one decimal place max for km.
      * @param meters
@@ -91,6 +48,39 @@ public class RadarView_Painter {
         } else {
             return String.valueOf(meters) + "m";
         }
+    }
+
+    private double cos(double degrees) { return Math.cos(Math.toRadians(degrees)); }
+
+    private double sin(double degrees) { return Math.sin(Math.toRadians(degrees)); }
+
+    /**
+     * Helper method to calculate screen coordinates of blips
+     * @param blip blip to be displayed
+     * @return x and y screen coordinates to draw the blip to in same units as screenWidth and screenHeigt
+     */
+    private Pair<Float, Float> calcScreenXY(Blip blip) {
+        double dLat = blip.getLatitude() - centerLocation.getLatitude();
+        double dLon = blip.getLongitude() - centerLocation.getLongitude();
+        double dLatMeters = Math.toRadians(dLat) * earthRadius; // good enough as lLat << earthRadius
+        double dLonMeters = Math.toRadians(dLon) * earthRadius * cos(centerLocation.getLatitude());
+        double dXPixels = (width / 2.0 / zoomRadius * dLonMeters);
+        double dYPixels = (width / 2.0 / zoomRadius * dLatMeters);
+        return new Pair<>(
+                (float) (width / 2 + cos(bearing) * dXPixels - sin(bearing) * dYPixels),
+                (float) (height / 2 - sin(bearing) * dXPixels - cos(bearing) * dYPixels)
+        );
+    }
+
+    /**
+     * Helper method to calculate where to draw the sun on the screen
+     * @return x and y screen coordinate to draw the sun at
+     */
+    private Pair<Float, Float> calcSunXY(double sunAzimuth) {
+        return new Pair<>(
+                (float) (width/2  - sin(bearing-sunAzimuth) * width/2.1),
+                (float) (height/2 - cos(bearing - sunAzimuth) * width/2.1)
+        );
     }
 
     public void crosshairs() {
@@ -148,13 +138,13 @@ public class RadarView_Painter {
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(width / 25);
 
-        Pair<Float, Float> xy = calcScreenXY(blip, centerLocation, width, height, zoomRadius, bearing);
+        Pair<Float, Float> xy = calcScreenXY(blip);
 
         double ageFactorColor = Math.exp(-blip.getAge_s() / 60.0);  // it takes about 1 min to loose color
         double ageFactorOpacity = Math.exp(-blip.getAge_s() / 300.0);  // it takes about 5 minutes to loose opacity
         int rg = (int) ((1-ageFactorColor) * 120);
         int b = (int) (255 * ageFactorColor + (1-ageFactorColor)* 120);
-        int alpha = (int) (200*ageFactorOpacity + 55);
+        int alpha = (int) (200 * ageFactorOpacity + 55);
         paint.setColor(Color.argb(alpha, rg, rg, b));
 
         canvas.drawCircle(xy.first, xy.second, width / 100, paint);
@@ -169,7 +159,7 @@ public class RadarView_Painter {
             int green = (int)(Math.max(0,(Math.min(sunElevation, 20) * 10)));   //200 max and declining to 0 from 20° above horizon
             paint.setColor(Color.argb(150, 200, green, green/10));
         }
-        Pair<Float, Float> sunXy = calcSunXY(width, height, bearing, sunAzimuth);
+        Pair<Float, Float> sunXy = calcSunXY(sunAzimuth);
         canvas.drawCircle(sunXy.first, sunXy.second, width / 20, paint);
     }
 }

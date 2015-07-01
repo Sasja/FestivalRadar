@@ -163,12 +163,10 @@ public class RadarView_Painter {
     }
 
     public void sun(double sunAzimuth, double sunElevation) {
+        paint.setStyle(Paint.Style.FILL);
         if(sunElevation < -3) {
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(Color.BLACK);
-            paint.setStrokeWidth(1);
+            paint.setColor(Color.argb(20, 0, 0, 0));
         } else {
-            paint.setStyle(Paint.Style.FILL);
             int green = (int)(Math.max(0,(Math.min(sunElevation, 20) * 10)));   //200 max and declining to 0 from 20° above horizon
             paint.setColor(Color.argb(150, 200, green, green/10));
         }

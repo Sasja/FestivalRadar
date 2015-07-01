@@ -39,7 +39,7 @@ public class RadarView extends View {
     private double sunAzimuth = 0.0;
     private double sunElevation = -90.0;
     private boolean sunIconEnabled = false;
-    private double zoomRadius = 1000.0;     // means its that much meters to the left or right edge of screen
+    private double zoomRadius = 1000;
     private ScaleGestureDetector mScaleGestureDetector;
 
     public RadarView(Context context) {
@@ -129,6 +129,10 @@ public class RadarView extends View {
         this.sunIconEnabled = sunEnabled;
     }
 
+    public double getZoomRadius() { return zoomRadius; }
+
+    public void setZoomRadius(double zoomRadius) { this.zoomRadius = zoomRadius; }
+
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
@@ -138,5 +142,4 @@ public class RadarView extends View {
             return true;
         }
     }
-
 }

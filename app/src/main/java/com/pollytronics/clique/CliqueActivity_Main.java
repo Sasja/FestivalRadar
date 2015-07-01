@@ -77,6 +77,8 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         sunEnabled = getCliquePreferences().getSunEnabled();
         radarView.setSunEnabled(sunEnabled);
 
+        radarView.setZoomRadius(getCliquePreferences().getZoomRadius());
+
         try {
             if(getCliqueDb().getSelfContact() == null) {
                 Log.i(TAG, "selfContact == null, so starting welcome activity");
@@ -96,6 +98,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         if (mRotation != null) {
             mSensorManager.unregisterListener(this);
         }
+        getCliquePreferences().setZoomRadius(radarView.getZoomRadius());
     }
 
     @Override

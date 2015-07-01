@@ -12,6 +12,8 @@ import com.pollytronics.clique.lib.base.Contact;
  * Helper class for RadarView to do all the canvas painting
  */
 public class RadarView_Painter {
+    public static final String TAG = "RadarView_Painter";
+
     static final double EARTH_RADIUS = 6371000.0;
     private final Paint paint = new Paint();
     private int width;
@@ -108,27 +110,16 @@ public class RadarView_Painter {
     }
 
     /**
-     * Draws the scaleCircles on the screen, it will calculate an appropriate step size before doing so
+     * Draws the scaleCircles on the screen.
+     * It will calculate an appropriate step size before doing so using the CircleStepper in order to remember the result
      * Make sure zoomRadius and canvas is set.
      */
     public void scaleCircles() {
-        // first calculate what scalecircles-step to use based on zoomRadius
-        int circleStepMeter = (int) (zoomRadius / 2.5);    // the quotient determines how many circles are drawn
-        int nulls = (int) Math.floor(Math.log10(circleStepMeter));
-        double expo = Math.log10(circleStepMeter) - nulls;
-        if (expo < 0.15) {  // this will snap circleStepMeter to a sensible round value
-            circleStepMeter = (int) Math.pow(10, nulls);
-        } else if (expo < 0.5) {
-            circleStepMeter = 2 * (int) Math.pow(10, nulls);
-        } else if (expo < 0.85) {
-            circleStepMeter = 5 * (int) Math.pow(10, nulls);
-        } else {
-            circleStepMeter = (int) Math.pow(10, nulls + 1);
-        }
-
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(width / 25);
         paint.setColor(Color.argb(100, 150, 150, 150));
+
+        int circleStepMeter = CircleStepper.getCircleStep(zoomRadius);
 
         for (int i = 1; i * circleStepMeter < zoomRadius * 2; ++i) {
             float radius = (float) (i * circleStepMeter / zoomRadius * width / 2);
@@ -143,6 +134,11 @@ public class RadarView_Painter {
         }
     }
 
+    /**
+     * Draws a blip to the RadarView Canvas with a color according to its age and the name of the corresponding Contact
+     * @param blip Blip to draw
+     * @param contact Contact used for its name
+     */
     public void blip(Blip blip, Contact contact) {
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.FILL);
@@ -151,9 +147,11 @@ public class RadarView_Painter {
 
         double ageFactorColor = Math.exp(-blip.getAge_s() / 60.0);  // it takes about 1 min to loose color
         double ageFactorOpacity = Math.exp(-blip.getAge_s() / 300.0);  // it takes about 5 minutes to loose opacity
+
         int rg = (int) ((1-ageFactorColor) * 120);
-        int b = (int) (255 * ageFactorColor + (1-ageFactorColor)* 120);
+        int b = (int) (255 * ageFactorColor + (1 - ageFactorColor) * 120);
         int alpha = (int) (200 * ageFactorOpacity + 55);
+
         paint.setColor(Color.argb(alpha, rg, rg, b));
 
         Pair<Float, Float> xy = calcScreenXY(blip);
@@ -161,15 +159,50 @@ public class RadarView_Painter {
         canvas.drawText(contact.getName(), xy.first, xy.second + width / 25, paint);
     }
 
+    /**
+     * Draws the sun to the RadarView Canvas, the sunElevation will dictate its color or look
+     * @param sunAzimuth azimuth of the sun in degrees
+     * @param sunElevation elevation above horizon in degrees
+     */
     public void sun(double sunAzimuth, double sunElevation) {
         paint.setStyle(Paint.Style.FILL);
         if(sunElevation < -3) {
             paint.setColor(Color.argb(20, 0, 0, 0));
         } else {
             int green = (int)(Math.max(0,(Math.min(sunElevation, 20) * 10)));   //200 max and declining to 0 from 20° above horizon
-            paint.setColor(Color.argb(150, 200, green, green/10));
+            paint.setColor(Color.argb(150, 200, green, green / 10));
         }
         Pair<Float, Float> sunXy = calcSunXY(sunAzimuth);
         canvas.drawCircle(sunXy.first, sunXy.second, width / 20, paint);
+    }
+
+    /**
+     * Optimization class
+     * This class provides a method to calculate the scale Circle step size from the zoomlevel
+     * If the zoomlevel does not change it will just return the last value.
+     */
+    private static class CircleStepper {
+        private static double lastZoomRadius = 0;
+        private static int lastCircleStepMeter = 0;
+        public static int getCircleStep(double zoomRadius) {
+            if(zoomRadius == lastZoomRadius) return lastCircleStepMeter;
+            else {
+                int circleStepMeter = (int) (zoomRadius / 2.5);    // the quotient determines how many circles are drawn
+                int nulls = (int) Math.floor(Math.log10(circleStepMeter));
+                double expo = Math.log10(circleStepMeter) - nulls;
+                if (expo < 0.15) {                                 // this will snap circleStepMeter to a sensible round value
+                    circleStepMeter = (int) Math.pow(10, nulls);
+                } else if (expo < 0.5) {
+                    circleStepMeter = 2 * (int) Math.pow(10, nulls);
+                } else if (expo < 0.85) {
+                    circleStepMeter = 5 * (int) Math.pow(10, nulls);
+                } else {
+                    circleStepMeter = (int) Math.pow(10, nulls + 1);
+                }
+                lastZoomRadius = zoomRadius;
+                lastCircleStepMeter = circleStepMeter;
+                return circleStepMeter;
+            }
+        }
     }
 }

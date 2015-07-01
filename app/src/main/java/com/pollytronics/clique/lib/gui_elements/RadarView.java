@@ -83,11 +83,7 @@ public class RadarView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        //int width = canvas.getWidth();        //does not work on emulator
-        //int height = canvas.getHeight();
-        int width = MeasureSpec.getSize(getWidth());     // works, but how? and why not just getWidth?
-        int height = MeasureSpec.getSize(getHeight());
-        RadarView_Painter painter = new RadarView_Painter(canvas, width, height, centerLocation, zoomlevel, bearing);
+        RadarView_Painter painter = new RadarView_Painter(canvas, centerLocation, zoomlevel, bearing);
 
         painter.crosshairs();
         painter.scaleCircles();
@@ -99,8 +95,6 @@ public class RadarView extends View {
         }
 
         if(sunIconEnabled) painter.sun(sunAzimuth, sunElevation);
-
-        //painter.frame(); // looks better without
     }
 
 

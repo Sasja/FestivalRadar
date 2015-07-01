@@ -14,17 +14,19 @@ import com.pollytronics.clique.lib.base.Contact;
  */
 public class RadarView_Painter {
     static final double earthRadius = 6371000.0;
+
     private final int width;
     private final int height;
     private final Canvas canvas;
+
     private final double zoomlevel;
     private final double bearing;
     private final Paint paint = new Paint();
     private final Blip centerLocation;
 
-    public RadarView_Painter(Canvas canvas, int width, int height, Blip centerLocation, double zoomlevel, double bearing) {
-        this.width = width;
-        this.height = height;
+    public RadarView_Painter(Canvas canvas, Blip centerLocation, double zoomlevel, double bearing) {
+        this.width = canvas.getWidth();
+        this.height = canvas.getHeight();
         this.canvas = canvas;
         this.centerLocation = centerLocation;
         this.zoomlevel = zoomlevel;
@@ -79,7 +81,7 @@ public class RadarView_Painter {
      * Helper method to produce a user readable String for a distance expressed in meters
      * It uses m or km and only one decimal place max for km.
      * @param meters
-     * @return
+     * @return a presentable string describing the distance
      */
     static private String metersToScaleString(int meters) {
         if (meters >= 1000) {
@@ -172,13 +174,5 @@ public class RadarView_Painter {
         }
         Pair<Float, Float> sunXy = calcSunXY(width, height, bearing, sunAzimuth);
         canvas.drawCircle(sunXy.first, sunXy.second, width / 20, paint);
-    }
-
-    public void frame() {
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setAntiAlias(false);
-        paint.setColor(Color.rgb(0, 0, 0));
-        paint.setStrokeWidth(1);
-        canvas.drawRect(0, 0, width-1, height-1, paint);
     }
 }

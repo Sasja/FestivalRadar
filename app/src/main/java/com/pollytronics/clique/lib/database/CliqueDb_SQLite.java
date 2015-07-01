@@ -63,7 +63,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         return instance;
     }
 
-    //------------------------------- SQL METHOD WRAPPERS ----------------------------------------------------------
+    //----------------------------------- PUBLIC METHODS ----------------------------------------------------
 
     /**
      * @return all contacts in the contact table in no particular order
@@ -131,10 +131,6 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         removeContactById(contact.getGlobalId());
     }
 
-
-
-    //----------------------------------- PUBLIC METHODS ----------------------------------------------------
-
     @Override
     public void removeContactById(long id) throws CliqueDbException {
         CliqueDbDelete delete = new CliqueDbDelete();
@@ -150,7 +146,6 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
      * @param contact contact to be added to the database
      * @throws CliqueDbException*
      */
-
     @Override
     public void addContact(Contact contact) throws CliqueDbException {
         if (getContactById(contact.getGlobalId()) != null) {
@@ -336,6 +331,8 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         query.execute();
         return blip[0];
     }
+
+    //------------------------------- SQL METHOD WRAPPERS ----------------------------------------------------------
 
     private static class ContactEntry implements BaseColumns {
         public static final String TABLE_NAME = "contacts";

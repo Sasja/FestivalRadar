@@ -88,7 +88,7 @@ public class RadarView_Painter {
 
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
-        paint.setColor(Color.argb(150, 200, 100, 100));
+        paint.setColor(Color.argb(100, 200, 100, 100));
 
         canvas.drawLine(width / 2, -width / 2, width / 2, height / 2, paint);
 

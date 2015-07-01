@@ -57,6 +57,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
      */
     public static CliqueDb_SQLite getInstance(Context context){
         if(instance == null) {
+            Log.i(TAG, "creating a new instance of CliqueDb_SQLite");
             instance = new CliqueDb_SQLite(context);
         }
         return instance;

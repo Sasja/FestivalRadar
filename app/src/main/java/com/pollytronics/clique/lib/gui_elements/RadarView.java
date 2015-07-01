@@ -39,7 +39,7 @@ public class RadarView extends View {
     private double sunAzimuth = 0.0;
     private double sunElevation = -90.0;
     private boolean sunIconEnabled = false;
-    private double zoomlevel = 1000.0;     // means its that much meters to the left or right edge of screen
+    private double zoomRadius = 1000.0;     // means its that much meters to the left or right edge of screen
     private ScaleGestureDetector mScaleGestureDetector;
 
     public RadarView(Context context) {
@@ -83,7 +83,7 @@ public class RadarView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        RadarView_Painter painter = new RadarView_Painter(canvas, centerLocation, zoomlevel, bearing);
+        RadarView_Painter painter = new RadarView_Painter(canvas, centerLocation, zoomRadius, bearing);
 
         painter.crosshairs();
         painter.scaleCircles();
@@ -132,12 +132,11 @@ public class RadarView extends View {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            zoomlevel /= Math.pow(detector.getScaleFactor(), 2);    // increasing the exponent will make the zoom more sensitive.
-            zoomlevel = Math.max(10.0, Math.min(100000.0, zoomlevel));
+            zoomRadius /= Math.pow(detector.getScaleFactor(), 2);    // increasing the exponent will make the zoom more sensitive.
+            zoomRadius = Math.max(10.0, Math.min(100000.0, zoomRadius));
             invalidate();
             return true;
         }
     }
-
 
 }

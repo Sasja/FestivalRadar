@@ -25,9 +25,9 @@ import java.util.List;
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
- * TODO: rotation sensor should be optionally disabled in the settings (idea to use sun and moon as an alternative reference)
+ *
  * TODO: make the calculated bearing sensible when holding the phone upright or tilted looking from below or display a warning to prevent confusion
- * TODO: replace the dummy seekbar for zooming with some pinching action
+ * TODO: radarView is never invalidated when service and compass is off, so blips will not fade according to age.
  */
 public class CliqueActivity_Main extends CliqueActivity implements SensorEventListener {
 

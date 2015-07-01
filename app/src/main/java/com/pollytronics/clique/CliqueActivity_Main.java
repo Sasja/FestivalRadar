@@ -86,6 +86,8 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         } catch (CliqueDb_SQLite.CliqueDbException e) {
             e.printStackTrace();
         }
+
+        feedDataToRadarView();
     }
 
     @Override
@@ -99,7 +101,6 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     @Override
     protected void onStart() {
         super.onStart();
-        feedDataToRadarView();
     }
 
     @Override

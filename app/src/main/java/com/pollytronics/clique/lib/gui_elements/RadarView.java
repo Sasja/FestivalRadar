@@ -27,6 +27,9 @@ import java.util.Map;
 public class RadarView extends View {
     static final String TAG = "RadarView";
 
+    private static final double MIN_ZOOM_RADIUS = 10.0;
+    private static final double MAX_ZOOM_RADIUS = 100.0 * 1000.0;
+
     @SuppressLint("UseSparseArrays")
     private final Map<Long, Contact> contacts = new HashMap<>();
     private final Map<Long, Blip> lastBlips = new HashMap<>();
@@ -125,7 +128,7 @@ public class RadarView extends View {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             zoomRadius /= Math.pow(detector.getScaleFactor(), 2);    // increasing the exponent will make the zoom more sensitive.
-            zoomRadius = Math.max(10.0, Math.min(100000.0, zoomRadius));
+            zoomRadius = Math.max(MIN_ZOOM_RADIUS, Math.min(MAX_ZOOM_RADIUS, zoomRadius));
             invalidate();
             return true;
         }

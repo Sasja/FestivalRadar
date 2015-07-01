@@ -21,7 +21,7 @@ import com.pollytronics.clique.lib.CliqueActivity;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostProfile;
 import com.pollytronics.clique.lib.base.Contact;
-import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
+import com.pollytronics.clique.lib.database.CliqueDbException;
 
 import org.json.JSONException;
 
@@ -61,7 +61,7 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
 
         try {
             setIdEditText.setHint(Long.toString(getCliqueDb().getSelfContact().getGlobalId()));
-        } catch (CliqueDb_SQLite.CliqueDbException e) {
+        } catch (CliqueDbException e) {
             e.printStackTrace();
         }
 
@@ -78,13 +78,13 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
                 Contact selfContact = null;
                 try {
                     selfContact = getCliqueDb().getSelfContact();
-                } catch (CliqueDb_SQLite.CliqueDbException e) {
+                } catch (CliqueDbException e) {
                     e.printStackTrace();
                 }
                 selfContact.setGlobalId(id);
                 try {
                     getCliqueDb().updateSelfContact(selfContact);
-                } catch (CliqueDb_SQLite.CliqueDbException e) {
+                } catch (CliqueDbException e) {
                     e.printStackTrace();
                 }
             }
@@ -156,7 +156,7 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
             Contact myProfile = null;
             try {
                 myProfile = getCliqueDb().getSelfContact();
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
             myProfile.setName(name);
@@ -211,7 +211,7 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         protected void onPreExecute() {
             try {
                 getProfile = new ApiCallGetProfile(getCliqueDb().getSelfContact().getGlobalId());
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
         }

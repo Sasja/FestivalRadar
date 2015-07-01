@@ -13,7 +13,7 @@ import com.pollytronics.clique.R;
 import com.pollytronics.clique.CliqueActivity_Main;
 import com.pollytronics.clique.lib.CliqueActivity_Interface4CliqueService;
 import com.pollytronics.clique.lib.database.CliqueDb_Interface;
-import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
+import com.pollytronics.clique.lib.database.CliqueSQLite.CliqueSQLite;
 import com.pollytronics.clique.SubService_Cloud_2;
 import com.pollytronics.clique.SubService_Localisation;
 
@@ -41,7 +41,7 @@ public class CliqueService extends Service implements CliqueService_Interface4Su
     }
 
     public CliqueDb_Interface getCliqueDb(){
-        return CliqueDb_SQLite.getInstance(this);
+        return CliqueSQLite.getInstance(this);
     }
 
     /**

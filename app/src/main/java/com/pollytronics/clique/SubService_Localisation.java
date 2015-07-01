@@ -10,7 +10,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.pollytronics.clique.lib.base.Blip;
-import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
+import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.lib.service.SubService;
 
@@ -104,7 +104,7 @@ public class SubService_Localisation extends SubService implements
         //getCliqueDb().updateSelfContact(selfContact);
         try {
             getCliqueDb().addSelfBlip(new Blip(location));
-        } catch (CliqueDb_SQLite.CliqueDbException e) {
+        } catch (CliqueDbException e) {
             e.printStackTrace();
         }
         getCliqueService().notifyNewData();

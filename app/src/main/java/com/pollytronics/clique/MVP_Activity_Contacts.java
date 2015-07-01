@@ -16,13 +16,13 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.pollytronics.clique.lib.CliqueActivity_MyViewPagerAct;
+import com.pollytronics.clique.lib.api_v01.ApiCallDeleteContact;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetContactIdsISee;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetContactIdsSeeme;
-import com.pollytronics.clique.lib.base.Contact;
-import com.pollytronics.clique.lib.api_v01.ApiCallDeleteContact;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostContact;
-import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
+import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.database.CliqueDbException;
 
 import org.json.JSONException;
 
@@ -109,7 +109,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         Log.i(TAG, "adding contact locally");
         try {
             getCliqueDb().addContact(contact);
-        } catch (CliqueDb_SQLite.CliqueDbException e) {
+        } catch (CliqueDbException e) {
             e.printStackTrace();
         }
         notifyDatabaseUpdate();
@@ -131,7 +131,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             long selfId = 0;
             try {
                 selfId = getCliqueDb().getSelfContact().getGlobalId();
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
             long deleteId = selectedContact.getGlobalId();
@@ -153,7 +153,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             Log.i(TAG, "deleting selected radar contact (id=" + deleteId + ")");
             try {
                 getCliqueDb().removeContact(selectedContact);
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
             Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contact_removed), Toast.LENGTH_SHORT);
@@ -204,7 +204,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             long selfId = 0;
             try {
                 selfId = getCliqueDb().getSelfContact().getGlobalId();
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
             long contactId = contact.getGlobalId();
@@ -281,7 +281,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             long selfId = 0;
             try {
                 selfId = getCliqueDb().getSelfContact().getGlobalId();
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
             apiCallPostContact = new ApiCallPostContact(selfId);
@@ -292,7 +292,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                 for (Contact c : getCliqueDb().getAllContacts()) {
                     con.add(c.getGlobalId());
                 }
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
         }
@@ -357,7 +357,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                     }
                     try {
                         getCliqueDb().addContact(newContacts.get(id));
-                    } catch (CliqueDb_SQLite.CliqueDbException e) {
+                    } catch (CliqueDbException e) {
                         e.printStackTrace();
                     }
                 }
@@ -365,7 +365,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                     Log.i(TAG, "deleting contact from local list (triggered by remote delete): " + id);
                     try {
                         getCliqueDb().removeContactById(id);
-                    } catch (CliqueDb_SQLite.CliqueDbException e) {
+                    } catch (CliqueDbException e) {
                         e.printStackTrace();
                     }
                 }

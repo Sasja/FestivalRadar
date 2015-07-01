@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.pollytronics.clique.lib.MyViewPagerFragment;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
-import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
+import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.tools.TimeFormatting;
 
 import java.util.Collections;
@@ -49,7 +49,7 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
         List<Contact> localContacts = null;
         try {
             localContacts = getCligueDb().getAllContacts();
-        } catch (CliqueDb_SQLite.CliqueDbException e) {
+        } catch (CliqueDbException e) {
             e.printStackTrace();
         }
         sortContactListByName(localContacts);
@@ -108,7 +108,7 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
             Blip lastBlip = null;
             try {
                 lastBlip = getCligueDb().getLastBlip(contact);
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
             if (lastBlip != null) {

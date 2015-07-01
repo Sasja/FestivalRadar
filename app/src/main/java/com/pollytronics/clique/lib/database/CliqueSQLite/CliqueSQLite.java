@@ -1,16 +1,22 @@
-package com.pollytronics.clique.lib.database;
+package com.pollytronics.clique.lib.database.CliqueSQLite;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.database.CliqueDbException;
+import com.pollytronics.clique.lib.database.CliqueDb_Interface;
+import com.pollytronics.clique.lib.database.CliqueSQLite.DbStructure.BlipEntry;
+import com.pollytronics.clique.lib.database.CliqueSQLite.DbStructure.CliqueDbHelper;
+import com.pollytronics.clique.lib.database.CliqueSQLite.DbStructure.ContactEntry;
+import com.pollytronics.clique.lib.database.CliqueSQLite.DbStructure.SelfBlipEntry;
+import com.pollytronics.clique.lib.database.CliqueSQLite.DbStructure.SelfContactEntry;
+import com.pollytronics.clique.lib.database.CliqueSQLite.SQLMethodWrappers.CliqueDbDelete;
+import com.pollytronics.clique.lib.database.CliqueSQLite.SQLMethodWrappers.CliqueDbInsert;
+import com.pollytronics.clique.lib.database.CliqueSQLite.SQLMethodWrappers.CliqueDbQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,28 +29,26 @@ import java.util.List;
  *
  * it is not threadsafe so should only be accessed from one thread (the main thread or UI thread)
  *
- * TODO: onUpgrade() and onDowngrade() simply discards all data at the moment
  * TODO: make method updateContacts(Collection<Contact> contacts) and use it from within SubService_Cloud_2
  * TODO: check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
- * TODO: is it still okay to do all this database stuff sync on the main thread? not really according to developer.android.com but it works fine in practice
+ * TODO: is it still okay to do all this database stuff sync on the main thread? not really according to developer.android.com but it works in practice
  * TODO: i put try catch everywhere in the code where the interface methods are used to get it working for now, take a day to clean up and do proper error handling
  * TODO: deleting a contact from the database should probably also get rid of the associated blips
  * TODO: clean up the database now and then to maintain a maximum number of blips per user
- * TODO: split this class in a few smaller ones
  */
-public final class CliqueDb_SQLite implements CliqueDb_Interface {
+public final class CliqueSQLite implements CliqueDb_Interface {
     public static final String DATABASE_NAME = "Clique.db";
     public static final int DATABASE_VERSION = 2;   // increasing this will wipe all local databases on update
-    private static final String TAG="CliqueDb_SQLite";
-    private static CliqueDb_SQLite instance = null;
+    private static final String TAG="CliqueSQLite";
+    private static CliqueSQLite instance = null;
     private final CliqueDbHelper cliqueDbHelper;
 
     /**
      * private constructor to make sure only one object is ever created, the object should be obtained through getInstance instead.
      * @param context
      */
-    private CliqueDb_SQLite(Context context){
-        Log.i(TAG, "instanciating CliqueDb_SQLite object");
+    private CliqueSQLite(Context context){
+        Log.i(TAG, "instanciating CliqueSQLite object");
         cliqueDbHelper = new CliqueDbHelper(context);
     }
 
@@ -56,10 +60,10 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
      * @param context
      * @return
      */
-    public static CliqueDb_SQLite getInstance(Context context){
+    public static CliqueSQLite getInstance(Context context){
         if(instance == null) {
-            Log.i(TAG, "creating a new instance of CliqueDb_SQLite");
-            instance = new CliqueDb_SQLite(context);
+            Log.i(TAG, "creating a new instance of CliqueSQLite");
+            instance = new CliqueSQLite(context);
         }
         return instance;
     }
@@ -72,7 +76,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     public List<Contact> getAllContacts() throws CliqueDbException{
         final List<Contact> contacts = new ArrayList<>();
 
-        CliqueDbQuery query = new CliqueDbQuery() {
+        CliqueDbQuery query = new CliqueDbQuery(cliqueDbHelper) {
             @Override
             void parseCursor(Cursor c) {
                 for(int i=0; i < c.getCount(); i++) {
@@ -99,7 +103,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     public Contact getContactById(final Long id) throws CliqueDbException {
         final Contact[] contact = new Contact[1];   // hack to allow access from CliqueDbQuery object
 
-        CliqueDbQuery query = new CliqueDbQuery() {
+        CliqueDbQuery query = new CliqueDbQuery(cliqueDbHelper) {
             @Override
             void parseCursor(Cursor c) throws CliqueDbException{
                 if(c.getCount() == 1) {
@@ -132,7 +136,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
 
     @Override
     public void removeContactById(long id) throws CliqueDbException {
-        CliqueDbDelete delete = new CliqueDbDelete();
+        CliqueDbDelete delete = new CliqueDbDelete(cliqueDbHelper);
         delete.setTable(ContactEntry.TABLE_NAME);
         delete.setWhere(ContactEntry.COLUMN_NAME_GLOBAL_ID + "=" + Long.toString(id));
         delete.execute();
@@ -151,7 +155,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
             Log.i(TAG, "WARNING: addContact() called with contact with allready used global id, not doing anything");
             return;
         }
-        CliqueDbInsert insert = new CliqueDbInsert();
+        CliqueDbInsert insert = new CliqueDbInsert(cliqueDbHelper);
         insert.setTable(ContactEntry.TABLE_NAME);
         ContentValues content = new ContentValues();
         content.put(ContactEntry.COLUMN_NAME_GLOBAL_ID, contact.getGlobalId());
@@ -171,7 +175,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     public Contact getSelfContact() throws CliqueDbException {
         final Contact[] selfContact = new Contact[1]; // hack to allow access from CliqueDbQuery object
 
-        CliqueDbQuery query = new CliqueDbQuery() {
+        CliqueDbQuery query = new CliqueDbQuery(cliqueDbHelper) {
             @Override
             void parseCursor(Cursor c) throws CliqueDbException {
                 int nFound = c.getCount();
@@ -205,10 +209,10 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     @Override
     public void updateSelfContact(Contact newSelfContact) throws CliqueDbException {
         Log.i(TAG, "updating selfContact");
-        CliqueDbDelete delete = new CliqueDbDelete();
+        CliqueDbDelete delete = new CliqueDbDelete(cliqueDbHelper);
         delete.setTable(SelfContactEntry.TABLE_NAME);
         delete.execute();
-        CliqueDbInsert insert = new CliqueDbInsert();
+        CliqueDbInsert insert = new CliqueDbInsert(cliqueDbHelper);
         insert.setTable(SelfContactEntry.TABLE_NAME);
         ContentValues content = new ContentValues();
         content.put(SelfContactEntry.COLUMN_NAME_GLOBAL_ID, newSelfContact.getGlobalId());
@@ -224,7 +228,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     @Override
     public Blip getLastBlip(Contact contact) throws CliqueDbException {
         final Blip[] blip = new Blip[1];
-        CliqueDbQuery query = new CliqueDbQuery() {
+        CliqueDbQuery query = new CliqueDbQuery(cliqueDbHelper) {
             @Override
             void parseCursor(Cursor c) throws CliqueDbException {
                 if(c.getCount() >= 1) {
@@ -255,7 +259,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     @Override
     public void addBlip(Blip blip, Contact contact) throws CliqueDbException {
         Log.i(TAG, "inserting new blip in database");
-        CliqueDbInsert insert = new CliqueDbInsert();
+        CliqueDbInsert insert = new CliqueDbInsert(cliqueDbHelper);
         insert.setTable(BlipEntry.TABLE_NAME);
         ContentValues content = new ContentValues();
         content.put(BlipEntry.COLUMN_NAME_GLOBAL_ID, contact.getGlobalId());
@@ -296,7 +300,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     @Override
     public void addSelfBlip(Blip blip) throws CliqueDbException {
         Log.i(TAG, "inserting a new selfblip in database");
-        CliqueDbInsert insert = new CliqueDbInsert();
+        CliqueDbInsert insert = new CliqueDbInsert(cliqueDbHelper);
         insert.setTable(SelfBlipEntry.TABLE_NAME);
         ContentValues content = new ContentValues();
         content.put(SelfBlipEntry.COLUMN_NAME_LAT, blip.getLatitude());
@@ -310,7 +314,7 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     @Override
     public Blip getLastSelfBlip() throws CliqueDbException {
         final Blip[] blip = new Blip[1];
-        CliqueDbQuery query = new CliqueDbQuery() {
+        CliqueDbQuery query = new CliqueDbQuery(cliqueDbHelper) {
             @Override
             void parseCursor(Cursor c) throws CliqueDbException {
                 if(c.getCount() >= 1) {
@@ -330,208 +334,4 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         query.execute();
         return blip[0];
     }
-
-    private static class ContactEntry implements BaseColumns {
-        public static final String TABLE_NAME = "contacts";
-        public static final String COLUMN_NAME_NAME="name";
-        public static final String COLUMN_NAME_GLOBAL_ID="globalId";
-    }
-
-    private static class SelfContactEntry extends ContactEntry {
-        public static final String TABLE_NAME = "selfContact";
-    }
-
-    private static class BlipEntry implements BaseColumns {
-        public static final String TABLE_NAME = "blips";
-        public static final String COLUMN_NAME_GLOBAL_ID="globalId";
-        public static final String COLUMN_NAME_LAT="lat";
-        public static final String COLUMN_NAME_LON="lon";
-        public static final String COLUMN_NAME_UTC_S="utc_s";
-        public static final String COLUMN_NAME_DLAT="dLat";
-        public static final String COLUMN_NAME_DLON="dLon";
-        public static final String COLUMN_NAME_VLAT="vLat";
-        public static final String COLUMN_NAME_VLON="vLon";
-    }
-
-    private static class SelfBlipEntry extends BlipEntry {
-        public static final String TABLE_NAME = "selfBlips";
-    }
-
-    /**
-     * this abstract class wraps database queries to the database in order to make sure SQLExceptions are checked and handled and resources are released
-     */
-    private abstract class CliqueDbQuery {
-
-        private String table = null;
-        private String[] projection = null;
-        private String selection = null;
-        private String[] selectionArgs = null;
-        private String groupBy = null;
-        private String having = null;
-        private String orderBy = null;
-
-        public CliqueDbQuery() {}
-
-        public void setTable(String table) { this.table = table; }
-        public void setProjection(String[] projection) { this.projection = projection; }
-        public void setSelection(String selection) { this.selection = selection; }
-        public void setSelectionArgs(String[] selectionArgs) { this.selectionArgs = selectionArgs; }
-        public void setGroupBy(String groupBy) { this.groupBy = groupBy; }
-        public void setHaving(String having) { this.having = having; }
-        public void setOrderBy(String orderBy) { this.orderBy = orderBy; }
-
-        /**
-         * Implement this method to extract necessary data from your cursor, throw a CliqueDbException with a message when something unexpected happens
-         * @param c Cursor instance returned by the database query.
-         * @throws CliqueDbException
-         */
-        abstract void parseCursor(Cursor c) throws CliqueDbException;
-
-        /**
-         * executes the sql operation, extracts the results, translates errors and releases resources
-         * because an SQLiteException is a RunTimeException it is not checked, Catching and rethrowing makes them checked.
-         * @throws CliqueDbException
-         */
-        void execute() throws CliqueDbException {
-            SQLiteDatabase db = null;
-            Cursor c = null;
-            try {
-                db = cliqueDbHelper.getReadableDatabase();
-                c = db.query(table, projection, selection, selectionArgs, groupBy, having, orderBy);
-                parseCursor(c);
-            } catch (SQLiteException e) {
-                e.printStackTrace();
-                throw new CliqueDbException();
-            } finally {
-                if (c != null) c.close();
-                if (db != null) db.close();
-            }
-        }
-    }
-
-    /**
-     * this class wraps database deletes in order to make sure SQLExceptions are checked and handled and resources are released
-     */
-    private class CliqueDbDelete {
-        private String table = null;
-        private String where = null;
-        private String[] whereArgs = null;
-
-        private int nDeleted = 0;
-
-        public CliqueDbDelete() {}
-
-        public void setTable(String table) { this.table = table; }
-        public void setWhere(String where) { this.where = where; }
-        public void setWhereArgs(String[] whereArgs) { this.whereArgs = whereArgs; }
-
-        /**
-         * executes the sql operation translates errors and releases resources
-         * because an SQLiteException is a RunTimeException it is not checked, Catching and rethrowing makes them checked.
-         * @throws CliqueDbException
-         */
-        void execute() throws CliqueDbException {
-            SQLiteDatabase db = null;
-            try {
-                db = cliqueDbHelper.getWritableDatabase();
-                nDeleted = db.delete(table, where, whereArgs);
-            } catch (SQLiteException e) {
-                e.printStackTrace();
-                throw new CliqueDbException();
-            } finally {
-                if (db != null) db.close();
-            }
-        }
-
-        public int getnDeleted() { return nDeleted; }
-    }
-
-    /**
-     * this class wraps database inserts in order to make sure SQLExceptions are checked and handled and resources are released
-     */
-    private class CliqueDbInsert {
-        private String table = null;
-        private ContentValues values = null;
-
-        public CliqueDbInsert() {}
-
-        public void setTable(String table) { this.table = table; }
-        public void setValues(ContentValues values) { this.values = values; }
-
-        void execute() throws CliqueDbException {
-            SQLiteDatabase db = null;
-            try {
-                db = cliqueDbHelper.getWritableDatabase();
-                long result = db.insertOrThrow(table, null, values);
-                if (result == -1) throw new CliqueDbException("insertOrThrow returned -1");
-            } catch (SQLiteException e) {
-                e.printStackTrace();
-                throw new CliqueDbException();
-            } finally {
-                if (db != null) db.close();
-            }
-        }
-    }
-
-    private class CliqueDbHelper extends SQLiteOpenHelper {
-        public CliqueDbHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            Log.i(TAG, "onCreate()");
-            db.execSQL("CREATE TABLE " + ContactEntry.TABLE_NAME + " ( " +
-                    ContactEntry._ID +                      " INTEGER PRIMARY KEY," +
-                    ContactEntry.COLUMN_NAME_GLOBAL_ID +    " LONG, " +
-                    ContactEntry.COLUMN_NAME_NAME +         " TEXT )");
-            db.execSQL("CREATE TABLE " + BlipEntry.TABLE_NAME + " ( " +
-                    BlipEntry._ID +                         " INTEGER PRIMARY KEY," +
-                    BlipEntry.COLUMN_NAME_GLOBAL_ID +       " LONG, " +
-                    BlipEntry.COLUMN_NAME_LAT +             " DOUBLE, " +
-                    BlipEntry.COLUMN_NAME_LON +             " DOUBLE, " +
-                    BlipEntry.COLUMN_NAME_UTC_S +           " DOUBLE, " +
-                    BlipEntry.COLUMN_NAME_DLAT +            " DOUBLE, " +
-                    BlipEntry.COLUMN_NAME_DLON +            " DOUBLE, " +
-                    BlipEntry.COLUMN_NAME_VLAT +            " DOUBLE, " +
-                    BlipEntry.COLUMN_NAME_VLON +            " DOUBLE )");
-            db.execSQL("CREATE TABLE " + SelfContactEntry.TABLE_NAME + " ( " +
-                    SelfContactEntry._ID +                  "INTEGER PRIMARY KEY," +
-                    SelfContactEntry.COLUMN_NAME_GLOBAL_ID +" LONG, " +
-                    SelfContactEntry.COLUMN_NAME_NAME +     " TEXT )");
-            db.execSQL("CREATE TABLE " + SelfBlipEntry.TABLE_NAME + " ( " +
-                    BlipEntry._ID +                         " INTEGER PRIMARY KEY," +
-                    //BlipEntry.COLUMN_NAME_GLOBAL_ID + " LONG, " +         // Threre is no global id column in this table
-                    SelfBlipEntry.COLUMN_NAME_LAT +         " DOUBLE, " +
-                    SelfBlipEntry.COLUMN_NAME_LON +         " DOUBLE, " +
-                    SelfBlipEntry.COLUMN_NAME_UTC_S +       " DOUBLE, " +
-                    SelfBlipEntry.COLUMN_NAME_DLAT +        " DOUBLE, " +
-                    SelfBlipEntry.COLUMN_NAME_DLON +        " DOUBLE, " +
-                    SelfBlipEntry.COLUMN_NAME_VLAT +        " DOUBLE, " +
-                    SelfBlipEntry.COLUMN_NAME_VLON +        " DOUBLE )");
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.i(TAG,"WARNING: onUpgrade(), discarding all data in local database. (dbversion "+oldVersion+"->"+newVersion+")");
-            //simply discard all data and start over
-            db.execSQL("DROP TABLE IF EXISTS " + ContactEntry.TABLE_NAME);
-            onCreate(db);
-        }
-
-        @Override
-        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.i(TAG,"WARING: onDowngrade() calling onUpgrade");
-            onUpgrade(db, oldVersion, newVersion);
-        }
-    }
-
-    public class CliqueDbException extends Exception {
-        public CliqueDbException() {
-            super();
-        }
-        public CliqueDbException(String detailMessage) { super(detailMessage); }
-    }
-
-
 }

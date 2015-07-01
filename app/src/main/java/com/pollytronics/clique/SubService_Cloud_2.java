@@ -10,7 +10,7 @@ import com.pollytronics.clique.lib.api_v01.ApiCallGetBlips;
 import com.pollytronics.clique.lib.api_v01.ApiCallSetMyBlip;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
-import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
+import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.lib.service.SubService;
 
@@ -119,13 +119,13 @@ public class SubService_Cloud_2 extends SubService {
             long selfId = 0;
             try {
                 selfId = getCliqueDb().getSelfContact().getGlobalId();
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
             Blip lastBlip = null;
             try {
                 lastBlip = getCliqueDb().getLastSelfBlip();
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
             try {
@@ -164,13 +164,13 @@ public class SubService_Cloud_2 extends SubService {
                     Contact contact = null;
                     try {
                         contact = getCliqueDb().getContactById(b.getOwnerId());
-                    } catch (CliqueDb_SQLite.CliqueDbException e) {
+                    } catch (CliqueDbException e) {
                         e.printStackTrace();
                     }
                     if(contact != null) {   // check if it is known locally on device
                         try {
                             getCliqueDb().addBlip(b, contact);
-                        } catch (CliqueDb_SQLite.CliqueDbException e) {
+                        } catch (CliqueDbException e) {
                             e.printStackTrace();
                         }
                     }

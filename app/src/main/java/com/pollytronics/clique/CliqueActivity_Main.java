@@ -15,7 +15,7 @@ import android.widget.Switch;
 import com.pollytronics.clique.lib.CliqueActivity;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
-import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
+import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.gui_elements.RadarView;
 import com.pollytronics.clique.lib.tools.nature.SunRelativePosition;
 
@@ -85,7 +85,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
                 Intent intent = new Intent(this, CliqueActivity_Welcome.class);
                 startActivity(intent);
             }
-        } catch (CliqueDb_SQLite.CliqueDbException e) {
+        } catch (CliqueDbException e) {
             e.printStackTrace();
         }
 
@@ -138,7 +138,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         Blip centerLocation = null;
         try {
             centerLocation = getCliqueDb().getLastSelfBlip();
-        } catch (CliqueDb_SQLite.CliqueDbException e) {
+        } catch (CliqueDbException e) {
             e.printStackTrace();
         }
         radarView.setCenterLocation(centerLocation);
@@ -146,13 +146,13 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         List<Contact> contacts = null;
         try {
             contacts = getCliqueDb().getAllContacts();
-        } catch (CliqueDb_SQLite.CliqueDbException e) {
+        } catch (CliqueDbException e) {
             e.printStackTrace();
         }
         for(Contact c:contacts){
             try {
                 radarView.updateContact(c, getCliqueDb().getLastBlip(c));
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
         }
@@ -161,7 +161,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
             Blip position = null;
             try {
                 position = getCliqueDb().getLastSelfBlip();
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
             if (position != null) {

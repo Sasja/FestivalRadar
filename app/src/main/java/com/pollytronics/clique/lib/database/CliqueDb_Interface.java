@@ -10,34 +10,34 @@ import java.util.List;
  * cannot be put in the interface being static (for now).
  *
  * Therefore retrieving an instance of the interface would go something like
- * (CliqueDb_Interface) CliqueDb_SQLite.getInstance();
+ * (CliqueDb_Interface) CliqueSQLite.getInstance();
  * Some base classes provide convenience for this through getCliqueDb()
  */
 public interface CliqueDb_Interface {
 
     // Contacts --------------------
 
-    List<Contact> getAllContacts() throws CliqueDb_SQLite.CliqueDbException;
+    List<Contact> getAllContacts() throws CliqueDbException;
 
-    void removeContact(Contact contact) throws CliqueDb_SQLite.CliqueDbException;
+    void removeContact(Contact contact) throws CliqueDbException;
 
-    void removeContactById(long id) throws CliqueDb_SQLite.CliqueDbException;
+    void removeContactById(long id) throws CliqueDbException;
 
-    void addContact(Contact contact) throws CliqueDb_SQLite.CliqueDbException;
+    void addContact(Contact contact) throws CliqueDbException;
 
-    Contact getSelfContact() throws CliqueDb_SQLite.CliqueDbException;
+    Contact getSelfContact() throws CliqueDbException;
 
-    Contact getContactById(Long id) throws CliqueDb_SQLite.CliqueDbException;
+    Contact getContactById(Long id) throws CliqueDbException;
 
-    void updateSelfContact(Contact newSelfContact) throws CliqueDb_SQLite.CliqueDbException;
+    void updateSelfContact(Contact newSelfContact) throws CliqueDbException;
 
     // Blips -----------------------
 
-    Blip getLastBlip(Contact contact) throws CliqueDb_SQLite.CliqueDbException;
+    Blip getLastBlip(Contact contact) throws CliqueDbException;
 
-    void addSelfBlip(Blip blip) throws CliqueDb_SQLite.CliqueDbException;
+    void addSelfBlip(Blip blip) throws CliqueDbException;
 
-    Blip getLastSelfBlip() throws CliqueDb_SQLite.CliqueDbException;
+    Blip getLastSelfBlip() throws CliqueDbException;
 
-    void addBlip(Blip blip, Contact contact) throws CliqueDb_SQLite.CliqueDbException;
+    void addBlip(Blip blip, Contact contact) throws CliqueDbException;
 }

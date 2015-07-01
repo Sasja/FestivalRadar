@@ -16,7 +16,7 @@ import com.pollytronics.clique.CliqueActivity_About;
 import com.pollytronics.clique.CliqueActivity_Debug;
 import com.pollytronics.clique.R;
 import com.pollytronics.clique.CliqueActivity_Settings;
-import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
+import com.pollytronics.clique.lib.database.CliqueSQLite.CliqueSQLite;
 import com.pollytronics.clique.lib.database.CliqueDb_Interface;
 import com.pollytronics.clique.lib.preferences.CliquePreferences;
 import com.pollytronics.clique.lib.service.CliqueService;
@@ -55,7 +55,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     }
 
     public CliqueDb_Interface getCliqueDb() {
-        return CliqueDb_SQLite.getInstance(getApplicationContext());
+        return CliqueSQLite.getInstance(getApplicationContext());
     }
 
     protected CliquePreferences getCliquePreferences() {

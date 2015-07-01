@@ -15,9 +15,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetPings;
-import com.pollytronics.clique.lib.database.CliqueDb_SQLite;
+import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.database.CliqueDbException;
 
 import org.json.JSONException;
 
@@ -97,7 +97,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
             Log.i(TAG, "gathering own user id");
             try {
                 getPings = new ApiCallGetPings(getCligueDb().getSelfContact().getGlobalId());
-            } catch (CliqueDb_SQLite.CliqueDbException e) {
+            } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
         }
@@ -130,7 +130,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
                             allReadyKnown.add(c);
                             Log.i(TAG, String.format("yup %s is allready known", c.getName()));
                         }
-                    } catch (CliqueDb_SQLite.CliqueDbException e) {
+                    } catch (CliqueDbException e) {
                         e.printStackTrace();
                     }
                 }

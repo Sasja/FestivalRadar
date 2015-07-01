@@ -8,8 +8,8 @@ android {
         applicationId "com.pollytronics.festivalradar"      // if this is changed google play will consider it a new app
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 7
-        versionName "1.0.6.a"
+        versionCode 8
+        versionName "1.0.7.a"
     }
     buildTypes {
         release {

@@ -27,8 +27,8 @@ import java.util.Map;
 public class RadarView extends View {
     static final String TAG = "RadarView";
 
-    private static final double MIN_ZOOM_RADIUS = 10.0;
-    private static final double MAX_ZOOM_RADIUS = 100.0 * 1000.0;
+    private static final double MIN_ZOOM_RADIUS = 10.0;                 // 10m
+    private static final double MAX_ZOOM_RADIUS = 100.0 * 1000.0;       // 100km
 
     @SuppressLint("UseSparseArrays")
     private final Map<Long, Contact> contacts = new HashMap<>();

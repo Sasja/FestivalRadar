@@ -13,30 +13,22 @@ import com.pollytronics.clique.lib.base.Contact;
  */
 public class RadarView_Painter {
     static final double earthRadius = 6371000.0;
-
-    private final int width;
-    private final int height;
-    private final Canvas canvas;
-
-    private final double zoomRadius;
-    private final double bearing;
     private final Paint paint = new Paint();
-    private final Blip centerLocation;
+    private int width;
+    private int height;
+    private  Canvas canvas = null;
+    private double zoomRadius = 1000.0;
+    private double bearing = 0.0;
+    private Blip centerLocation = null;
 
-    public RadarView_Painter(Canvas canvas, Blip centerLocation, double zoomRadius, double bearing) {
-        this.width = canvas.getWidth();
-        this.height = canvas.getHeight();
-        this.canvas = canvas;
-        this.centerLocation = centerLocation;
-        this.zoomRadius = zoomRadius;
-        this.bearing = bearing;
+    public RadarView_Painter() {
         this.paint.setAntiAlias(true);
     }
 
     /**
      * Helper method to produce a user readable String for a distance expressed in meters
      * It uses m or km and only one decimal place max for km.
-     * @param meters
+     * @param meters a distance in meters
      * @return a presentable string describing the distance
      */
     static private String metersToScaleString(int meters) {
@@ -50,12 +42,25 @@ public class RadarView_Painter {
         }
     }
 
+    public void setCanvas(Canvas canvas) {
+        this.canvas = canvas;
+        this.width = canvas.getWidth();
+        this.height = canvas.getHeight();
+    }
+
+    public void setZoomRadius(double zoomRadius) { this.zoomRadius = zoomRadius; }
+
+    public void setBearing(double bearing) { this.bearing = bearing; }
+
+    public void setCenterLocation(Blip centerLocation) { this.centerLocation = centerLocation; }
+
     private double cos(double degrees) { return Math.cos(Math.toRadians(degrees)); }
 
     private double sin(double degrees) { return Math.sin(Math.toRadians(degrees)); }
 
     /**
      * Helper method to calculate screen coordinates of blips
+     * TODO: the new Pair<> seems to be allocation that is performed in the onDraw method...
      * @param blip blip to be displayed
      * @return x and y screen coordinates to draw the blip to in same units as screenWidth and screenHeigt
      */
@@ -74,12 +79,13 @@ public class RadarView_Painter {
 
     /**
      * Helper method to calculate where to draw the sun on the screen
+     * TODO: the new Pair<> seems to be allocation that is performed in the onDraw method...
      * @return x and y screen coordinate to draw the sun at
      */
     private Pair<Float, Float> calcSunXY(double sunAzimuth) {
         return new Pair<>(
-                (float) (width/2  - sin(bearing-sunAzimuth) * width/2.1),
-                (float) (height/2 - cos(bearing - sunAzimuth) * width/2.1)
+                (float) (width / 2 - sin(bearing - sunAzimuth) * width / 2.1),
+                (float) (height / 2 - cos(bearing - sunAzimuth) * width / 2.1)
         );
     }
 
@@ -138,8 +144,6 @@ public class RadarView_Painter {
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(width / 25);
 
-        Pair<Float, Float> xy = calcScreenXY(blip);
-
         double ageFactorColor = Math.exp(-blip.getAge_s() / 60.0);  // it takes about 1 min to loose color
         double ageFactorOpacity = Math.exp(-blip.getAge_s() / 300.0);  // it takes about 5 minutes to loose opacity
         int rg = (int) ((1-ageFactorColor) * 120);
@@ -147,6 +151,7 @@ public class RadarView_Painter {
         int alpha = (int) (200 * ageFactorOpacity + 55);
         paint.setColor(Color.argb(alpha, rg, rg, b));
 
+        Pair<Float, Float> xy = calcScreenXY(blip);
         canvas.drawCircle(xy.first, xy.second, width / 100, paint);
         canvas.drawText(contact.getName(), xy.first, xy.second + width / 25, paint);
     }

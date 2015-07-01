@@ -3,7 +3,6 @@ package com.pollytronics.clique.lib.gui_elements;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -26,20 +25,20 @@ import java.util.Map;
  * TODO: try not to allocate anything in onDraw
  */
 public class RadarView extends View {
-
-    @SuppressWarnings("unused")
     static final String TAG = "RadarView";
 
     @SuppressLint("UseSparseArrays")
     private final Map<Long, Contact> contacts = new HashMap<>();
     private final Map<Long, Blip> lastBlips = new HashMap<>();
-    private final Paint paint = new Paint();
+
     private Blip centerLocation;
     private double bearing = 0.0;
     private double sunAzimuth = 0.0;
     private double sunElevation = -90.0;
     private boolean sunIconEnabled = false;
-    private double zoomRadius = 1000;
+    private double zoomRadius = 1000.0; // should be set through a setter on onResume of the activity
+    private RadarView_Painter painter = new RadarView_Painter();
+
     private ScaleGestureDetector mScaleGestureDetector;
 
     public RadarView(Context context) {
@@ -58,9 +57,9 @@ public class RadarView extends View {
     }
 
     /**
-     * must be called from the constructors, to disable hardware accereleration for this View (because of lack of compatibility with/without)
+     * must be called from the constructors to disable hardware accereleration for this View (because of lack of compatibility with/without)
      * it also initializes the ScaleGestureDetector
-     * @param context
+     * @param context context
      */
     private void init(Context context){
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -69,8 +68,8 @@ public class RadarView extends View {
 
     /**
      * intercepts all Motion Events on the view and passes them on to the ScaleGestureDetector
-     * @param ev
-     * @return
+     * @param ev event that is received
+     * @return true if the event is consumed
      */
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
@@ -83,7 +82,10 @@ public class RadarView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        RadarView_Painter painter = new RadarView_Painter(canvas, centerLocation, zoomRadius, bearing);
+        painter.setCanvas(canvas);
+        painter.setCenterLocation(centerLocation);
+        painter.setZoomRadius(zoomRadius);
+        painter.setBearing(bearing);
 
         painter.crosshairs();
         painter.scaleCircles();

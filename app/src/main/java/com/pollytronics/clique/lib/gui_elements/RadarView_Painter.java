@@ -12,7 +12,7 @@ import com.pollytronics.clique.lib.base.Contact;
  * Helper class for RadarView to do all the canvas painting
  */
 public class RadarView_Painter {
-    static final double earthRadius = 6371000.0;
+    static final double EARTH_RADIUS = 6371000.0;
     private final Paint paint = new Paint();
     private int width;
     private int height;
@@ -33,9 +33,9 @@ public class RadarView_Painter {
      */
     static private String metersToScaleString(int meters) {
         if (meters >= 1000) {
-            int km = meters/1000;
-            double frac = meters/1000.0 - km;
-            if(frac > 0) return String.valueOf(km + frac) + "km";
+            int km = meters / 1000;
+            double frac = meters / 1000.0 - km;
+            if (frac > 0) return String.valueOf(km + frac) + "km";
             else return String.valueOf(km) + "km";
         } else {
             return String.valueOf(meters) + "m";
@@ -49,26 +49,23 @@ public class RadarView_Painter {
     }
 
     public void setZoomRadius(double zoomRadius) { this.zoomRadius = zoomRadius; }
-
     public void setBearing(double bearing) { this.bearing = bearing; }
-
     public void setCenterLocation(Blip centerLocation) { this.centerLocation = centerLocation; }
 
     private double cos(double degrees) { return Math.cos(Math.toRadians(degrees)); }
-
     private double sin(double degrees) { return Math.sin(Math.toRadians(degrees)); }
 
     /**
      * Helper method to calculate screen coordinates of blips
      * TODO: the new Pair<> seems to be allocation that is performed in the onDraw method...
      * @param blip blip to be displayed
-     * @return x and y screen coordinates to draw the blip to in same units as screenWidth and screenHeigt
+     * @return x and y screen coordinates to draw the blip to (in same units as screenWidth and screenHeight eg. pixels)
      */
     private Pair<Float, Float> calcScreenXY(Blip blip) {
         double dLat = blip.getLatitude() - centerLocation.getLatitude();
         double dLon = blip.getLongitude() - centerLocation.getLongitude();
-        double dLatMeters = Math.toRadians(dLat) * earthRadius; // good enough as lLat << earthRadius
-        double dLonMeters = Math.toRadians(dLon) * earthRadius * cos(centerLocation.getLatitude());
+        double dLatMeters = Math.toRadians(dLat) * EARTH_RADIUS; // good enough as dLat << EARTH_RADIUS
+        double dLonMeters = Math.toRadians(dLon) * EARTH_RADIUS * cos(centerLocation.getLatitude());
         double dXPixels = (width / 2.0 / zoomRadius * dLonMeters);
         double dYPixels = (width / 2.0 / zoomRadius * dLatMeters);
         return new Pair<>(
@@ -89,6 +86,10 @@ public class RadarView_Painter {
         );
     }
 
+    /**
+     * Draws crosshairs over the screen.
+     * Make sure bearing and canvas is set appropriately.
+     */
     public void crosshairs() {
         canvas.rotate(-(float) bearing, width / 2, height / 2); // make sure to restore!
 
@@ -106,12 +107,16 @@ public class RadarView_Painter {
         canvas.restore();   // restoring the rotate operation
     }
 
+    /**
+     * Draws the scaleCircles on the screen, it will calculate an appropriate step size before doing so
+     * Make sure zoomRadius and canvas is set.
+     */
     public void scaleCircles() {
-        // first calculate what scale circles step to use based on zoomRadius
-        int circleStepMeter = (int) (zoomRadius / 2.5);    // the quotient will determine how many circles are drawn approx
+        // first calculate what scalecircles-step to use based on zoomRadius
+        int circleStepMeter = (int) (zoomRadius / 2.5);    // the quotient determines how many circles are drawn
         int nulls = (int) Math.floor(Math.log10(circleStepMeter));
         double expo = Math.log10(circleStepMeter) - nulls;
-        if (expo < 0.15) {                              // this will snap to a sensible scale circle interval
+        if (expo < 0.15) {  // this will snap circleStepMeter to a sensible round value
             circleStepMeter = (int) Math.pow(10, nulls);
         } else if (expo < 0.5) {
             circleStepMeter = 2 * (int) Math.pow(10, nulls);

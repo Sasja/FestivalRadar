@@ -77,7 +77,11 @@ public class RadarView extends View {
         return true;
     }
 
-
+    /**
+     * draws all the elements of the radarview using the RadarView_Painter instance.
+     * Make sure all necessary attributes are set before calling the drawing methods or you'll get nullPointerExceptions
+     * @param canvas the canvas to draw on
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -95,15 +99,11 @@ public class RadarView extends View {
                 painter.blip(b, c);
             }
         }
-
         if(sunIconEnabled) painter.sun(sunAzimuth, sunElevation);
     }
 
-
-
     public void addContact(Contact contact, Blip lastBlip) {
         if(contacts.containsKey(contact.getGlobalId())) {
-            //throw new IllegalArgumentException("contact to add is allready present in RadarView");
             Log.i(TAG, "WARNING: contact ID is allready present in RaderView, duplicate ID's?");
         } else {
             contacts.put(contact.getGlobalId(),contact);
@@ -111,28 +111,14 @@ public class RadarView extends View {
         }
     }
 
-    public void removeAllContacts() {
-        contacts.clear();
-    }
+    public void removeAllContacts() { contacts.clear(); }
 
-    public void setCenterLocation(Blip centerLocation) {
-        this.centerLocation = centerLocation;
-    }
-
-    public void setBearing(double bearing) {
-        this.bearing = bearing;
-    }
-
+    public void setCenterLocation(Blip centerLocation) { this.centerLocation = centerLocation; }
+    public void setBearing(double bearing) { this.bearing = bearing; }
     public void setSunAzimuth(double sunAzimuth) {this.sunAzimuth = sunAzimuth; }
-
     public void setSunElevation(double sunElevation) {this.sunElevation = sunElevation; }
-
-    public void setSunEnabled(boolean sunEnabled) {
-        this.sunIconEnabled = sunEnabled;
-    }
-
+    public void setSunEnabled(boolean sunEnabled) { this.sunIconEnabled = sunEnabled; }
     public double getZoomRadius() { return zoomRadius; }
-
     public void setZoomRadius(double zoomRadius) { this.zoomRadius = zoomRadius; }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {

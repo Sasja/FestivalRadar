@@ -43,12 +43,13 @@ public class CliquePreferences {
         int setting = preferences.getInt(UPDATE_RATE, UPDATE_RATE_DEFAULT);
         switch (setting) {
             case UPDATE_RATE_LO_BAT:
-                return 30 * 1000;
+                return 60 * 1000;
             case UPDATE_RATE_BALANCED:
                 return 15 * 1000;
             case UPDATE_RATE_HI_PERFORMANCE:
                 return 1 * 1000;
             default:
+                Log.i(TAG, "WARNING: unexpected UPDATE_RATE preference, returning the balanced value");
                 return 15 * 1000;
         }
     }
@@ -56,13 +57,14 @@ public class CliquePreferences {
         int setting = preferences.getInt(UPDATE_RATE, UPDATE_RATE_DEFAULT);
         switch (setting) {
             case UPDATE_RATE_LO_BAT:
-                return 120 * 1000;
+                return 300 * 1000;
             case UPDATE_RATE_BALANCED:
-                return 30 * 1000;
+                return 60 * 1000;
             case UPDATE_RATE_HI_PERFORMANCE:
-                return 5 * 1000;
+                return 10 * 1000;
             default:
-                return 30 * 1000;
+                Log.i(TAG, "WARNING: unexpected UPDATE_RATE preference, returning the balanced value");
+                return 60 * 1000;
         }
     }
 

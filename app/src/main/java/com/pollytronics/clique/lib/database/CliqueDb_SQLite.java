@@ -89,6 +89,12 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         return contacts;
     }
 
+    /**
+     * returns a contact with that global id or null if none is found
+     * @param id the global id of the contact
+     * @return null or the contact if it is present
+     * @throws CliqueDbException throws an error when more than one entry is found on that global id
+     */
     @Override
     public Contact getContactById(final Long id) throws CliqueDbException {
         final Contact[] contact = new Contact[1];   // hack to allow access from CliqueDbQuery object
@@ -114,10 +120,17 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         return contact[0];
     }
 
+    /**
+     * removes a contact from the database, it basically just calls removes entries that have the same global id as contact
+     * @param contact contact to remove from db, it just looks at the global id
+     * @throws CliqueDbException
+     */
     @Override
     public void removeContact(Contact contact) throws CliqueDbException {
         removeContactById(contact.getGlobalId());
     }
+
+
 
     //----------------------------------- PUBLIC METHODS ----------------------------------------------------
 

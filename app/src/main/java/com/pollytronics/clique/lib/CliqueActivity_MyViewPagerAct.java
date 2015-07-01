@@ -17,8 +17,8 @@ import java.util.Map;
 
 /**
  * This class is meant to be used as a base class for group and contact management.
- * it works like this:
- *      override loadMyFragments to initialise the fragments and fragmentTitles variables with the classes and titles of the fragments you want slide between
+ *
+ * Override loadMyFragments to initialise the fragments and fragmentTitles variables with the classes and titles of the fragments you want slide between
  *
  * TODO: if i need to call fragment methods from the activity i need an extra method to get a ref of the fragments as stored in fragments
  * TODO: if calling methods on fragments, make sure they are alive (some parameter, or check for it) to prevent nullpointerexceptions

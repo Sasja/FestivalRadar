@@ -151,7 +151,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         }
         for(Contact c:contacts){
             try {
-                radarView.addContact(c, getCliqueDb().getLastBlip(c));
+                radarView.updateContact(c, getCliqueDb().getLastBlip(c));
             } catch (CliqueDb_SQLite.CliqueDbException e) {
                 e.printStackTrace();
             }

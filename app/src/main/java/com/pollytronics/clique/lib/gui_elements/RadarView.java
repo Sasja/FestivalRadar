@@ -4,9 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import com.pollytronics.clique.lib.base.Blip;
@@ -42,7 +41,8 @@ public class RadarView extends View {
     private double zoomRadius = 1000.0; // should be set through a setter on onResume of the activity
     private RadarView_Painter painter = new RadarView_Painter();
 
-    private ScaleGestureDetector mScaleGestureDetector;
+    // private ScaleGestureDetector mScaleGestureDetector;
+    private GestureDetector mScrollGestureDetector;
 
     public RadarView(Context context) {
         super(context);
@@ -66,22 +66,22 @@ public class RadarView extends View {
      */
     private void init(Context context){
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
+//        mScaleGestureDetector = new ScaleGestureDetector(context, new MyScaleListener());
+        mScrollGestureDetector = new GestureDetector(context, new MyScrollListener());
     }
 
-    /**
-     * intercepts all Motion Events on the view and passes them on to the ScaleGestureDetector
-     * @param ev event that is received
-     * @return true if the event is consumed
-     */
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        mScaleGestureDetector.onTouchEvent(ev);
-        return true;
-    }
+    public void setCenterLocation(Blip centerLocation) { this.centerLocation = centerLocation; }
+    public void setBearing(double bearing) { this.bearing = bearing; }
+    public void setSunAzimuth(double sunAzimuth) {this.sunAzimuth = sunAzimuth; }
+    public void setSunElevation(double sunElevation) {this.sunElevation = sunElevation; }
+    public void setSunEnabled(boolean sunEnabled) { this.sunIconEnabled = sunEnabled; }
+    public double getZoomRadius() { return zoomRadius; }
+    public void setZoomRadius(double zoomRadius) { this.zoomRadius = zoomRadius; }
+
+
 
     /**
-     * draws all the elements of the radarview using the RadarView_Painter instance.
+     * Draws all the elements of the radarview using the RadarView_Painter instance.
      * Make sure all necessary attributes are set before calling the drawing methods or you'll get nullPointerExceptions
      * @param canvas the canvas to draw on
      */
@@ -105,29 +105,49 @@ public class RadarView extends View {
         if(sunIconEnabled) painter.sun(sunAzimuth, sunElevation);
     }
 
-    public void addContact(Contact contact, Blip lastBlip) {
-        if(contacts.containsKey(contact.getGlobalId())) {
-            Log.i(TAG, "WARNING: contact ID is allready present in RaderView, duplicate ID's?");
-        } else {
-            contacts.put(contact.getGlobalId(),contact);
-            lastBlips.put(contact.getGlobalId(), lastBlip);
-        }
+    /**
+     * Add or update a contact and its last Blip on the RadarView.
+     * @param contact Contact instance of the owner of the Blip
+     * @param lastBlip the Blip to display on the View
+     */
+    public void updateContact(Contact contact, Blip lastBlip) {
+        contacts.put(contact.getGlobalId(), contact);
+        lastBlips.put(contact.getGlobalId(), lastBlip);
     }
 
-    public void removeAllContacts() { contacts.clear(); }
+    /**
+     * clear all contacts and blips remembered by the RadarView
+     */
+    public void removeAllContacts() { contacts.clear(); lastBlips.clear(); }
 
-    public void setCenterLocation(Blip centerLocation) { this.centerLocation = centerLocation; }
-    public void setBearing(double bearing) { this.bearing = bearing; }
-    public void setSunAzimuth(double sunAzimuth) {this.sunAzimuth = sunAzimuth; }
-    public void setSunElevation(double sunElevation) {this.sunElevation = sunElevation; }
-    public void setSunEnabled(boolean sunEnabled) { this.sunIconEnabled = sunEnabled; }
-    public double getZoomRadius() { return zoomRadius; }
-    public void setZoomRadius(double zoomRadius) { this.zoomRadius = zoomRadius; }
+    /**
+     * Intercepts all Motion Events on the view and passes them on to the ScaleGestureDetector or ScrollGestureDetector
+     * @param ev event that is received
+     * @return need to return true in order to receive more events related to the current event
+     */
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        //mScaleGestureDetector.onTouchEvent(ev);
+        mScrollGestureDetector.onTouchEvent(ev);
+        return true; // give me all events
+    }
 
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+//    private class MyScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+//        @Override
+//        public boolean onScale(ScaleGestureDetector detector) {
+//            // Log.i(TAG, String.format("scaling, factor = %f", detector.getScaleFactor()));
+//            zoomRadius /= Math.pow(detector.getScaleFactor(), 2);    // increasing the exponent will make the zoom more sensitive.
+//            zoomRadius = Math.max(MIN_ZOOM_RADIUS, Math.min(MAX_ZOOM_RADIUS, zoomRadius));
+//            invalidate();
+//            return true;
+//        }
+//    }
+
+    private class MyScrollListener extends GestureDetector.SimpleOnGestureListener {
         @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            zoomRadius /= Math.pow(detector.getScaleFactor(), 2);    // increasing the exponent will make the zoom more sensitive.
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            // Log.i(TAG, String.format("scrolling, dY = %f", distanceY));
+            zoomRadius /= Math.pow(0.995, distanceY);
             zoomRadius = Math.max(MIN_ZOOM_RADIUS, Math.min(MAX_ZOOM_RADIUS, zoomRadius));
             invalidate();
             return true;

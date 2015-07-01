@@ -10,7 +10,6 @@ import com.pollytronics.clique.lib.base.Contact;
 
 /**
  * Helper class for RadarView to do all the canvas painting
- * it only contains static methods so it should never be instantiated
  */
 public class RadarView_Painter {
     static final double earthRadius = 6371000.0;
@@ -24,12 +23,12 @@ public class RadarView_Painter {
     private final Paint paint = new Paint();
     private final Blip centerLocation;
 
-    public RadarView_Painter(Canvas canvas, Blip centerLocation, double zoomlevel, double bearing) {
+    public RadarView_Painter(Canvas canvas, Blip centerLocation, double zoomRadius, double bearing) {
         this.width = canvas.getWidth();
         this.height = canvas.getHeight();
         this.canvas = canvas;
         this.centerLocation = centerLocation;
-        this.zoomlevel = zoomlevel;
+        this.zoomlevel = zoomRadius;
         this.bearing = bearing;
         this.paint.setAntiAlias(true);
     }

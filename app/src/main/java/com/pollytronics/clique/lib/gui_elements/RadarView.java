@@ -3,11 +3,9 @@ package com.pollytronics.clique.lib.gui_elements;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -19,31 +17,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by pollywog on 10/2/14.
- * TODO: hardware accelleration is now enabled in manifest and disabled for this view due to a lack
- * TODO: of compatibility with/without. This if fine as long performance is good enough.
+ * This View subclass provides visualisation for blips/contacts.
+ * It needs to be fed all the data through setters and then invalidated to update the visuals
+ *
+ * TODO: hardware accelleration is now enabled in manifest and disabled for this view due to a lack of compatibility. This is ok as long as performance is good enough.
  * TODO: make zoom value when app loads remembered in preferences or smth
- * TODO: make it prettier
- * TODO: compass blocked on jill's motoG: investigate, more logging
+ * TODO: compass blocked on jill's motoG: investigate
+ * TODO: try not to allocate anything in onDraw
  */
 public class RadarView extends View {
 
     @SuppressWarnings("unused")
     static final String TAG = "RadarView";
-    static final double earthRadius = 6371000.0;
+
     @SuppressLint("UseSparseArrays")
     private final Map<Long, Contact> contacts = new HashMap<>();
     private final Map<Long, Blip> lastBlips = new HashMap<>();
     private final Paint paint = new Paint();
     private Blip centerLocation;
-    private double bearing=0;
-    private double sunAzimuth = 0;
-    private double sunElevation = -90;
+    private double bearing = 0.0;
+    private double sunAzimuth = 0.0;
+    private double sunElevation = -90.0;
     private boolean sunIconEnabled = false;
-    private double zoomLevel = 1000.0;     // means its that much meters to the left or right edge of screen
+    private double zoomlevel = 1000.0;     // means its that much meters to the left or right edge of screen
     private ScaleGestureDetector mScaleGestureDetector;
-
-    // TODO: zoomlevel should not be initialised here but from some stored value in preferences or smth
 
     public RadarView(Context context) {
         super(context);
@@ -60,141 +57,50 @@ public class RadarView extends View {
         init(context);
     }
 
+    /**
+     * must be called from the constructors, to disable hardware accereleration for this View (because of lack of compatibility with/without)
+     * it also initializes the ScaleGestureDetector
+     * @param context
+     */
     private void init(Context context){
-        // Disables hardware acceleration for this view as theres no full compatibility with/without
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
     }
 
+    /**
+     * intercepts all Motion Events on the view and passes them on to the ScaleGestureDetector
+     * @param ev
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         mScaleGestureDetector.onTouchEvent(ev);
         return true;
     }
 
-    private Pair<Float, Float> calcScreenXY(Blip blip,
-                                            Blip centerLocation,
-                                            double screenWidth,
-                                            double screenHeight,
-                                            double bearing) {
-        double dLat = blip.getLatitude() - centerLocation.getLatitude();
-        double dLon = blip.getLongitude() - centerLocation.getLongitude();
-        double dLatMeters = dLat * 3.1415 / 180 * earthRadius;
-        double dLonMeters = dLon * 3.1415 / 180 * earthRadius * Math.cos(centerLocation.getLatitude() * 3.1415 / 180);
-        double dXPixels = (screenWidth / 2 / zoomLevel * dLonMeters);
-        double dYPixels = (screenWidth / 2 / zoomLevel * dLatMeters);
-        double bearingRad = (bearing * 3.1415 / 180.0);
-        return new Pair<>(
-                (float) (screenWidth/2 + Math.cos(bearingRad) * dXPixels - Math.sin(bearingRad) * dYPixels),
-                (float) (screenHeight/2 - Math.sin(bearingRad) * dXPixels - Math.cos(bearingRad) * dYPixels)
-        );
-    }
-
-    private Pair<Float, Float> calcSunXY(double width, double height, double bearing, double sunAzimuth) {
-        return new Pair<>(
-                (float) (width/2  - Math.sin((bearing-sunAzimuth)*3.1415/180.0) * width/2.1),
-                (float) (height/2 - Math.cos((bearing-sunAzimuth)*3.1415/180.0) * width/2.1)
-        );
-    }
-
-    private String intToScaleText(int meters) {
-        if (meters >= 1000) {
-            int km = meters/1000;
-            double frac = meters/1000.0 - km;
-            if(frac > 0) return String.valueOf(km + frac) + "km";
-            else return String.valueOf(km) + "km";
-        } else {
-            return String.valueOf(meters) + "m";
-        }
-    }
 
     @Override
-    // TODO: make this way more elegant and efficient and better in every imaginable way once you like the look and feel of it
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
         //int width = canvas.getWidth();        //does not work on emulator
         //int height = canvas.getHeight();
         int width = MeasureSpec.getSize(getWidth());     // works, but how? and why not just getWidth?
         int height = MeasureSpec.getSize(getHeight());
+        RadarView_Painter painter = new RadarView_Painter(canvas, width, height, centerLocation, zoomlevel, bearing);
 
-        super.onDraw(canvas);
-
-        canvas.rotate(-(float) bearing, (float) width / 2, (float) height / 2); //dont forget to restore!
-
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setAntiAlias(true);
-        paint.setStrokeWidth(5);
-        paint.setColor(Color.argb(150, 200, 100, 100));
-        canvas.drawLine(width / 2, -width / 2, width / 2, height / 2, paint);
-        paint.setStrokeWidth(3);
-        paint.setColor(Color.argb(100, 150, 150, 150));
-        canvas.drawLine(width / 2, height / 2, width / 2, height - 1 + width / 2, paint);
-        canvas.drawLine(-height / 2, height / 2, width - 1 + height / 2, height / 2, paint);
-
-        canvas.restore();   // calculate own rotation from now on
-
-        int circleStepMeter = (int) (zoomLevel/2.5);    // the quotient will determine how many circles are drawn approx
-        int nulls = (int) Math.floor(Math.log10(circleStepMeter));
-        double expo = Math.log10(circleStepMeter)-nulls;
-        if (expo < 0.15) {                              // this will snap to a sensible scale circle interval
-            circleStepMeter = 1 * (int) Math.pow(10,nulls);
-        } else if (expo < 0.5) {
-            circleStepMeter = 2 * (int) Math.pow(10, nulls);
-        } else if (expo < 0.85) {
-            circleStepMeter = 5 * (int) Math.pow(10, nulls);
-        } else {
-            circleStepMeter = 1 * (int) Math.pow(10, nulls+1);
-        }
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(width / 25);
-        paint.setColor(Color.argb(100, 150, 150, 150));
-        for (int i = 1; i*circleStepMeter < zoomLevel * 2; ++i) {
-            float radius = (float) (i*circleStepMeter/zoomLevel*width/2);
-            paint.setStrokeWidth(3);
-            paint.setStyle(Paint.Style.STROKE);
-            canvas.drawCircle(width / 2, height / 2, radius, paint);
-            paint.setStrokeWidth(1);
-            paint.setStyle(Paint.Style.FILL);
-            canvas.drawText(intToScaleText(circleStepMeter*i), width/2, height/2 + radius - width / 60, paint);
-        }
-
-        paint.setStrokeWidth(1);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(width / 25);
-        for(Contact c:contacts.values()) {
-            if(lastBlips.get(c.getGlobalId()) != null ) {
-                Pair<Float, Float> xy = calcScreenXY(lastBlips.get(c.getGlobalId()), centerLocation, width, height, bearing);
-                double ageFactorColor = Math.exp(-lastBlips.get(c.getGlobalId()).getAge_s() / 60.0);  // it takes about 1 min to loose color
-                double ageFactorOpacity = Math.exp(-lastBlips.get(c.getGlobalId()).getAge_s() / 300.0);  // it takes about 5 minutes to loose opacity
-                int rg = (int) ((1-ageFactorColor) * 120);
-                int b = (int) (255 * ageFactorColor + (1-ageFactorColor)* 120);
-                int alpha = (int) (200*ageFactorOpacity + 55);
-                paint.setColor(Color.argb(alpha, rg, rg, b));
-                canvas.drawCircle(xy.first, xy.second, width / 100
-                        , paint);
-                canvas.drawText(c.getName(), xy.first, xy.second + width / 25, paint);
+        painter.crosshairs();
+        painter.scaleCircles();
+        for(Contact c:contacts.values()){
+            Blip b = lastBlips.get(c.getGlobalId());
+            if(b != null) {
+                painter.blip(b, c);
             }
         }
 
-        if(sunIconEnabled) {
-            if(sunElevation < -3) {
-                paint.setStyle(Paint.Style.STROKE);
-                paint.setColor(Color.BLACK);
-                paint.setStrokeWidth(1);
-            } else {
-                paint.setStyle(Paint.Style.FILL);
-                int green = (int)(Math.max(0,(Math.min(sunElevation, 20) * 10)));   //200 max and declining to 0 from 20° above horizon
-                paint.setColor(Color.argb(150, 200, green, green/10));
-            }
-            Pair<Float, Float> sunXy = calcSunXY(width, height, bearing, sunAzimuth);
-            canvas.drawCircle(sunXy.first, sunXy.second, width / 20, paint);
-        }
+        if(sunIconEnabled) painter.sun(sunAzimuth, sunElevation);
 
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setAntiAlias(false);
-        paint.setColor(Color.rgb(0, 0, 0));
-        paint.setStrokeWidth(1);
-        canvas.drawRect(0, 0, width-1, height-1, paint);
+        //painter.frame(); // looks better without
     }
 
 
@@ -225,10 +131,6 @@ public class RadarView extends View {
 
     public void setSunElevation(double sunElevation) {this.sunElevation = sunElevation; }
 
-    public void zoomPercent(double zoomPercent) {
-        this.zoomLevel = Math.pow(10, 5-zoomPercent/25);  // 0 -> 100km and 100 -> 10m
-    }
-
     public void setSunEnabled(boolean sunEnabled) {
         this.sunIconEnabled = sunEnabled;
     }
@@ -236,8 +138,8 @@ public class RadarView extends View {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            zoomLevel /= Math.pow(detector.getScaleFactor(), 2);    // increasing the exponent will make the zoom more sensitive.
-            zoomLevel = Math.max(10.0, Math.min(100000.0, zoomLevel));
+            zoomlevel /= Math.pow(detector.getScaleFactor(), 2);    // increasing the exponent will make the zoom more sensitive.
+            zoomlevel = Math.max(10.0, Math.min(100000.0, zoomlevel));
             invalidate();
             return true;
         }

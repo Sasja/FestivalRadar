@@ -30,6 +30,7 @@ import java.util.List;
  * TODO: i put try catch everywhere in the code where the interface methods are used to get it working for now, take a day to clean up and do proper error handling
  * TODO: deleting a contact from the database should probably also get rid of the associated blips
  * TODO: clean up the database now and then to maintain a maximum number of blips per user
+ * TODO: split this class in a few smaller ones
  */
 public final class CliqueDb_SQLite implements CliqueDb_Interface {
     public static final String DATABASE_NAME = "Clique.db";
@@ -62,8 +63,6 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         }
         return instance;
     }
-
-    //----------------------------------- PUBLIC METHODS ----------------------------------------------------
 
     /**
      * @return all contacts in the contact table in no particular order
@@ -332,8 +331,6 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         return blip[0];
     }
 
-    //------------------------------- SQL METHOD WRAPPERS ----------------------------------------------------------
-
     private static class ContactEntry implements BaseColumns {
         public static final String TABLE_NAME = "contacts";
         public static final String COLUMN_NAME_NAME="name";
@@ -359,8 +356,6 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
     private static class SelfBlipEntry extends BlipEntry {
         public static final String TABLE_NAME = "selfBlips";
     }
-
-    //-------------------------------- DATABASE STRUCTURE -------------------------------------------------
 
     /**
      * this abstract class wraps database queries to the database in order to make sure SQLExceptions are checked and handled and resources are released

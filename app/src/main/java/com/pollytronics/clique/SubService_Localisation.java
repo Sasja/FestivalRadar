@@ -23,6 +23,7 @@ import java.util.Random;
  * TODO: figure out wether mGoogleApiClient can be null, ive seen a RunTimeExceptions seemingly caused by such a thing using an emulator AND my old tablet without google services
  * TODO: it says smth like unable to stop CliqueService (IllegalStateException) GoogleApiClient is not connected yet
  * TODO: might want to notify the user to enable its own location. (later with maps, you could run the app without your own location in principle)
+ * TODO: check if everything necessary is enabled in order to get locations and help user in enabling it
  */
 public class SubService_Localisation extends SubService implements
         GoogleApiClient.ConnectionCallbacks,

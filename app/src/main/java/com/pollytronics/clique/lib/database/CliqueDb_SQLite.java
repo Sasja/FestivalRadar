@@ -356,11 +356,11 @@ public final class CliqueDb_SQLite implements CliqueDb_Interface {
         public static final String COLUMN_NAME_VLON="vLon";
     }
 
-    //-------------------------------- DATABASE STRUCTURE -------------------------------------------------
-
     private static class SelfBlipEntry extends BlipEntry {
         public static final String TABLE_NAME = "selfBlips";
     }
+
+    //-------------------------------- DATABASE STRUCTURE -------------------------------------------------
 
     /**
      * this abstract class wraps database queries to the database in order to make sure SQLExceptions are checked and handled and resources are released

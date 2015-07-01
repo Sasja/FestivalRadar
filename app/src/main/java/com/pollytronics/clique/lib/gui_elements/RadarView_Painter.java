@@ -18,7 +18,7 @@ public class RadarView_Painter {
     private final int height;
     private final Canvas canvas;
 
-    private final double zoomlevel;
+    private final double zoomRadius;
     private final double bearing;
     private final Paint paint = new Paint();
     private final Blip centerLocation;
@@ -28,7 +28,7 @@ public class RadarView_Painter {
         this.height = canvas.getHeight();
         this.canvas = canvas;
         this.centerLocation = centerLocation;
-        this.zoomlevel = zoomRadius;
+        this.zoomRadius = zoomRadius;
         this.bearing = bearing;
         this.paint.setAntiAlias(true);
     }
@@ -111,8 +111,8 @@ public class RadarView_Painter {
     }
 
     public void scaleCircles() {
-        // first calculate what scale circles step to use based on zoomlevel
-        int circleStepMeter = (int) (zoomlevel / 2.5);    // the quotient will determine how many circles are drawn approx
+        // first calculate what scale circles step to use based on zoomRadius
+        int circleStepMeter = (int) (zoomRadius / 2.5);    // the quotient will determine how many circles are drawn approx
         int nulls = (int) Math.floor(Math.log10(circleStepMeter));
         double expo = Math.log10(circleStepMeter) - nulls;
         if (expo < 0.15) {                              // this will snap to a sensible scale circle interval
@@ -129,8 +129,8 @@ public class RadarView_Painter {
         paint.setTextSize(width / 25);
         paint.setColor(Color.argb(100, 150, 150, 150));
 
-        for (int i = 1; i * circleStepMeter < zoomlevel * 2; ++i) {
-            float radius = (float) (i * circleStepMeter / zoomlevel * width / 2);
+        for (int i = 1; i * circleStepMeter < zoomRadius * 2; ++i) {
+            float radius = (float) (i * circleStepMeter / zoomRadius * width / 2);
 
             paint.setStrokeWidth(3);
             paint.setStyle(Paint.Style.STROKE);
@@ -148,7 +148,7 @@ public class RadarView_Painter {
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(width / 25);
 
-        Pair<Float, Float> xy = calcScreenXY(blip, centerLocation, width, height, zoomlevel, bearing);
+        Pair<Float, Float> xy = calcScreenXY(blip, centerLocation, width, height, zoomRadius, bearing);
 
         double ageFactorColor = Math.exp(-blip.getAge_s() / 60.0);  // it takes about 1 min to loose color
         double ageFactorOpacity = Math.exp(-blip.getAge_s() / 300.0);  // it takes about 5 minutes to loose opacity

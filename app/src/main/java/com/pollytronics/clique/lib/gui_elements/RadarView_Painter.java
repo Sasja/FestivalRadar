@@ -10,6 +10,7 @@ import com.pollytronics.clique.lib.base.Contact;
 
 /**
  * Helper class for RadarView to do all the canvas painting
+ * TODO: tweak the color coding of age and consider involving zoomRadius in the calculation (10 minutes ago at 50km is much more relevant than at 1km)
  */
 public class RadarView_Painter {
     public static final String TAG = "RadarView_Painter";

@@ -22,7 +22,7 @@ import com.pollytronics.clique.lib.preferences.CliquePreferences;
 import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.MVP_Activity_Contacts;
 import com.pollytronics.clique.MVP_Activity_Groups;
-import com.pollytronics.clique.lib.service.CliqueService_interface4CliqueActivity;
+import com.pollytronics.clique.lib.service.CliqueService_Interface4CliqueActivity;
 
 /**
  * Base class for all Activities
@@ -41,11 +41,11 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
      * methods for ie SubServices and such
      * @return interface to instance of CliqueService, if no bound service is running, it will return a spoof interface to nothing
      */
-    protected CliqueService_interface4CliqueActivity getBoundCliqueService() {
+    protected CliqueService_Interface4CliqueActivity getBoundCliqueService() {
         if(rsBound){
             return rs;
         } else {
-            return new CliqueService_interface4CliqueActivity() {
+            return new CliqueService_Interface4CliqueActivity() {
                 @Override
                 public void notifyNewSettings() {
                     Log.i(TAG, "called notifyNewSettings() while not connected to service");

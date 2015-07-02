@@ -40,6 +40,7 @@ public final class CliqueSQLite implements CliqueDb_Interface {
     public static final String DATABASE_NAME = "Clique.db";
     public static final int DATABASE_VERSION = 2;   // increasing this will wipe all local databases on update
     private static final String TAG="CliqueSQLite";
+
     private static CliqueSQLite instance = null;
     private final CliqueDbHelper cliqueDbHelper;
 

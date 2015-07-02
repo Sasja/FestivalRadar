@@ -22,9 +22,9 @@ import com.pollytronics.clique.SubService_Localisation;
  * it creates a few helper classes derived from the SubService class to implement its features and to delegate calls to
  * This class forms a layer between SubService classes and RadarActivities:
  *      - This class delegates calls from activities to the right helper classes (SubServices)
- *      - This class provide methods to the SubServices to reach the Activities.
+ *      - This class provides methods to the SubServices to reach the Activities.
  */
-public class CliqueService extends Service implements CliqueService_Interface4SubService, CliqueService_interface4CliqueActivity {
+public class CliqueService extends Service implements CliqueService_Interface4SubService, CliqueService_Interface4CliqueActivity {
 
     private final static String TAG = "CliqueService";
     private final CliqueBinder cliqueBinder = new CliqueBinder();

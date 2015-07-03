@@ -19,7 +19,7 @@
     <string name="service_notification_text">Active… Open to disable.</string>
 
     <!-- Related to the welcome activity -->
-    <string name="welcome">Welcome brave alpha testing adventurer!\nplease choose a user name (again)</string>
+    <string name="welcome">Welcome brave alpha testing adventurer!\nplease choose a user name</string>
 
     <!-- Related to the Contacts activity -->
     <string name="button_ping">PING</string>
@@ -49,25 +49,24 @@
 
     <!-- Related to the About activity -->
     <string name="text_about">
-        \nnot a release version
-        \nlast release below:
+        <!--\nnot a release version-->
+        <!--\nlast release below:-->
+        <!--\n-->
+        \n<b>Clique (version 1.1.0.a) Konfusion release :P</b>
+        <!--\nspecial release for awesome alpha testers like you!-->
         \n
-        \nClique (version 1.0.8.a)
-        \nspecial release for awesome alpha testers like you!
+        \n<u>updates since 1.0.8.a:</u>
+        \n - not much, but i\'m leaving for Konfusion today so I won\'t be working on it for a while
+        \n - blip color is now determined relative to zoomRadius
+        \n - some small bugs...
         \n
-        \nupdates since 1.0.6.a:
-        \n - new look and feel, zooming is feasible using one hand now :)
-        \n - a few bugfixes
-        \n - zoom level is now remembered
-        \n - lots of stuff under the hood (as usual)
-        \n - removed the extra permissions needed for 1.0.7.a
-        \n
-        \nThere is no encryption yet so all your location updates are public as well as your username, but no other info such as real name, phone number, other profiles...
+        \nThere is no encryption yet so all your location updates are public as well as your username, but no other info such as real name, phone number, other profiles…
         \n
         \nLet me know whenever something doesn\'t work or just tell me what you like or dislike and what features you would like to see in the future.
         \n
-        \n thanks for testing!
-        \n alexander.steen.gent@gmail.com</string>
+        \nthanks for testing!
+        \nalexander.steen.gent@gmail.com</string>
+
 
     <!-- Related to the Debug activity -->
 

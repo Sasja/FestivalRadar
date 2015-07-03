@@ -91,7 +91,10 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
 
 
 
-    //TODO: kind of duplicate code here with ping
+    /**
+     * TODO: DRY (see ping)
+     * TODO: put the english into string resources
+     */
     private class CliqueContactAdapter extends ArrayAdapter<Contact> {
 
         private static final int layout_resource = R.layout.list_item_mycontacts;
@@ -112,7 +115,7 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
                 e.printStackTrace();
             }
             if (lastBlip != null) {
-                tv_extra.setText(TimeFormatting.ageStringFromSeconds(lastBlip.getAge_s())+ " old");
+                tv_extra.setText(TimeFormatting.ageStringFromSeconds(lastBlip.getAge_s())+ " ago");
             } else {
                 tv_extra.setText("no data yet");
             }

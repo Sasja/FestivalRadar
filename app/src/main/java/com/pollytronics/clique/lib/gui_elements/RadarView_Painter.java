@@ -90,6 +90,25 @@ public class RadarView_Painter {
     }
 
     /**
+     * Calculates a suitable color according to the age of the blip and the zoomRadius.
+     * An old blip is way more relevant when zoomed out than when zoomed in
+     * TODO: consider using distance from center instead of zoomRadius
+     * @param age_s
+     * @return
+     */
+    private int age2blipColor(double age_s) {
+        final double WANDERSPEED = 1.0; // speed in m/s that a blip is assumed to move at
+        final double COLOR_DECAY = 7.0; // 1.0 corresponds to 1/e after wandering one display radius
+        final double OPACITY_DECAY = 2.0;
+        final double MIN_OPACITY = 55.0;
+        double zoomRadiussesWandered = WANDERSPEED * age_s / zoomRadius;
+        double b = (255.0 * 2.0 / 3.0) * Math.exp(-zoomRadiussesWandered * COLOR_DECAY) + (255.0 / 3.0);
+        double rg = (255.0 - b) / 2.0;
+        double alpha = (255.0 - MIN_OPACITY) * Math.exp(-zoomRadiussesWandered * OPACITY_DECAY) + MIN_OPACITY;
+        return Color.argb((int) alpha, (int) rg, (int) rg, (int) b);
+    }
+
+    /**
      * Draws crosshairs over the screen.
      * Make sure bearing and canvas is set appropriately.
      */
@@ -146,14 +165,15 @@ public class RadarView_Painter {
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(width / 25);
 
-        double ageFactorColor = Math.exp(-blip.getAge_s() / 60.0);  // it takes about 1 min to loose color
-        double ageFactorOpacity = Math.exp(-blip.getAge_s() / 300.0);  // it takes about 5 minutes to loose opacity
-
-        int rg = (int) ((1-ageFactorColor) * 120);
-        int b = (int) (255 * ageFactorColor + (1 - ageFactorColor) * 120);
-        int alpha = (int) (200 * ageFactorOpacity + 55);
-
-        paint.setColor(Color.argb(alpha, rg, rg, b));
+//        double ageFactorColor = Math.exp(-blip.getAge_s() / 60.0);  // it takes about 1 min to loose color
+//        double ageFactorOpacity = Math.exp(-blip.getAge_s() / 300.0);  // it takes about 5 minutes to loose opacity
+//
+//        int rg = (int) ((1-ageFactorColor) * 120);
+//        int b = (int) (255 * ageFactorColor + (1 - ageFactorColor) * 120);
+//        int alpha = (int) (200 * ageFactorOpacity + 55);
+//
+//        paint.setColor(Color.argb(alpha, rg, rg, b));
+        paint.setColor(age2blipColor(blip.getAge_s()));
 
         Pair<Float, Float> xy = calcScreenXY(blip);
         canvas.drawCircle(xy.first, xy.second, width / 100, paint);

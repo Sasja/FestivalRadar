@@ -1,25 +1,34 @@
 package com.pollytronics.clique.lib.tools;
 
-/**
- * Created by pollywog on 6/25/15.
- * TODO: use resources for language
- */
+import android.content.Context;
+import android.content.res.Resources;
+
+import com.pollytronics.clique.R;
+
 public class TimeFormatting {
-    public static String ageStringFromSeconds(double seconds) {
+    /**
+     * Turns an amount of seconds in a descriptive string.
+     *
+     * @param seconds amount of seconds
+     * @param context the context to obtain the resource strings from
+     * @return a string describing an age such as "18 hours" or "an hour"
+     */
+    public static String ageStringFromSeconds(double seconds, Context context) {
+        final Resources resources = context.getResources();
         int secs = (int) seconds;
-        if (secs < 60) return String.valueOf(secs) + " sec";
+        if (secs < 60) return resources.getQuantityString(R.plurals.timeformatting_sec, secs, secs);
+
         int mins = secs/60;
-        if (mins < 60) return String.valueOf(mins) + " min";
+        if (mins == 1) return resources.getString(R.string.timeformatting_one_min); // bit silly to catch the 'one' cases and then use plurals anyway... oh well it works fine
+        if (mins < 60) return resources.getQuantityString(R.plurals.timeformatting_min, mins, mins);
+
         int hours = mins / 60;
-        if (hours < 24) {
-            if (hours == 1) return "one hour";
-            else return String.valueOf(hours) + " hours";
-        }
+        if (hours == 1) return resources.getString(R.string.timeformatting_one_hour);
+        if (hours < 24) return resources.getQuantityString(R.plurals.timeformatting_hour, hours, hours);
+
         int days = hours/24;
-        if (days < 7) {
-            if (days == 1) return "one day";
-            else return String.valueOf(days) + " days";
-        }
-        return "over a week";
+        if (days == 1) return resources.getString(R.string.timeformatting_one_day);
+        if (days < 7) return resources.getQuantityString(R.plurals.timeformatting_day, days, days);
+        return context.getString(R.string.timeformatting_over_a_week);
     }
 }

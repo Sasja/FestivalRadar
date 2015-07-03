@@ -61,7 +61,7 @@
         </activity>
         <activity
             android:name=".MVP_Activity_Groups"
-            android:label="@string/title_activity_view_pager_activity__groups"
+            android:label="@string/title_activity_groups"
             android:parentActivityName=".CliqueActivity_Main" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -69,7 +69,7 @@
         </activity>
         <activity
             android:name=".MVP_Activity_Contacts"
-            android:label="@string/title_activity_view_pager_activity__contacts"
+            android:label="@string/title_activity_contacts"
             android:parentActivityName=".CliqueActivity_Main" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -77,7 +77,7 @@
         </activity>
         <activity
             android:name=".CliqueActivity_Welcome"
-            android:label="@string/title_activity_clique_activity__welcome_choose_username"
+            android:label="@string/title_activity_welcome"
             android:parentActivityName=".CliqueActivity_Main" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

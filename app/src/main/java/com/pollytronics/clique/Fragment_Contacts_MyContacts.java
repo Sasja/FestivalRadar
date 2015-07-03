@@ -22,7 +22,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
+/**
+ * TODO: when updating the ListView on a database update it should not scroll back up
+ * TODO: update the listView regularly if no database updates are comming in order to keep the displayed times up to date
+ */
 public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
 
     @SuppressWarnings("unused")
@@ -68,7 +71,7 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
             @Override
             public int compare(Contact lhs, Contact rhs) {
                 int result = lhs.getName().compareTo(rhs.getName());
-                if (result == 0) result = lhs.getGlobalId()>rhs.getGlobalId()?1:-1;
+                if (result == 0) result = lhs.getGlobalId() > rhs.getGlobalId() ? 1 : -1;
                 return result;
             }
         });
@@ -115,9 +118,9 @@ public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
                 e.printStackTrace();
             }
             if (lastBlip != null) {
-                tv_extra.setText(TimeFormatting.ageStringFromSeconds(lastBlip.getAge_s())+ " ago");
+                tv_extra.setText(TimeFormatting.ageStringFromSeconds(lastBlip.getAge_s(), getContext()) + " " + getContext().getString(R.string.timeformatting_ago));
             } else {
-                tv_extra.setText("no data yet");
+                tv_extra.setText(getContext().getString(R.string.no_data_yet));
             }
             return view;
         }

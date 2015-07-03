@@ -166,23 +166,22 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     }
 
     public static class TemporaryDeleteDialog extends DialogFragment {
-
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return new AlertDialog.Builder(getActivity())
-                    .setMessage("Delete this contact?")
-                    .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                    .setMessage(getString(R.string.dialog_delete_this_contact))
+                    .setNegativeButton(getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Log.i(TAG, "denied, not doing anything");
                         }
                     })
-                    .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Log.i(TAG, "calling deleteSelectedContact()");
-                            ((MVP_Activity_Contacts)getActivity()).deleteSelectedContact();
+                            ((MVP_Activity_Contacts) getActivity()).deleteSelectedContact();
                         }
                     })
                     .create();

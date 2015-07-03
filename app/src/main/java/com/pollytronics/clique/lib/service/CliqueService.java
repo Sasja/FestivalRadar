@@ -21,7 +21,8 @@ import com.pollytronics.clique.lib.database.CliqueSQLite.CliqueSQLite;
  * The CliqueService class provides access to active CliqueActivity instances if any for SubServices. (e.g. to notify them of new data to present)
  * The actual work is done in the SubService classes that are created and managed by this class.
  *
- * TODO: use a list of subServices to pass on the onEvent callbacks instead of manually calling them
+ * TODO: use a list of subServices to pass on the onEvent callbacks instead of manually calling them, look into EvenListener interface and its subclasses
+ * TODO: consider using smth like PreferenceChangeListener interfaces instead of notifyNewSettings
  */
 public class CliqueService extends Service implements CliqueService_Interface4SubService, CliqueService_Interface4CliqueActivity {
 

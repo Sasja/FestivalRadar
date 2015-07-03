@@ -93,8 +93,8 @@ public class RadarView_Painter {
      * Calculates a suitable color according to the age of the blip and the zoomRadius.
      * An old blip is way more relevant when zoomed out than when zoomed in
      * TODO: consider using distance from center instead of zoomRadius
-     * @param age_s
-     * @return
+     * @param age_s age of the blip in seconds
+     * @return an int that is used to set color in Paint.setColor()
      */
     private int age2blipColor(double age_s) {
         final double WANDERSPEED = 1.0; // speed in m/s that a blip is assumed to move at

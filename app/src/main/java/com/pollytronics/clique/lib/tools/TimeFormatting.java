@@ -7,7 +7,7 @@ import com.pollytronics.clique.R;
 
 public class TimeFormatting {
     /**
-     * Turns an amount of seconds in a descriptive string.
+     * Turns an amount of seconds into a descriptive string.
      *
      * @param seconds amount of seconds
      * @param context the context to obtain the resource strings from

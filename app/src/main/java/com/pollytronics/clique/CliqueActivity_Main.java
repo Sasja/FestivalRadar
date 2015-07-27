@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.opengl.Matrix;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,10 +25,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Main app activity, it should give an overview of the situation and provide a simple GUI to
- * the most likely actions a user would want to perform
+ * Main app activity, it should give an overview of the situation and provide a simple GUI for
+ * the most likely actions a user would want to perform.
  *
- * TODO: radarView is never invalidated when service and compass is off, so blips will not fade according to age.
  * TODO: check out these possible nullpointerexceptions lint complains about
  */
 public class CliqueActivity_Main extends CliqueActivity implements SensorEventListener {
@@ -39,6 +39,8 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     private Sensor mRotation;
     private boolean compassEnabled = false;
     private boolean sunEnabled = false;
+    private Handler handler = new Handler();
+    private InvalidateLoop invalidateLoop = new InvalidateLoop();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +91,8 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         } catch (CliqueDbException e) {
             e.printStackTrace();
         }
-
         feedDataToRadarView();
+        handler.postDelayed(invalidateLoop, 3000);  // starting the loop that invalidates the radarView about every 3 secs
     }
 
     @Override
@@ -100,6 +102,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
             mSensorManager.unregisterListener(this);
         }
         getCliquePreferences().setZoomRadius(radarView.getZoomRadius());
+        handler.removeCallbacks(invalidateLoop);
     }
 
     @Override
@@ -188,7 +191,6 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     public void onSensorChanged(SensorEvent sensorEvent) {
         // You're not supposed to do to much work  in this callback but this seems reasonable
         if(compassEnabled && (sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR)) {
-            //Log.i(TAG, "sensor event received! : " + sensorEvent.toString());
             final float[] rotMat = new float[16];
             final float[] orient = new float[3];
             final float[] flatRotMat = new float[16];
@@ -208,4 +210,17 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {}
+
+    /**
+     * This looping construction is for invalidating the radarView regularly as the blip age progresses without any database changes.
+     * So the display should change but nothing will notify the radarView that it needs to be updated. Starting this loop assures this timely updating.
+     */
+    private class InvalidateLoop implements Runnable {
+        @Override
+        public void run() {
+            Log.i(TAG, "invalidating radarView from timed loop");
+            if(radarView != null) radarView.invalidate();
+            handler.postDelayed(invalidateLoop, 3000);
+        }
+    }
 }

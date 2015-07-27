@@ -14,10 +14,10 @@ import java.util.ArrayList;
 
 /**
  * CliqueActivity for debugging purposes
- * TODO: have a look at the SlidingsTabBasic demo for some ideas for logging
  * No data is retrieved from exec("logcat -d") on a API 15 tablet, or on API 15 emulator.
  * An API 18/19 emulation works fine.
  * So this might not work well on older devices for some reason, so be it.
+ * HINT: have a look at the SlidingsTabBasic demo for some ideas for displaying logs within an activity
  */
 public class CliqueActivity_Debug extends CliqueActivity {
 

@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -26,7 +27,6 @@ import java.util.List;
  * Main app activity, it should give an overview of the situation and provide a simple GUI to
  * the most likely actions a user would want to perform
  *
- * TODO: make the calculated bearing sensible when holding the phone upright or tilted looking from below or display a warning to prevent confusion
  * TODO: radarView is never invalidated when service and compass is off, so blips will not fade according to age.
  * TODO: check out these possible nullpointerexceptions lint complains about
  */
@@ -176,15 +176,29 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         radarView.invalidate();
     }
 
+    /**
+     * Calculates the proper bearing to use depending on the sensor values it gets from the the Sensors
+     * Holding the phone flat on a table, straight up, even slightly tilted towards you should work without glitches.
+     * Lying on your back looking at it from below could later be implemented but would require a discontinuity.
+     * HINT: you might find a few ways to do this more efficiently, this function is called quite a lot
+     * HINT: when pitch is about 45° upside down (screen aiming down) behaviour is unexpected, might figure that one out.
+     * @param sensorEvent a SensorEvent that might be a TYPE_ROTATION_VECTOR
+     */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         // You're not supposed to do to much work  in this callback but this seems reasonable
         if(compassEnabled && (sensorEvent.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR)) {
             //Log.i(TAG, "sensor event received! : " + sensorEvent.toString());
-            float[] rotMat = new float[16];
-            float[] orient = new float[3];
+            final float[] rotMat = new float[16];
+            final float[] orient = new float[3];
+            final float[] flatRotMat = new float[16];
+            final float[] corRotMat = new float[16];
             SensorManager.getRotationMatrixFromVector(rotMat, sensorEvent.values);
             SensorManager.getOrientation(rotMat, orient);
+            double pitch = orient[1];
+            Matrix.setRotateM(corRotMat, 0, (float) (-pitch * 180.0/3.1415), 1f, 0f, 0f);
+            Matrix.multiplyMM(flatRotMat, 0, corRotMat, 0, rotMat, 0);
+            SensorManager.getOrientation(flatRotMat, orient);
             double x;
             x = orient[0];
             radarView.setBearing(x*180.0/3.1415);

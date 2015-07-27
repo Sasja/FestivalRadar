@@ -29,7 +29,6 @@ import java.io.IOException;
 
 /**
  * TODO: changing your name does not update the local database
- * TODO: check out the possible nullpointerexceptions lint complains about
  */
 public class CliqueActivity_Settings extends CliqueActivity implements AdapterView.OnItemSelectedListener{
 
@@ -76,11 +75,12 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
                     Log.i(TAG, "thats not a number, cant set this ID");
                     return;
                 }
-                Contact selfContact = null;
+                Contact selfContact;
                 try {
                     selfContact = getCliqueDb().getSelfContact();
                 } catch (CliqueDbException e) {
                     e.printStackTrace();
+                    return;
                 }
                 selfContact.setGlobalId(id);
                 try {
@@ -155,11 +155,12 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         private boolean apiCallSucceeded = false;
 
         public setRemoteProfileNameTask(String name) {
-            Contact myProfile = null;
+            Contact myProfile;
             try {
                 myProfile = getCliqueDb().getSelfContact();
             } catch (CliqueDbException e) {
                 e.printStackTrace();
+                return;
             }
             myProfile.setName(name);
             try {
@@ -235,7 +236,8 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         @Override
         protected void onPostExecute(String s) {
             if (apiCallSucceeded) {
-                setNameEditText.setHint(getProfile.getContact().getName());
+                Contact contact = getProfile.getContact();
+                if(contact != null) setNameEditText.setHint(contact.getName());
             }
         }
     }

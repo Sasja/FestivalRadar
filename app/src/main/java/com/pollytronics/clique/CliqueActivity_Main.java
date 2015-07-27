@@ -27,8 +27,7 @@ import java.util.List;
 /**
  * Main app activity, it should give an overview of the situation and provide a simple GUI for
  * the most likely actions a user would want to perform.
- *
- * TODO: check out these possible nullpointerexceptions lint complains about
+ * TODO: what to do with all the printStackTrace calls all over the code?
  */
 public class CliqueActivity_Main extends CliqueActivity implements SensorEventListener {
 
@@ -147,11 +146,12 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         }
         radarView.setCenterLocation(centerLocation);
         radarView.removeAllContacts();
-        List<Contact> contacts = null;
+        List<Contact> contacts;
         try {
             contacts = getCliqueDb().getAllContacts();
         } catch (CliqueDbException e) {
             e.printStackTrace();
+            return;
         }
         for(Contact c:contacts){
             try {

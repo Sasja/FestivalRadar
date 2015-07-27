@@ -48,11 +48,12 @@ public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
     }
     
     private void fillListViewFromLocalDb(ListView listView) {
-        List<Contact> localContacts = null;
+        List<Contact> localContacts;
         try {
             localContacts = getCligueDb().getAllContacts();
         } catch (CliqueDbException e) {
             e.printStackTrace();
+            return;
         }
         sortContactListByName(localContacts);
         CliqueContactAdapter adapter = (CliqueContactAdapter) listView.getAdapter();
@@ -82,7 +83,9 @@ public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
     @Override
     public void notifyDatabaseUpdate() {
         super.notifyDatabaseUpdate();
-        ListView listView = (ListView) getView().findViewById(R.id.listview_mycontacts);
+        View view = getView();
+        ListView listView = null;
+        if(view != null) listView = (ListView) view.findViewById(R.id.listview_mycontacts);
         if (listView != null) {
             Log.i(TAG,"updating listview from notifyDatabaseUpdate");
             fillListViewFromLocalDb(listView);
@@ -90,7 +93,6 @@ public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
             Log.i(TAG, "failed to find listView from notifyDatabaseUpdate");
         }
     }
-
 
 
     /**

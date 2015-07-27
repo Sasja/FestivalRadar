@@ -46,7 +46,6 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cliqueactivity_main);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);        //TODO: try not to do these things dynamically but in xml
 
         toggleService = (Switch) findViewById(R.id.toggle_service);
         toggleService.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

@@ -95,7 +95,6 @@ public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
 
     /**
      * TODO: DRY (see ping)
-     * TODO: put the english into string resources
      */
     private class CliqueContactAdapter extends ArrayAdapter<Contact> {
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.pollytronics.clique" >
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -62,7 +63,8 @@
         <activity
             android:name=".MVP_Activity_Groups"
             android:label="@string/title_activity_groups"
-            android:parentActivityName=".CliqueActivity_Main" >
+            android:parentActivityName=".CliqueActivity_Main"
+            tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
@@ -70,7 +72,8 @@
         <activity
             android:name=".MVP_Activity_Contacts"
             android:label="@string/title_activity_contacts"
-            android:parentActivityName=".CliqueActivity_Main" >
+            android:parentActivityName=".CliqueActivity_Main"
+            tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
@@ -78,7 +81,8 @@
         <activity
             android:name=".CliqueActivity_Welcome"
             android:label="@string/title_activity_welcome"
-            android:parentActivityName=".CliqueActivity_Main" >
+            android:parentActivityName=".CliqueActivity_Main"
+            tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />

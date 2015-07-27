@@ -29,6 +29,7 @@ import java.io.IOException;
 
 /**
  * TODO: changing your name does not update the local database
+ * TODO: check out the possible nullpointerexceptions lint complains about
  */
 public class CliqueActivity_Settings extends CliqueActivity implements AdapterView.OnItemSelectedListener{
 
@@ -142,6 +143,7 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         return true;
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);

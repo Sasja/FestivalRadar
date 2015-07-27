@@ -15,6 +15,7 @@ class SQLMethodWrappers {
 
     static abstract class CliqueDbQuery {
 
+        private final CliqueDbHelper cliqueDbHelper;
         private String table = null;
         private String[] projection = null;
         private String selection = null;
@@ -22,7 +23,6 @@ class SQLMethodWrappers {
         private String groupBy = null;
         private String having = null;
         private String orderBy = null;
-        private CliqueDbHelper cliqueDbHelper;
 
         public CliqueDbQuery(CliqueDbHelper cliqueDbHelper) {
             this.cliqueDbHelper = cliqueDbHelper;
@@ -66,11 +66,10 @@ class SQLMethodWrappers {
     }
 
     static class CliqueDbDelete {
+        private final CliqueDbHelper cliqueDbHelper;
         private String table = null;
         private String where = null;
         private String[] whereArgs = null;
-        private CliqueDbHelper cliqueDbHelper;
-
         private int nDeleted = 0;
 
         public CliqueDbDelete(CliqueDbHelper cliqueDbHelper) {
@@ -103,9 +102,9 @@ class SQLMethodWrappers {
     }
 
     static class CliqueDbInsert {
+        private final CliqueDbHelper cliqueDbHelper;
         private String table = null;
         private ContentValues values = null;
-        private CliqueDbHelper cliqueDbHelper;
 
         public CliqueDbInsert(CliqueDbHelper cliqueDbHelper) {
             this.cliqueDbHelper = cliqueDbHelper;

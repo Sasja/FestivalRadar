@@ -15,7 +15,7 @@ public class ApiCallPostContact extends CliqueApiCall {
     @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "contacts";
 
-    private long selfId;
+    private final long selfId;
     private String body;
     private boolean fullyInitialized = false;
 

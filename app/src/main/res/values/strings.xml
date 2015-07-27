@@ -20,8 +20,12 @@
 
     <!-- Related to the welcome activity -->
     <string name="welcome">Welcome brave alpha testing adventurer!\nplease choose a user name</string>
+    <string name="edittext_name_hint">Name</string>
 
     <!-- Related to the Contacts activity -->
+    <string name="contacts_tab_ping">PING</string>
+    <string name="contacts_tab_mycontacts">MY CONTACTS</string>
+    <string name="contacts_tab_remote">REMOTE</string>
     <string name="button_ping">PING</string>
     <string name="menu_sync_contacts">sync</string>
     <string name="toast_contacts_synced">contacts synced</string>
@@ -101,6 +105,5 @@
     </plurals>
     <string name="timeformatting_over_a_week">over a week</string>
     <string name="timeformatting_ago">ago</string>
-
 
 </resources>

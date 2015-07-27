@@ -11,12 +11,13 @@ import org.json.JSONObject;
  *
  * TODO: post profile will only use the name and id at the moment and set other attributes to constants...
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ApiCallPostProfile extends CliqueApiCall {
     private final String TAG = "ApiCallPostProfile";
 
     private final String apiResourceName = "profiles";
 
-    private long selfId;
+    private final long selfId;
     private Contact profileReceive;
     private String body;
     private boolean fullyInitialized = false;
@@ -47,7 +48,7 @@ public class ApiCallPostProfile extends CliqueApiCall {
         this.profileReceive = new Contact(new JSONObject(content).getJSONObject("profiles"));
     }
 
-    public Contact getContact() throws JSONException {
+    public Contact getContact() {
         return this.profileReceive;
     }
 }

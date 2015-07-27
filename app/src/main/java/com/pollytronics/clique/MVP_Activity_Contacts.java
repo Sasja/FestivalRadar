@@ -39,7 +39,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     @SuppressWarnings("unused")
     private static final String TAG = "ViewPagerAct_Contacts";
 
-    Contact selectedContact = null;
+    private Contact selectedContact = null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,14 +72,14 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
      * TODO: make this foolproof
      */
     protected void loadMyFragments() {
-        addFragment(Fragment_Contacts_Ping.class, "PING");
-        addFragment(Fragment_Contacts_MyContacts.class, "MY CONTACTS");
-        addFragment(Fragment_Contacts_Remote.class, "REMOTE");
+        addFragment(Fragment_Contacts_Ping.class, getString(R.string.contacts_tab_ping));
+        addFragment(Fragment_Contacts_MyContacts.class, getString(R.string.contacts_tab_mycontacts));
+        addFragment(Fragment_Contacts_Remote.class, getString(R.string.contacts_tab_remote));
     }
 
     /**
      * TODO: make this foolproof
-     * @return
+     * @return the Fragment_Contacts_Ping instance
      */
     public Fragment_Contacts_Ping getF_Ping() {
         return (Fragment_Contacts_Ping) getFragmentByNr(0);
@@ -87,7 +87,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
 
     /**
      * TODO: make this foolproof
-     * @return
+     * @return the Fragment_Contacts_MyContacts instance
      */
     public Fragment_Contacts_MyContacts getF_MyContacts() {
         return (Fragment_Contacts_MyContacts) getFragmentByNr(1);
@@ -95,7 +95,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
 
     /**
      * TODO: make this foolproof
-     * @return
+     * @return the Fragment_Contacts_Remote instance
      */
     public Fragment_Contacts_Remote getF_Remote() {
         return (Fragment_Contacts_Remote) getFragmentByNr(2);
@@ -189,9 +189,9 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     }
 
     private class postNewContactTask extends AsyncTask<Void, Void, String> {
+        private final Contact contact;
         private ApiCallPostContact postContact;
         private boolean apiCallSucceeded = false;
-        private Contact contact;
 
         public postNewContactTask(Contact contact) {
             this.contact = contact;
@@ -265,6 +265,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         private final Set<Long> toDeleteFromCon = new HashSet<>();
         private final Set<Long> toAddToCon = new HashSet<>();
         private final Set<Long> toPostToCsm = new HashSet<>();
+        private final Map<Long, Contact> newContacts= new HashMap<>();
         private ApiCallPostContact apiCallPostContact;
         private ApiCallGetContactIdsSeeme apiCallGetContactsSeeme;
         private ApiCallGetContactIdsISee apiCallGetContactsISee;
@@ -272,7 +273,6 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         private Set<Long> ics = new HashSet<>();
         private Set<Long> csm = new HashSet<>();
         private boolean apiCallsSucceeded = false;
-        private Map<Long, Contact> newContacts= new HashMap<>();
 
         @Override
         protected void onPreExecute() {
@@ -302,8 +302,8 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             try {
                 apiCallGetContactsISee.callAndParse();
                 apiCallGetContactsSeeme.callAndParse();
-                ics = new HashSet<Long>(apiCallGetContactsISee.getContactIds());
-                csm = new HashSet<Long>(apiCallGetContactsSeeme.getContactIds());
+                ics = new HashSet<>(apiCallGetContactsISee.getContactIds());
+                csm = new HashSet<>(apiCallGetContactsSeeme.getContactIds());
                 Log.i(TAG, "successfully loaded all contact lists local and remote");
                 Log.i(TAG, String.format("nCON=%d nICS=%d nCSM=%d" ,con.size(), ics.size(), csm.size()));
                 // find contacts i need to add to local contacts (do in onPostExecute)

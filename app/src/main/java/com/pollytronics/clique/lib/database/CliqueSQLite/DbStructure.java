@@ -13,7 +13,7 @@ import android.util.Log;
  * TODO: onUpgrade() and onDowngrade() simply discards all data at the moment
  */
 class DbStructure {
-    public static final String TAG = "DbStructure";
+    private static final String TAG = "DbStructure";
 
     static class ContactEntry implements BaseColumns {
         public static final String TABLE_NAME = "contacts";

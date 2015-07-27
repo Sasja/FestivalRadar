@@ -33,6 +33,7 @@ public class Contact{
         return name;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public Contact setName(String name) {
         this.name = name;
         return this;
@@ -42,6 +43,7 @@ public class Contact{
         return globalId;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public Contact setGlobalId(long globalId) {
         Log.i(TAG, "WARNING: setGlobalId(), should only be called for testing purposes");
         this.globalId = globalId;

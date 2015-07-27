@@ -22,6 +22,7 @@ import java.util.Map;
  * TODO: make zoom value when app loads remembered in preferences or smth
  * TODO: compass blocked on jill's motoG: investigate
  * TODO: try not to allocate anything in onDraw
+ * TODO: check out @NonNull problem (Lint)
  */
 public class RadarView extends View {
     static final String TAG = "RadarView";
@@ -32,15 +33,13 @@ public class RadarView extends View {
     @SuppressLint("UseSparseArrays")
     private final Map<Long, Contact> contacts = new HashMap<>();
     private final Map<Long, Blip> lastBlips = new HashMap<>();
-
+    private final RadarView_Painter painter = new RadarView_Painter();
     private Blip centerLocation;
     private double bearing = 0.0;
     private double sunAzimuth = 0.0;
     private double sunElevation = -90.0;
     private boolean sunIconEnabled = false;
     private double zoomRadius = 1000.0; // should be set through a setter on onResume of the activity
-    private RadarView_Painter painter = new RadarView_Painter();
-
     // private ScaleGestureDetector mScaleGestureDetector;
     private GestureDetector mScrollGestureDetector;
 

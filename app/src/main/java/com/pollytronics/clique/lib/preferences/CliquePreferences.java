@@ -13,13 +13,13 @@ import android.util.Log;
  * Not threadsafe.
  */
 public class CliquePreferences {
-    public static final String COMPASS_ENABLED = "compassEnabled";
-    public static final String SUN_ENABLED = "sunEnabled";
-    public static final String ZOOM_RADIUS = "zoomRadius";
-    public static final int UPDATE_RATE_LO_BAT = 0;
-    public static final int UPDATE_RATE_BALANCED = 1;
-    public static final int UPDATE_RATE_HI_PERFORMANCE = 2;
-    static final String TAG = "CliquePreferences";
+    private static final String COMPASS_ENABLED = "compassEnabled";
+    private static final String SUN_ENABLED = "sunEnabled";
+    private static final String ZOOM_RADIUS = "zoomRadius";
+    private static final int UPDATE_RATE_LO_BAT = 0;
+    private static final int UPDATE_RATE_BALANCED = 1;
+    private static final int UPDATE_RATE_HI_PERFORMANCE = 2;
+    private static final String TAG = "CliquePreferences";
     private static final String UPDATE_RATE = "updateRate";
     private static final boolean COMPASS_ENABLED_DEFAULT = true;
     private static final boolean SUN_ENABLED_DEFAULT = false;
@@ -63,7 +63,6 @@ public class CliquePreferences {
      * @return the desired cloud connection rate in milliseconds
      */
     public long getCloudUpdateTime_ms(){
-        int setting = preferences.getInt(UPDATE_RATE, UPDATE_RATE_DEFAULT);
         switch (getUpdateRate()) {
             case UPDATE_RATE_LO_BAT:
                 return 300 * 1000;

@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.pollytronics.clique.lib.MyViewPagerFragment;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.database.CliqueDbException;
@@ -26,7 +25,7 @@ import java.util.List;
  * TODO: when updating the ListView on a database update it should not scroll back up
  * TODO: update the listView regularly if no database updates are comming in order to keep the displayed times up to date (might put this feat in CliqueActivity for other activities)
  */
-public class Fragment_Contacts_MyContacts extends MyViewPagerFragment {
+public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
 
     @SuppressWarnings("unused")
     private static final String TAG = "Frag_Cntcts_MyContacts";

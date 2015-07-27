@@ -37,7 +37,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
     @SuppressWarnings("unused")
     private static final String TAG = "Frag_Contacts_Ping";
 
-    ListView listView;
+    private ListView listView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -122,7 +122,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
             if(apiCallSucceeded) {
                 Log.i(TAG, "using/aplying the responses of the webservice");
                 List<Contact> apiContacts = getPings.getAllPingContacts();
-                List<Contact> allReadyKnown = new ArrayList<Contact>();
+                List<Contact> allReadyKnown = new ArrayList<>();
                 for (Contact c : apiContacts) {
                     Log.i(TAG, String.format("checking if contact %s is allready known",c.getName()));
                     try {

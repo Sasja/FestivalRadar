@@ -10,12 +10,13 @@ import org.json.JSONObject;
 /**
  * retrieves a profile from the api for a specified global id
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ApiCallGetProfile extends CliqueApiCall {
     protected final String TAG = "ApiCallGetProfile";
 
     private final String apiResourceName = "profiles";
+    private final long requestedID;
     private Contact profile;
-    private long requestedID;
     private boolean fullyInitialized = false;
 
     public ApiCallGetProfile(long requestedID) {

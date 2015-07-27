@@ -26,19 +26,13 @@ import java.util.Map;
 public class CliqueActivity_MyViewPagerAct extends CliqueActivity {
 
     private static final String TAG = "MyViewPagerAct";
-
-    ViewPager viewPager;
-    FragmentPagerAdapter fragmentPagerAdapter;
     // for the following, see:  http://stackoverflow.com/questions/7951730/viewpager-and-fragments-whats-the-right-way-to-store-fragments-state
     // TODO: should this use a hashmap??
-    Map<Integer, MyViewPagerFragment> myPagerFragments = new HashMap<>();  // funky trick, keep ref of all the Fragments of the viewPager by overloading instantiateItem in the FragmentPagerAdapter
-
-    private List<Class> fragments = new ArrayList<>();
-    private List<String> fragmentTitles = new ArrayList<>();
-
-    public CliqueActivity_MyViewPagerAct() {
-        loadMyFragments();
-    }
+    private final Map<Integer, MyViewPagerFragment> myPagerFragments = new HashMap<>();  // funky trick, keep ref of all the Fragments of the viewPager by overloading instantiateItem in the FragmentPagerAdapter
+    private final List<Class> fragments = new ArrayList<>();
+    private final List<String> fragmentTitles = new ArrayList<>();
+    private ViewPager viewPager;
+    private FragmentPagerAdapter fragmentPagerAdapter;
 
     /**
      * Override this baby to put the right fragments into the viewPager
@@ -57,6 +51,7 @@ public class CliqueActivity_MyViewPagerAct extends CliqueActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadMyFragments();
         setContentView(R.layout.myviewpager_base);
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setOffscreenPageLimit(2);     // this will prevent destruction of first fragment if last is shown (in case of three frags
@@ -68,13 +63,10 @@ public class CliqueActivity_MyViewPagerAct extends CliqueActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
-    public MyViewPagerFragment getFragmentByNr(int nr) {
+    protected MyViewPagerFragment getFragmentByNr(int nr) {
         return myPagerFragments.get(nr);
     }
 
@@ -98,8 +90,8 @@ public class CliqueActivity_MyViewPagerAct extends CliqueActivity {
          * if i understand well this will be called only once for every i. (when fragment is about to be displayed next)
          * when activity gets recreated on tilt, fragment objects are recreated but not through this method.
          *
-         * @param position
-         * @return
+         * @param position starting from 0 the position of the fragment
+         * @return the fragment at that position
          */
         @Override
         public Fragment getItem(int position) {

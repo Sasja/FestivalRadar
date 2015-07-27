@@ -62,6 +62,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
         return CliquePreferences.getInstance(getApplicationContext());
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

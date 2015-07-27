@@ -31,8 +31,9 @@ import java.net.URL;
  * TODO: allow connecting to a testing api by changing baseUrl
  *
  */
+@SuppressWarnings("FieldCanBeLocal")
 abstract public class CliqueApiCall {
-    protected final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
+    final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/";
     private final String TAG = "CliqueApiCall";
     //protected final String baseUrl = "http://192.168.0.5:8080/api/v1/";
 
@@ -49,7 +50,7 @@ abstract public class CliqueApiCall {
      * must return "GET" or "POST" or any implemented other http method
      * @return "GET" or "POST" or "DELETE"
      */
-    public abstract String getHttpMethod();
+    protected abstract String getHttpMethod();
 
     /**
      * must return the full url that needs to be called, use the baseUrl attribute to construct it
@@ -61,12 +62,13 @@ abstract public class CliqueApiCall {
      * Override this one if you need to post application/json data to the api
      * @return string to post to api
      */
+    @SuppressWarnings("WeakerAccess")
     protected String getApiBodyString() { return ""; }
 
     /**
      * this method needs to interpret the api reply and store it in the object in a way that can be retrieved later,
      * this could be just as a string or jsonobject but better parse further down to lists of Contacts or Blips and such.
-     * @param content
+     * @param content the reply of the api
      */
     protected abstract void parseContent(String content) throws JSONException;
 
@@ -105,6 +107,7 @@ abstract public class CliqueApiCall {
         conn.connect();
         int response = conn.getResponseCode();
         if(response!=200) throw new IOException(String.format("HTTP RESPONSE CODE = %d", response));
+
         InputStream is = conn.getInputStream();
         try {
             return readInputStream(is);

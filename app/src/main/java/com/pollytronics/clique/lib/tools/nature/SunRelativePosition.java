@@ -78,6 +78,7 @@ import static java.lang.Math.toRadians;
  * @since 2.0
  * @module
  */
+@SuppressWarnings("WeakerAccess")
 public class SunRelativePosition {
     /**
      * {@linkplain #getElevation Elevation angle} of astronomical twilight, in degrees.

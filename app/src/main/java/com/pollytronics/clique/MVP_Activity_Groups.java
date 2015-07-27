@@ -18,8 +18,8 @@ public class MVP_Activity_Groups extends CliqueActivity_MyViewPagerAct {
 
     @Override
     protected void loadMyFragments() {
-        addFragment(Fragment_Groups_Nearby.class,"NEARBY");
-        addFragment(Fragment_Groups_MyGroups.class,"MY GROUPS");
-        addFragment(Fragment_Groups_Remote.class,"REMOTE");
+        addFragment(Fragment_Groups_Nearby.class, getString(R.string.groups_tab_nearby));
+        addFragment(Fragment_Groups_MyGroups.class, getString(R.string.groups_tab_mygroups));
+        addFragment(Fragment_Groups_Private.class, getString(R.string.groups_tab_private));
     }
 }

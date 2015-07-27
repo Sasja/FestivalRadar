@@ -14,15 +14,15 @@ import java.util.List;
  */
 public abstract class ApiCallGetContactIdsAbstract extends CliqueApiCall {
     @SuppressWarnings("FieldCanBeLocal")
-    protected final String apiResourceName = "contacts";
+    final String apiResourceName = "contacts";
+    final long selfId;
     @SuppressWarnings("unused")
     private final String TAG = "ApiCallGetContactIdsAbstract";
-    protected long selfId;
-    private List<Long> contactIds = new ArrayList<>();
+    private final List<Long> contactIds = new ArrayList<>();
 
     private boolean fullyInitialized = false;
 
-    public ApiCallGetContactIdsAbstract(long selfId) {
+    ApiCallGetContactIdsAbstract(long selfId) {
         this.selfId = selfId;
         this.fullyInitialized = true;
     }

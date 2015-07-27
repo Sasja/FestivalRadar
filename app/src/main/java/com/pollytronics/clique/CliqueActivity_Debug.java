@@ -40,11 +40,13 @@ public class CliqueActivity_Debug extends CliqueActivity {
         return true;
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public void notifyDatabaseUpdate() {
         super.notifyDatabaseUpdate();

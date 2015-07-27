@@ -20,9 +20,12 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
+/**
+ * TODO: make the layout a bit prettier
+ */
 public class CliqueActivity_Welcome extends CliqueActivity {
 
-    public static final String TAG = "CliqueActivity_Welcome";
+    private static final String TAG = "CliqueActivity_Welcome";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +56,7 @@ public class CliqueActivity_Welcome extends CliqueActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     /**

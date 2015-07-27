@@ -28,6 +28,7 @@ import java.util.List;
  *
  * TODO: make the calculated bearing sensible when holding the phone upright or tilted looking from below or display a warning to prevent confusion
  * TODO: radarView is never invalidated when service and compass is off, so blips will not fade according to age.
+ * TODO: check out these possible nullpointerexceptions lint complains about
  */
 public class CliqueActivity_Main extends CliqueActivity implements SensorEventListener {
 
@@ -123,6 +124,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         return true;
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);

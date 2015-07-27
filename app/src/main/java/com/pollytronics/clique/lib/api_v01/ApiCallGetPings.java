@@ -12,14 +12,15 @@ import java.util.List;
 /**
  * provides a list of contacts that pinged along with me
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ApiCallGetPings extends CliqueApiCall {
     @SuppressWarnings("unused")
     protected final String TAG = "ApiCallGetPings";
 
     private final String apiResourceName = "pings";
 
-    private List<Contact> pings = new ArrayList<>();
-    private long selfId;
+    private final List<Contact> pings = new ArrayList<>();
+    private final long selfId;
     private boolean fullyInitialized = false;
 
     public ApiCallGetPings(long selfId) {

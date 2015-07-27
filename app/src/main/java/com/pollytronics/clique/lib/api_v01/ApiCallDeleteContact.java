@@ -11,9 +11,9 @@ public class ApiCallDeleteContact extends CliqueApiCall {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "contacts";
-    boolean fullyInitialized = false;
-    private long selfId;
-    private long deleteId;
+    private final long selfId;
+    private final long deleteId;
+    private boolean fullyInitialized = false;
 
     public ApiCallDeleteContact(long selfId, long deleteId) {
         this.selfId = selfId;
@@ -37,8 +37,8 @@ public class ApiCallDeleteContact extends CliqueApiCall {
     }
 
     /**
-     * does not have to do anything as there is only a "ok" response when succesfull. and callAndParse() throws an error when fails.
-     * @param content
+     * does not have to do anything as there is only a "ok" response when succesfull. and callAndParse() throws an error when it fails.
+     * @param content the relpy of the api
      */
     @Override
     protected void parseContent(String content) {

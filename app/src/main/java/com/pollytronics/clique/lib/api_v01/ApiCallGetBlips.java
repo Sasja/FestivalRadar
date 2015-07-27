@@ -20,8 +20,8 @@ public class ApiCallGetBlips extends CliqueApiCall {
 
     @SuppressWarnings("FieldCanBeLocal")
     private final String apiResourceName = "blips";
-    private List<Blip> blips = new ArrayList<>();
-    private long selfId;
+    private final List<Blip> blips = new ArrayList<>();
+    private final long selfId;
     private boolean fullyInitialized = false;
 
     public ApiCallGetBlips(long selfId) {
@@ -46,7 +46,7 @@ public class ApiCallGetBlips extends CliqueApiCall {
 
     /**
      * fills the blips List with blips created from the api response
-     * @param content
+     * @param content the reply of the api
      * @throws JSONException
      */
     @Override

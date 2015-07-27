@@ -53,6 +53,7 @@ import java.io.PrintStream;
  * @since 2.0
  * @module
  */
+@SuppressWarnings("ALL")
 public final class Calendar {
     /**
      * Nombre de millisecondes dans une journée. Cette constante est

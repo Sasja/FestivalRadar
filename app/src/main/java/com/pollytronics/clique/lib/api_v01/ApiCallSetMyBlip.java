@@ -10,14 +10,13 @@ import org.json.JSONObject;
 /**
  * posts your last blip to the api
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ApiCallSetMyBlip extends CliqueApiCall {
     private final String TAG = "ApiCallSetMyBlip";
-    @SuppressWarnings("FieldCanBeLocal")
 
     private final String apiResourceName = "blips";
-
+    private final long selfId;
     private String body;
-    private long selfId;
     private boolean fullyInitialized = false;
 
     public ApiCallSetMyBlip(Blip selfBlip, long selfId) throws JSONException {

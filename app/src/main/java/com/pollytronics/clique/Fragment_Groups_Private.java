@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.pollytronics.clique.lib.MyViewPagerFragment;
 
 
-public class Fragment_Groups_Remote extends MyViewPagerFragment {
+public class Fragment_Groups_Private extends MyViewPagerFragment {
 
     @SuppressWarnings("unused")
     private static final String TAG = "Frag_Groups_Remote";

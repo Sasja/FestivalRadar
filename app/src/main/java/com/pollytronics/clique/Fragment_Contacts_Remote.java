@@ -6,10 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.pollytronics.clique.lib.MyViewPagerFragment;
 
-
-public class Fragment_Contacts_Remote extends MyViewPagerFragment {
+public class Fragment_Contacts_Remote extends MVP_Fragment_Contacts {
 
     @SuppressWarnings("unused")
     private static final String TAG = "Frag_Contacts_Remote";

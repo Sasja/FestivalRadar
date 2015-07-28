@@ -3,20 +3,19 @@ package com.pollytronics.clique.lib.gui_elements;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Pair;
 
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
 
 /**
  * Helper class for RadarView to do all the canvas painting
- * TODO: tweak the color coding of age and consider involving zoomRadius in the calculation (10 minutes ago at 50km is much more relevant than at 1km)
  */
 class RadarView_Painter {
     public static final String TAG = "RadarView_Painter";
 
     private static final double EARTH_RADIUS = 6371000.0;
-    private final Paint paint = new Paint();
+    private final Paint paint = new Paint(); // reuse this baby
+    ScreenCoords screenCoords = new ScreenCoords(0f,0f); // reuse this baby
     private int width;
     private int height;
     private  Canvas canvas = null;
@@ -60,39 +59,34 @@ class RadarView_Painter {
 
     /**
      * Helper method to calculate screen coordinates of blips
-     * TODO: the new Pair<> seems to be allocation that is performed in the onDraw method...
-     * @param blip blip to be displayed
-     * @return x and y screen coordinates to draw the blip to (in same units as screenWidth and screenHeight eg. pixels)
+     * @param screenCoords an instance to write the results to for efficiency
+     * @param blip the blip to represent
      */
-    private Pair<Float, Float> calcScreenXY(Blip blip) {
+    private void calcScreenXY(ScreenCoords screenCoords, Blip blip) {
         double dLat = blip.getLatitude() - centerLocation.getLatitude();
         double dLon = blip.getLongitude() - centerLocation.getLongitude();
         double dLatMeters = Math.toRadians(dLat) * EARTH_RADIUS; // good enough as dLat << EARTH_RADIUS
         double dLonMeters = Math.toRadians(dLon) * EARTH_RADIUS * cos(centerLocation.getLatitude());
         double dXPixels = (width / 2.0 / zoomRadius * dLonMeters);
         double dYPixels = (width / 2.0 / zoomRadius * dLatMeters);
-        return new Pair<>(
-                (float) (width / 2 + cos(bearing) * dXPixels - sin(bearing) * dYPixels),
-                (float) (height / 2 - sin(bearing) * dXPixels - cos(bearing) * dYPixels)
-        );
+        screenCoords.setX((float) (width / 2 + cos(bearing) * dXPixels - sin(bearing) * dYPixels));
+        screenCoords.setY((float) (height / 2 - sin(bearing) * dXPixels - cos(bearing) * dYPixels));
     }
 
     /**
      * Helper method to calculate where to draw the sun on the screen
-     * TODO: the new Pair<> seems to be allocation that is performed in the onDraw method...
-     * @return x and y screen coordinate to draw the sun at
+     * @param screenCoords an instance to write the results to for efficiency
+     * @param sunAzimuth the azimuth of the sun
      */
-    private Pair<Float, Float> calcSunXY(double sunAzimuth) {
-        return new Pair<>(
-                (float) (width / 2 - sin(bearing - sunAzimuth) * width / 2.1),
-                (float) (height / 2 - cos(bearing - sunAzimuth) * width / 2.1)
-        );
+    private void calcSunXY(ScreenCoords screenCoords, double sunAzimuth) {
+        screenCoords.setX((float) (width / 2 - sin(bearing - sunAzimuth) * width / 2.1));
+        screenCoords.setY((float) (height / 2 - cos(bearing - sunAzimuth) * width / 2.1));
     }
 
     /**
      * Calculates a suitable color according to the age of the blip and the zoomRadius.
      * An old blip is way more relevant when zoomed out than when zoomed in
-     * TODO: consider using distance from center instead of zoomRadius
+     * HINT: consider using distance from center instead of zoomRadius
      * @param age_s age of the blip in seconds
      * @return an int that is used to set color in Paint.setColor()
      */
@@ -164,20 +158,11 @@ class RadarView_Painter {
         paint.setStyle(Paint.Style.FILL);
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(width / 25);
-
-//        double ageFactorColor = Math.exp(-blip.getAge_s() / 60.0);  // it takes about 1 min to loose color
-//        double ageFactorOpacity = Math.exp(-blip.getAge_s() / 300.0);  // it takes about 5 minutes to loose opacity
-//
-//        int rg = (int) ((1-ageFactorColor) * 120);
-//        int b = (int) (255 * ageFactorColor + (1 - ageFactorColor) * 120);
-//        int alpha = (int) (200 * ageFactorOpacity + 55);
-//
-//        paint.setColor(Color.argb(alpha, rg, rg, b));
         paint.setColor(age2blipColor(blip.getAge_s()));
 
-        Pair<Float, Float> xy = calcScreenXY(blip);
-        canvas.drawCircle(xy.first, xy.second, width / 100, paint);
-        canvas.drawText(contact.getName(), xy.first, xy.second + width / 25, paint);
+        calcScreenXY(screenCoords, blip);
+        canvas.drawCircle(screenCoords.getX(), screenCoords.getY(), width / 100, paint);
+        canvas.drawText(contact.getName(), screenCoords.getX(), screenCoords.getY() + width / 25, paint);
     }
 
     /**
@@ -193,8 +178,8 @@ class RadarView_Painter {
             int green = (int)(Math.max(0,(Math.min(sunElevation, 20) * 10)));   //200 max and declining to 0 from 20° above horizon
             paint.setColor(Color.argb(150, 200, green, green / 10));
         }
-        Pair<Float, Float> sunXy = calcSunXY(sunAzimuth);
-        canvas.drawCircle(sunXy.first, sunXy.second, width / 20, paint);
+        calcSunXY(screenCoords, sunAzimuth);
+        canvas.drawCircle(screenCoords.getX(), screenCoords.getY(), width / 20, paint);
     }
 
     /**

@@ -25,9 +25,8 @@ import java.util.List;
  * periodically pulls and pushes data from server and updates the local database
  * This class uses the api_vxx methods to do the actual api calls
  *
- * TODO: minimize tcp connection lifetime to minimize load on server
- * TODO: figure out how time is to be stored in backend db and into local phone-db, now its broken but not used
- * TODO: look for printStacktrace try catch blocks everywhere and fix it
+ * TODO: (syncing) minimize tcp connection lifetime to minimize load on server
+ * TODO: (errorhandling) look for printStacktrace try catch blocks everywhere and fix it
  * http://developer.android.com/training/basics/network-ops/connecting.html
  *
  * Created by pollywog on 26/5/2015.
@@ -103,8 +102,7 @@ public class SubService_Cloud_2 extends SubService {
      * it relies on APICall objects to handle the api details of each api separate interaction.
      * doInBackground can communicate with the other methods by setting member fields, it's safe:
      * http://developer.android.com/reference/android/os/AsyncTask.html (See Memory observability)
-     * TODO: might be prettier to return a boolean for success from doInbackground instead of using a var
-     * TODO: also look for other uses similar to this
+     * TODO: (syncing) might be prettier to return a boolean for success from doInbackground instead of using a var
      */
     private class SyncToWebserviceTask extends AsyncTask<Void, Void, String> {
         private ApiCallSetMyBlip setMyBlip;

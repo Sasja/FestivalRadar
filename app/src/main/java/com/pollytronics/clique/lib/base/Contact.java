@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * Class that holds information on a Contact and its Profile, is also used for own profile info.
  * Methods that change the object should return the object so calls can be chained.
  *
- * TODO: add marker icon and color stuff
+ * TODO: (feature) add marker icon and color stuff
  */
 public class Contact{
 

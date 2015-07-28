@@ -27,8 +27,8 @@ import java.net.URL;
  *
  * These classes should take care of all the JSON stuff and just throw JSONExceptions to be handled higher up.
  *
- * TODO: optimise server connection for multiple api calls, when to call disconnect, how long are connections kept open, ...
- * TODO: allow connecting to a testing api by changing baseUrl
+ * TODO: (syncing) optimise server connection for multiple api calls, when to call disconnect, how long are connections kept open, ...
+ * TODO: (api) allow connecting to a testing api by changing baseUrl
  *
  */
 @SuppressWarnings("FieldCanBeLocal")
@@ -92,7 +92,7 @@ abstract public class CliqueApiCall {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(5000);
         conn.setConnectTimeout(10000);
-        if(!(method.equals("GET") || method.equals("POST") || method.equals("DELETE"))) throw new RuntimeException(method + " http method not supported yet");
+        if(!(method.equals("GET") || method.equals("POST") || method.equals("DELETE"))) throw new RuntimeException(method + " http method not supported");
         conn.setRequestMethod(method);
         conn.setDoInput(true);
         Log.i(TAG, method + " " + myUrl);

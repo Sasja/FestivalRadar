@@ -28,7 +28,7 @@ import com.pollytronics.clique.lib.service.CliqueService_Interface4CliqueActivit
 /**
  * Base class for all Activities
  * This class is only responsible for managing the connection to the CliqueService
- * TODO: can i use a more funky Theme such as Holo.Light.DarkActionBar with AppCompatActivity??
+ * TODO: (gui) can i use a more funky Theme such as Holo.Light.DarkActionBar with AppCompatActivity??
  */
 public abstract class CliqueActivity extends AppCompatActivity implements CliqueActivity_Interface4CliqueService {
 
@@ -230,7 +230,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     /**
      * code snipppet from http://stackoverflow.com/questions/600207/how-to-check-if-a-service-is-running-in-android
      * checks if a Service is running
-     * TODO: might have better solution
+     * TODO: (optimize) might have better solution
      */
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);

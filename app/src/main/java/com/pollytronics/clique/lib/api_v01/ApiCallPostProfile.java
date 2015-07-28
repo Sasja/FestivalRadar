@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * create a new profile or update an existing one
  * when user id is set to 0 the api will create a new profile and return the profile with its appointed id
  *
- * TODO: post profile will only use the name and id at the moment and set other attributes to constants...
+ * TODO: (feature) post profile will only use the name and id at the moment and set other attributes to constants...
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class ApiCallPostProfile extends CliqueApiCall {

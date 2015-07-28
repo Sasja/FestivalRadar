@@ -133,7 +133,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         mDialog.show(getSupportFragmentManager(), "DeleteContactDialog");
     }
 
-    //TODO: still super ugly, but it works for now
+    //TODO: (syncing) still super ugly, but it works for now
     private void deleteSelectedContact() {
         final ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -148,7 +148,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             final ApiCallDeleteContact deleteContact = new ApiCallDeleteContact(selfId, deleteId);
             Thread thread = new Thread(new Runnable() {
                 @Override
-                public void run() { // TODO: what to do when this fails?
+                public void run() { // TODO: (errorhandling) what to do when this fails?
                     try {
                         deleteContact.callAndParse();
                     } catch (IOException e) {
@@ -168,7 +168,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             }
             Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contact_removed), Toast.LENGTH_SHORT);
             toast.show();
-            notifyDatabaseUpdate();         // TODO: this shouldn't be called here but happen autamatically
+            notifyDatabaseUpdate();
         } else {
             Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_no_network), Toast.LENGTH_SHORT);
             toast.show();
@@ -378,7 +378,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                         e.printStackTrace();
                     }
                 }
-                notifyDatabaseUpdate();             // TODO: not sure this needs to be called
+                notifyDatabaseUpdate();
                 Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_contacts_synced), Toast.LENGTH_SHORT);
                 toast.show();
             } else { // apiCallsSucceeded == false

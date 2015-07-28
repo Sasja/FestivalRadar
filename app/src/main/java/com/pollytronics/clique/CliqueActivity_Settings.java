@@ -28,7 +28,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 /**
- * TODO: changing your name does not update the local database
+ * TODO: syncing local and remote database for self profile should happen more elegantly, now its done at hoc and prone to all kinds of problems
  */
 public class CliqueActivity_Settings extends CliqueActivity implements AdapterView.OnItemSelectedListener{
 
@@ -43,17 +43,18 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cliqueactivity_settings);
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_update_rate);
+        Spinner updateRateSpinner = (Spinner) findViewById(R.id.spinner_update_rate);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.update_rate_choices, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
-        spinner.setSelection(getCliquePreferences().getUpdateRate());   // call this at the end or it will not work
+        updateRateSpinner.setAdapter(adapter);
+        updateRateSpinner.setOnItemSelectedListener(this);
+        updateRateSpinner.setSelection(getCliquePreferences().getUpdateRate());   // call this at the end or it will not work
 
         setIdEditText = (EditText) findViewById(R.id.edittext_setid);
         Button setIdButton = (Button) findViewById(R.id.button_setid);
         Button setNameButton = (Button) findViewById(R.id.button_setname);
         setNameEditText = (EditText) findViewById(R.id.edittext_setname);
+
         CheckBox enableCompassCheckBox = (CheckBox) findViewById(R.id.checkbox_enable_compass);
         enableCompassCheckBox.setChecked(getCliquePreferences().getCompassEnabled());
         CheckBox enableSunChechBox = (CheckBox) findViewById(R.id.checkbox_enable_sun);
@@ -98,7 +99,15 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
                     String name = setNameEditText.getText().toString();
+                    Log.i(TAG, "updating remote self profile");
                     new setRemoteProfileNameTask(name).execute();
+                    Log.i(TAG, "updating local self profile");
+                    try {
+                        getCliqueDb().updateSelfContact(getCliqueDb().getSelfContact().setName(name));
+                    } catch (CliqueDbException e) {
+                        e.printStackTrace();
+                        Log.i(TAG, "could not update local profile");
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "no network", Toast.LENGTH_SHORT).show();
                 }

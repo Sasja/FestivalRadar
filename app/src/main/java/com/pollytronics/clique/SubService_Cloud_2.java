@@ -27,6 +27,7 @@ import java.util.List;
  *
  * TODO: (syncing) minimize tcp connection lifetime to minimize load on server
  * TODO: (errorhandling) look for printStacktrace try catch blocks everywhere and fix it
+ * TODO: (syncing) sync sometimes fails... ivestigate!
  * http://developer.android.com/training/basics/network-ops/connecting.html
  *
  * Created by pollywog on 26/5/2015.
@@ -143,6 +144,7 @@ public class SubService_Cloud_2 extends SubService {
                 apiCallsSucceeded = true;
             } catch (IOException e) {
                 Log.i(TAG, "IOException: unable to complete all API requests");
+                e.printStackTrace();
                 return "IOExcepion: unable to complete all API requests";
             } catch (JSONException e) {
                 e.printStackTrace();

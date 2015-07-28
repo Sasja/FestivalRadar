@@ -42,6 +42,20 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     private Contact selectedContact = null;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        enableHeartBeat(3000);
+    }
+
+    /**
+     * Will regularly call notifyDatabaseUpdate on all fragments in order to keep em up to date
+     */
+    @Override
+    protected void heartBeatCallBack() {
+        notifyDatabaseUpdate();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.contacts, menu);
         return true;

@@ -21,9 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * TODO: update the listView regularly if no database updates are comming in order to keep the displayed times up to date (might put this feat in CliqueActivity for other activities)
- */
 public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
 
     @SuppressWarnings("unused")

@@ -7,7 +7,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.opengl.Matrix;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,8 +37,6 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     private Sensor mRotation;
     private boolean compassEnabled = false;
     private boolean sunEnabled = false;
-    private Handler handler = new Handler();
-    private InvalidateLoop invalidateLoop = new InvalidateLoop();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +61,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         radarView.setBearing(0);
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);   // might return null!
+        enableHeartBeat(3000);  // will refresh view every 5 seconds regardless of new data (dot color needs to change)
     }
 
     @Override
@@ -90,7 +88,6 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
             e.printStackTrace();
         }
         feedDataToRadarView();
-        handler.postDelayed(invalidateLoop, 3000);  // starting the loop that invalidates the radarView about every 3 secs
     }
 
     @Override
@@ -100,7 +97,6 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
             mSensorManager.unregisterListener(this);
         }
         getCliquePreferences().setZoomRadius(radarView.getZoomRadius());
-        handler.removeCallbacks(invalidateLoop);
     }
 
     @Override
@@ -211,15 +207,14 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     public void onAccuracyChanged(Sensor sensor, int i) {}
 
     /**
-     * This looping construction is for invalidating the radarView regularly as the blip age progresses without any database changes.
-     * So the display should change but nothing will notify the radarView that it needs to be updated. Starting this loop assures this timely updating.
+     * Invalidates the radarView regularly as the blip age progresses without any database changes.
+     * So the display should change but nothing will notify the radarView that it needs to be updated.
+     * Hence this heartbeat update.
      */
-    private class InvalidateLoop implements Runnable {
-        @Override
-        public void run() {
-            Log.i(TAG, "invalidating radarView from timed loop");
-            if(radarView != null) radarView.invalidate();
-            handler.postDelayed(invalidateLoop, 3000);
-        }
+    @Override
+    protected void heartBeatCallBack() {
+        Log.i(TAG, "invalidating radarView from hearbeatcallback");
+        if(radarView != null) radarView.invalidate();
     }
+
 }

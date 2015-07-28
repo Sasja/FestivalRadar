@@ -3,7 +3,6 @@ package com.pollytronics.clique.lib;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +32,5 @@ public class MyViewPagerFragment extends Fragment {
     }
 
     public void notifyDatabaseUpdate() {
-        Log.i(TAG, "received a notifyDatabaseUpdate");
     }
 }

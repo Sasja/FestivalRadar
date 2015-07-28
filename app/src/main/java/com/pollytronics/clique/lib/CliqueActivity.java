@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,9 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     private CliqueService rs;        //needs access to more methods than just the interface, for handshaking,
     private boolean rsBound = false;
     private ServiceConnection rsConn;
+    private Handler handler = new Handler();
+    private HeartbeatLoop heartbeatLoop = new HeartbeatLoop();
+    private int heartBeatTime = 0;  // 0 is disabled, anything is time in milliseconds
 
     /**
      * get instance of running service, it only returns the interface meant for activities to prevent CliqueActivity subclasses to call
@@ -173,6 +177,18 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
         super.onStop();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(heartBeatTime != 0) handler.postDelayed(heartbeatLoop, heartBeatTime);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacks(heartbeatLoop);
+    }
+
     /**
      * menu items that need to appear in all derived activities get added here
      */
@@ -237,5 +253,24 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     @Override
     public void notifyDatabaseUpdate() {
         Log.i(TAG,"received database update notification");
+    }
+
+    protected void enableHeartBeat(int milliseconds) {
+        heartBeatTime = milliseconds;
+    }
+
+    /**
+     * Override this function to do something every x milliseconds. Don't call super.method() in the override
+     */
+    protected void heartBeatCallBack() {
+        Log.i(TAG, "heartbeat callback empty... should not enable me");
+    }
+
+    private class HeartbeatLoop implements Runnable {
+        @Override
+        public void run() {
+            heartBeatCallBack();
+            handler.postDelayed(heartbeatLoop, heartBeatTime);
+        }
     }
 }

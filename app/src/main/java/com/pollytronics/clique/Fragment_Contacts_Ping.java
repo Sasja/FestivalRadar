@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: fix duplicate code everywhere checking for network availability (also other files)
- * TODO: animate adding/ignoring contact (add => fly to the right, ignore => shrink or dissolve or smth)
+ * TODO: (syncing) fix duplicate code everywhere checking for network availability (also other files)
+ * TODO: (gui) animate adding/ignoring contact (add => fly to the right, ignore => shrink or dissolve or smth)
  * TODO: turning screen will not remember the contacts in the ping list
- * TODO: maybe the pingtask belongs in the activity class?
- * TODO: some feedback when pinging is in progress
+ * TODO: (syncing) maybe the pingtask belongs in the activity class?
+ * TODO: (syncing) some feedback when pinging is in progress
  *
  */
 public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
@@ -85,7 +85,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
      * 2) wait a few seconds, then do the GET ping api call
      * 2) update the listView through the CliqueContactAdapter
      *
-     * TODO: do the post api call once it is really implemented and the waiting and whatnot
+     * TODO: (api) do the post api call once it is really implemented and the waiting and whatnot
      *
      */
     private class PingTask extends AsyncTask<Void, Void, String> {
@@ -154,11 +154,11 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
             final Contact contact = getItem(position);
-            // TODO: further apply the values of contact to the view object
+            // TODO: (gui) further apply the values of contact to the view object
             Button connectButt = (Button) view.findViewById(R.id.button_ping_connect);
             connectButt.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {   //TODO: clean up / refactor
+                public void onClick(View v) {
                     Log.i(TAG, "onClick()... adding contact");
                     ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

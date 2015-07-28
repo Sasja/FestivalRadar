@@ -28,7 +28,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 /**
- * TODO: syncing local and remote database for self profile should happen more elegantly, now its done at hoc and prone to all kinds of problems
+ * TODO: (syncing) syncing local and remote database for self profile should happen more elegantly, now its done at hoc and prone to all kinds of problems
  */
 public class CliqueActivity_Settings extends CliqueActivity implements AdapterView.OnItemSelectedListener{
 

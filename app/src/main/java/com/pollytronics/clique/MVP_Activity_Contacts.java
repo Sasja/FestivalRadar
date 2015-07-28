@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * TODO: Study https://developer.android.com/training/sync-adapters/index.html and consider implementing such a thing
+ * TODO: (syncing) Study https://developer.android.com/training/sync-adapters/index.html and consider implementing such a thing
  */
 public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     @SuppressWarnings("unused")
@@ -83,16 +83,14 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     @Override
     /**
      * make sure the getF methods use the same order!!!
-     * TODO: make this foolproof
      */
     protected void loadMyFragments() {
-        addFragment(Fragment_Contacts_Ping.class, getString(R.string.contacts_tab_ping));
-        addFragment(Fragment_Contacts_MyContacts.class, getString(R.string.contacts_tab_mycontacts));
-        addFragment(Fragment_Contacts_Remote.class, getString(R.string.contacts_tab_remote));
+        addFragment(Fragment_Contacts_Ping.class, getString(R.string.contacts_tab_ping));   //0
+        addFragment(Fragment_Contacts_MyContacts.class, getString(R.string.contacts_tab_mycontacts));   //1
+        addFragment(Fragment_Contacts_Remote.class, getString(R.string.contacts_tab_remote));   //2
     }
 
     /**
-     * TODO: make this foolproof
      * @return the Fragment_Contacts_Ping instance
      */
     public Fragment_Contacts_Ping getF_Ping() {
@@ -100,7 +98,6 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     }
 
     /**
-     * TODO: make this foolproof
      * @return the Fragment_Contacts_MyContacts instance
      */
     public Fragment_Contacts_MyContacts getF_MyContacts() {
@@ -108,7 +105,6 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     }
 
     /**
-     * TODO: make this foolproof
      * @return the Fragment_Contacts_Remote instance
      */
     public Fragment_Contacts_Remote getF_Remote() {

@@ -29,10 +29,10 @@ import java.util.List;
  *
  * it is not threadsafe so should only be accessed from one thread (the main thread or UI thread)
  *
- * TODO: is it still okay to do all this database stuff sync on the main thread? not really according to developer.android.com but it works in practice
- * TODO: i put try catch everywhere in the code where the interface methods are used to get it working for now, take a day to clean up and do proper error handling
- * TODO: deleting a contact from the database should probably also get rid of the associated blips
- * TODO: clean up the database now and then to maintain a maximum number of blips per user
+ * TODO: (optimize) is it still okay to do all this database stuff sync on the main thread? not really according to developer.android.com but it works in practice
+ * TODO: (errorhandling) i put try catch everywhere in the code where the interface methods are used to get it working for now, take a day to clean up and do proper error handling
+ * TODO: (syncing) deleting a contact from the database should probably also get rid of the associated blips
+ * TODO: (syncing) clean up the database now and then to maintain a maximum number of blips per user
  */
 public final class CliqueSQLite implements CliqueDb_Interface {
     public static final String DATABASE_NAME = "Clique.db";

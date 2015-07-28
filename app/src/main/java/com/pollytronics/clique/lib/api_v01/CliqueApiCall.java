@@ -80,7 +80,7 @@ abstract public class CliqueApiCall {
     /**
      * This method will throw an IOException when having any problems with the httprequest including any non 200 http status code.
      * It does not check for network connection.
-     * TODO: figure out what would happen if called without a connection?
+     * TODO: (bug) figure out what would happen if called without a connection?
      * @param method must be "GET" or "POST" or "DELETE"
      * @param myUrl the full url of the http request
      * @param myBody the json string of the body

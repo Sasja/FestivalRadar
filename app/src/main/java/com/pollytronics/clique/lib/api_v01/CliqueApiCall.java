@@ -128,11 +128,18 @@ abstract public class CliqueApiCall {
         final int bufferSize = 8 * 1024;
         Reader reader = new InputStreamReader(is, "UTF-8");
         char[] buffer = new char[bufferSize];
-        int charsRead = reader.read(buffer);
-        int theresMore = reader.read();
-        if (theresMore != -1) { // this happens when the response was longer than the buffer
+        int charsRead = reader.read(buffer,0,bufferSize);
+        int length = charsRead;
+        Log.i(TAG, "charsRead = " + charsRead + "   length = " + length);
+        while((charsRead != -1) && (length < bufferSize)) {
+            charsRead = reader.read(buffer, charsRead, bufferSize-charsRead);
+            if (charsRead > 0) length += charsRead;
+            Log.i(TAG, "charsRead = " + charsRead + "   length = " + length);
+        }
+        if (charsRead != -1) { // this happens when the response size was longer or equal to the buffer size)
+            Log.i(TAG, "stream = " + new String(buffer, 0, length));
             throw new IOException(String.format("api response longer than expected (buffersize = %d)", bufferSize));
         }
-        return new String(buffer, 0, charsRead);
+        return new String(buffer, 0, length);
     }
 }

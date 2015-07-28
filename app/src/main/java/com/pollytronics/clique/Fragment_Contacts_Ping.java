@@ -30,7 +30,7 @@ import java.util.List;
  * TODO: (gui) animate adding/ignoring contact (add => fly to the right, ignore => shrink or dissolve or smth)
  * TODO: (syncing) turning screen will not remember the contacts in the ping list(figure out working with Bundle savedinstance state in onCreate)
  * TODO: (syncing) maybe the pingtask belongs in the activity class?
- * TODO: (syncing) some feedback when pinging is in progress
+ * TODO: (syncing) some feedback when pinging is in progress (see basicsyncadapter demo for inspiration (progressbar))
  *
  */
 public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {

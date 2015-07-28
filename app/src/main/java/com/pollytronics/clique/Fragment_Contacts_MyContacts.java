@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * TODO: when updating the ListView on a database update it should not scroll back up
  * TODO: update the listView regularly if no database updates are comming in order to keep the displayed times up to date (might put this feat in CliqueActivity for other activities)
  */
 public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
@@ -59,11 +58,12 @@ public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
         CliqueContactAdapter adapter = (CliqueContactAdapter) listView.getAdapter();
         if(adapter == null) {   // there is no adapter yet
             adapter = new CliqueContactAdapter(getActivity(), localContacts);
+            listView.setAdapter(adapter);
         } else {                // lets reuse the current adapter
             adapter.clear();
-            for(Contact c : localContacts) adapter.add(c);
+            adapter.addAll(localContacts);
+            adapter.notifyDataSetChanged();
         }
-        listView.setAdapter(adapter);
     }
 
     private void sortContactListByName(List<Contact> cList) {

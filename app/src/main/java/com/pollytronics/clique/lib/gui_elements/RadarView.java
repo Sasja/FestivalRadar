@@ -3,6 +3,7 @@ package com.pollytronics.clique.lib.gui_elements;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -18,11 +19,10 @@ import java.util.Map;
  * This View subclass provides visualisation for blips/contacts.
  * It needs to be fed all the data through setters and then invalidated to update the visuals
  *
- * TODO: hardware accelleration is now enabled in manifest and disabled for this view due to a lack of compatibility. This is ok as long as performance is good enough.
- * TODO: make zoom value when app loads remembered in preferences or smth
- * TODO: compass blocked on jill's motoG: investigate
- * TODO: try not to allocate anything in onDraw
- * TODO: check out @NonNull problem (Lint)
+ * HINT: hardware accelleration is now enabled in manifest and disabled for this view due to a lack of compatibility. This is ok as long as performance is good enough.
+ * TODO: (bug) compass blocked on jill's motoG: investigate
+ * TODO: (optimize) try not to allocate anything in onDraw
+ * TODO: (feature) allow pinching as well as single finger swiping
  */
 public class RadarView extends View {
     static final String TAG = "RadarView";
@@ -125,7 +125,7 @@ public class RadarView extends View {
      * @return need to return true in order to receive more events related to the current event
      */
     @Override
-    public boolean onTouchEvent(MotionEvent ev) {
+    public boolean onTouchEvent(@NonNull MotionEvent ev) {
         //mScaleGestureDetector.onTouchEvent(ev);
         mScrollGestureDetector.onTouchEvent(ev);
         return true; // give me all events

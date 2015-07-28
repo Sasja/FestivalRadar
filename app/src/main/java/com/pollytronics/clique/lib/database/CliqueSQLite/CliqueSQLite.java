@@ -251,7 +251,7 @@ public final class CliqueSQLite implements CliqueDb_Interface {
 
     /**
      * Adds a blip to the local database. The table has a column to store the owners id
-     * TODO: check if it is there allready to prevent duplicates
+     * TODO: (syncing) check if it is there allready to prevent duplicates
      * @param blip the blip to add, duh
      * @param contact contact used for the global_id that the blip belongs to
      */
@@ -273,8 +273,7 @@ public final class CliqueSQLite implements CliqueDb_Interface {
      * thanks to Alex Barret
      * http://stackoverflow.com/questions/578867/sql-query-delete-all-records-from-the-table-except-latest-n
      * (see answer of NickC for optimisation for large tables)
-     * TODO: implement it right, make sure to keep n entries per contact, use some kind of wrapper as above
-     * TODO: apply it right, when should this cleaning be performed?
+     * TODO: (syncing) implement it right, make sure to keep n entries per contact, use some kind of wrapper as above
      * @param tableName
      * @param orderColumnName
      * @param nEntries

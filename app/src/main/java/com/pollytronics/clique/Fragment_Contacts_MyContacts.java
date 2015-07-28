@@ -91,10 +91,6 @@ public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
         }
     }
 
-
-    /**
-     * TODO: DRY (see ping)
-     */
     private class CliqueContactAdapter extends ArrayAdapter<Contact> {
 
         private static final int layout_resource = R.layout.list_item_mycontacts;

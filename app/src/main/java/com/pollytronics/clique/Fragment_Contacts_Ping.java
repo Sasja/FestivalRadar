@@ -142,7 +142,6 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         }
     }
 
-    //TODO: kind of duplicate code here with mycontacts
     private class CliqueContactAdapter extends ArrayAdapter<Contact> {
 
         private static final int layout_resource = R.layout.list_item_ping;

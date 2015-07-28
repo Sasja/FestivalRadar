@@ -28,6 +28,7 @@ import java.util.List;
  * TODO: (syncing) minimize tcp connection lifetime to minimize load on server
  * TODO: (errorhandling) look for printStacktrace try catch blocks everywhere and fix it
  * TODO: (syncing) sync sometimes fails... ivestigate!
+ * TODO: (syncing) i believe this will generate a shitload of duplicate blips
  * http://developer.android.com/training/basics/network-ops/connecting.html
  *
  * Created by pollywog on 26/5/2015.

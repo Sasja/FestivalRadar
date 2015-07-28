@@ -10,6 +10,7 @@ import com.pollytronics.clique.lib.database.CliqueSQLite.DbStructure.CliqueDbHel
 
 /**
  * These wrappers make sure all database resources are released and translate (unchecked) SQLExceptions to (checked) CliqueDbExceptions.
+ * TODO: (optimize) check if it is ok to getReadableDatabase() and close() all the time, should it be open all the time and close once?
  */
 class SQLMethodWrappers {
 

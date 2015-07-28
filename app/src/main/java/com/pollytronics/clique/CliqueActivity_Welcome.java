@@ -21,7 +21,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 /**
- * TODO: make the layout a bit prettier
+ * Activity that gets started when the user hasn't got a profile yet, it requests a userid from the api and requests a user name from the user
  */
 public class CliqueActivity_Welcome extends CliqueActivity {
 

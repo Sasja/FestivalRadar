@@ -88,12 +88,11 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
      * (activity will be registered at service in onServiceConnected callback)
      */
     private void bindIfRunningCliqueService(){
-        Log.i(TAG,"bind if service is running");
         if(isMyServiceRunning(CliqueService.class)){
-            Log.i(TAG,"yup found it running, lets bind to it");
+            Log.i(TAG,"bindIfRunningCliqueService(): found service running, now binding to it");
             bindService(new Intent(CliqueActivity.this, CliqueService.class), rsConn, 0);
         } else {
-            Log.i(TAG, "seems its not running");
+            Log.i(TAG, "bindIfRunningCliqueService(): service is not running, so not binding to it");
         }
     }
 

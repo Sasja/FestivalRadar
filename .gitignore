@@ -31,3 +31,4 @@ proguard/
 *.swp
 .DS_Store
 /app/proguard-rules.pro
+JavaDoc/

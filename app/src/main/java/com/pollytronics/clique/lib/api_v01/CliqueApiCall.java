@@ -33,9 +33,10 @@ import java.net.URL;
  */
 @SuppressWarnings("FieldCanBeLocal")
 abstract public class CliqueApiCall {
-    final String baseUrl = "http://festivalradarservice.herokuapp.com/api/v1/"; //TODO: replace with cliqueradarservice.herokuapp.com...
+    //final String baseUrl = "http://cliqueserver.herokuapp.com/api/v1/";
+    final String baseUrl = "http://cliquedev.herokuapp.com/api/v1/";
+    //final String baseUrl = "http://192.168.44.162:1337/api/v1/";
     private final String TAG = "CliqueApiCall";
-    //protected final String baseUrl = "http://192.168.0.5:8080/api/v1/";
 
     /**
      * override this method to return true only when all necessary attributes are initialized in the api call object.

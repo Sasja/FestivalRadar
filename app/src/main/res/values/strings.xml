@@ -53,16 +53,14 @@
 
     <!-- Related to the About activity -->
     <string name="text_about">
-        \nnot a release version
-        \nlast release below:
+        <!--\nnot a release version-->
+        <!--\nlast release below:-->
+        <!--\n-->
+        \n<b>Clique 1.2.b</b>
         \n
-        \n<b>Clique (version 1.1.0.a) Konfusion release :P</b>
-        <!--\nspecial release for awesome alpha testers like you!-->
-        \n
-        \n<u>updates since 1.0.8.a:</u>
-        \n - not much, but i\'m leaving for Konfusion today so I won\'t be working on it for a while
-        \n - blip color is now determined relative to zoomRadius
-        \n - some small bugs…
+        \n<u>updates since 1.1.0.a:</u>
+        \n - migrated to a new app in google play
+        \n - connects to a separate development webservice and database
         \n
         \nThere is no encryption yet so all your location updates are public as well as your username, but no other info such as real name, phone number, other profiles…
         \n

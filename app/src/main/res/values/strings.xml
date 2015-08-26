@@ -53,9 +53,9 @@
 
     <!-- Related to the About activity -->
     <string name="text_about">
-        <!--\nnot a release version-->
-        <!--\nlast release below:-->
-        <!--\n-->
+        \nnot a release version
+        \nlast release below:
+        \n
         \n<b>Clique 1.2.b</b>
         \n
         \n<u>updates since 1.1.0.a:</u>

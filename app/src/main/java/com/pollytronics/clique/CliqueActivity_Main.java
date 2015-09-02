@@ -61,7 +61,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         radarView.setBearing(0);
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);   // might return null!
-        enableHeartBeat(3000);  // will refresh view every 5 seconds regardless of new data (dot color needs to change)
+        enableHeartBeat(5000);  // will refresh view every 5 seconds regardless of new data (dot color needs to change)
     }
 
     @Override

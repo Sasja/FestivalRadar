@@ -18,9 +18,10 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/MainActionTheme">
+            android:theme="@style/MainActionTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -65,7 +66,7 @@
             android:name=".MVP_Activity_Groups"
             android:label="@string/title_activity_groups"
             android:parentActivityName=".CliqueActivity_Main"
-            tools:ignore="UnusedAttribute">
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
@@ -74,19 +75,24 @@
             android:name=".MVP_Activity_Contacts"
             android:label="@string/title_activity_contacts"
             android:parentActivityName=".CliqueActivity_Main"
-            tools:ignore="UnusedAttribute">
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
         </activity>
         <activity
-            android:name=".CliqueActivity_Welcome"
+            android:name=".CliqueActivity_Welcome_deprec"
             android:label="@string/title_activity_welcome"
             android:parentActivityName=".CliqueActivity_Main"
-            tools:ignore="UnusedAttribute">
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
+        </activity>
+        <activity
+            android:name=".CliqueActivity_Login"
+            android:label="@string/title_activity_login"
+            android:windowSoftInputMode="stateHidden">
         </activity>
     </application>
 

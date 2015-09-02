@@ -23,7 +23,7 @@ import java.io.IOException;
 /**
  * Activity that gets started when the user hasn't got a profile yet, it requests a userid from the api and requests a user name from the user
  */
-public class CliqueActivity_Welcome extends CliqueActivity {
+public class CliqueActivity_Welcome_deprec extends CliqueActivity {
 
     private static final String TAG = "CliqueActivity_Welcome";
 
@@ -48,7 +48,7 @@ public class CliqueActivity_Welcome extends CliqueActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.welcome, menu);
+        getMenuInflater().inflate(R.menu.welcome_deprec, menu);
         return true;
     }
 

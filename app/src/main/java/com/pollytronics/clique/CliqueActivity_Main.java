@@ -81,7 +81,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         try {
             if(getCliqueDb().getSelfContact() == null) {
                 Log.i(TAG, "selfContact == null, so starting welcome activity");
-                Intent intent = new Intent(this, CliqueActivity_Welcome.class);
+                Intent intent = new Intent(this, CliqueActivity_Login.class);
                 startActivity(intent);
             }
         } catch (CliqueDbException e) {

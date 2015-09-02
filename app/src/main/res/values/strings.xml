@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Clique</string>
 
+    <string name="title_activity_login">Clique</string>
     <string name="title_activity_welcome">Welcome</string>
     <string name="title_activity_contacts">Contacts</string>
     <string name="title_activity_groups">Groups</string>
@@ -21,6 +22,13 @@
     <!-- Related to the welcome activity -->
     <string name="welcome">Welcome brave alpha testing adventurer!\nPlease choose a user name:</string>
     <string name="edittext_name_hint">Name</string>
+
+    <!-- Related to the login activity -->
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_in">Sign in or Register</string>
+    <string name="sign_in_welcome_text">Welcome brave beta testing adventurer!</string>
 
     <!-- Related to the Contacts activity -->
     <string name="contacts_tab_ping">PING</string>
@@ -103,5 +111,7 @@
     </plurals>
     <string name="timeformatting_over_a_week">over a week</string>
     <string name="timeformatting_ago">ago</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

@@ -33,11 +33,12 @@ public interface CliqueDb_Interface {
 
     // Blips -----------------------
 
+    void addBlip(Blip blip, Contact contact) throws CliqueDbException;
+
     Blip getLastBlip(Contact contact) throws CliqueDbException;
 
     void addSelfBlip(Blip blip) throws CliqueDbException;
 
     Blip getLastSelfBlip() throws CliqueDbException;
 
-    void addBlip(Blip blip, Contact contact) throws CliqueDbException;
 }

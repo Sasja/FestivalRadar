@@ -13,13 +13,14 @@ import android.util.Log;
  * Not threadsafe.
  */
 public class CliquePreferences {
+    private static final String TAG = "CliquePreferences";
+
     private static final String COMPASS_ENABLED = "compassEnabled";
     private static final String SUN_ENABLED = "sunEnabled";
     private static final String ZOOM_RADIUS = "zoomRadius";
     private static final int UPDATE_RATE_LO_BAT = 0;
     private static final int UPDATE_RATE_BALANCED = 1;
     private static final int UPDATE_RATE_HI_PERFORMANCE = 2;
-    private static final String TAG = "CliquePreferences";
     private static final String UPDATE_RATE = "updateRate";
     private static final boolean COMPASS_ENABLED_DEFAULT = true;
     private static final boolean SUN_ENABLED_DEFAULT = false;

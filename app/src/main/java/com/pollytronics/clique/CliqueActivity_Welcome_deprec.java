@@ -30,7 +30,7 @@ public class CliqueActivity_Welcome_deprec extends CliqueActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.cliqueactivity_welcome);
+        setContentView(R.layout.cliqueactivity_welcome_deprec);
         final EditText newUsernameEditText = (EditText) findViewById(R.id.edittext_new_username);
         newUsernameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

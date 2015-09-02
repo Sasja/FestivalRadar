@@ -40,7 +40,6 @@
                 android:gravity="center">
 
                 <TextView
-                    android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="40dp"
@@ -67,7 +66,7 @@
                     android:maxLines="1"
                     android:singleLine="true" />
 
-                <Button android:id="@+id/username_sign_in_button"
+                <Button android:id="@+id/sign_in_button"
                     style="?android:textAppearanceSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -29,6 +29,10 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_sign_in">Sign in or Register</string>
     <string name="sign_in_welcome_text">Welcome brave beta testing adventurer!</string>
+    <string name="error_password_invalid">This password is to short</string>
+    <string name="error_password_incorrect">incorrect password</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_username_invalid">This username is invalid</string>
 
     <!-- Related to the Contacts activity -->
     <string name="contacts_tab_ping">PING</string>

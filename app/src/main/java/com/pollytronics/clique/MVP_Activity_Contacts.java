@@ -35,7 +35,7 @@ import java.util.Set;
 
 /**
  * TODO: (syncing) Study https://developer.android.com/training/sync-adapters/index.html and consider implementing such a thing
- * TODO: receiving database update notifications every three seconds when in contacts activity!?! investigate
+ * TODO: receiving database update notifications every three seconds when in contacts activity!?! why is that?
  */
 public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     @SuppressWarnings("unused")

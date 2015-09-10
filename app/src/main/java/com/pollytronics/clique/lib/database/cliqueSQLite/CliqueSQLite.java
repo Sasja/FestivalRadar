@@ -28,31 +28,8 @@ public final class CliqueSQLite {
     public static final int DATABASE_VERSION = 13;   // increasing this will wipe all local databases on update
     private static final String TAG="CliqueSQLite";
 
-//    private static CliqueSQLite instance = null;
-
     private static CliqueDbHelper cliqueDbHelper = null;
     private static Context context = null;
-
-//    /**
-//     * private constructor to make sure only one object is ever created, the object should be obtained through getInstance instead.
-//     * @param context
-//     */
-//    private CliqueSQLite(Context context){
-//        Log.i(TAG, "instanciating CliqueSQLite object");
-//        this.cliqueDbHelper = new CliqueDbHelper(context);
-//        this.context = context;
-//    }
-
-//    /**
-//     * This is used instead of a constructor to ensure only one instance of this class is ever created (singleton design pattern)
-//     */
-//    public static CliqueSQLite getInstance(Context context){
-//        if(instance == null) {
-//            Log.i(TAG, "creating a new instance of CliqueSQLite");
-//            instance = new CliqueSQLite(context);
-//        }
-//        return instance;
-//    }
 
     public static CliqueDbHelper getCliqueDbHelper() {
         if(cliqueDbHelper == null) {

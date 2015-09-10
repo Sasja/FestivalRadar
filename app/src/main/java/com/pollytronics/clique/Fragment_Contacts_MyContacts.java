@@ -15,8 +15,12 @@ import android.widget.TextView;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.database.CliqueDbException;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbBlip;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbProfile;
 import com.pollytronics.clique.lib.tools.TimeFormatting;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -44,21 +48,25 @@ public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
     }
     
     private void fillListViewFromLocalDb(ListView listView) {
-        List<Contact> localContacts;
+        List<Long> contactIds;
+        List<Contact> contacts = new ArrayList<>();
         try {
-            localContacts = getCligueDb().getAllContacts();
+            contactIds = DbContact.getIds();
+            for(long cid : contactIds) {
+                contacts.add(new Contact(cid, DbProfile.get(cid)));
+            }
         } catch (CliqueDbException e) {
             e.printStackTrace();
             return;
         }
-        sortContactListByName(localContacts);
+        sortContactListByName(contacts);
         CliqueContactAdapter adapter = (CliqueContactAdapter) listView.getAdapter();
         if(adapter == null) {   // there is no adapter yet
-            adapter = new CliqueContactAdapter(getActivity(), localContacts);
+            adapter = new CliqueContactAdapter(getActivity(), contacts);
             listView.setAdapter(adapter);
         } else {                // lets reuse the current adapter
             adapter.clear();
-            adapter.addAll(localContacts);
+            adapter.addAll(contacts);
             adapter.notifyDataSetChanged();
         }
     }
@@ -106,7 +114,7 @@ public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
             TextView tv_extra = (TextView) view.findViewById(R.id.textview_contact_extra);
             Blip lastBlip = null;
             try {
-                lastBlip = getCligueDb().getLastBlip(contact);
+                lastBlip = DbBlip.getLast(contact.getGlobalId());
             } catch (CliqueDbException e) {
                 e.printStackTrace();
             }

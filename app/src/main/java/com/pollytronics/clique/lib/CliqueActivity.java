@@ -5,9 +5,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -15,19 +15,21 @@ import android.view.MenuItem;
 
 import com.pollytronics.clique.CliqueActivity_About;
 import com.pollytronics.clique.CliqueActivity_Debug;
-import com.pollytronics.clique.R;
+import com.pollytronics.clique.CliqueActivity_Login;
 import com.pollytronics.clique.CliqueActivity_Settings;
-import com.pollytronics.clique.lib.database.CliqueSQLite.CliqueSQLite;
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
-import com.pollytronics.clique.lib.preferences.CliquePreferences;
-import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.MVP_Activity_Contacts;
 import com.pollytronics.clique.MVP_Activity_Groups;
+import com.pollytronics.clique.R;
+import com.pollytronics.clique.lib.database.cliqueSQLite.CliqueSQLite;
+import com.pollytronics.clique.lib.preferences.CliquePreferences;
+import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.lib.service.CliqueService_Interface4CliqueActivity;
 
 /**
  * Base class for all Activities
- * This class is only responsible for managing the connection to the CliqueService
+ * This class is responsible for managing the connection to the CliqueService
+ * It also provides a few services such as getCliqueDb, getCliquePreferences, hearbeatLoop
+ * and it also checks for authentication credentials (if not disabled through overriding the function)
  * TODO: (gui) can i use a more funky Theme such as Holo.Light.DarkActionBar with AppCompatActivity??
  */
 public abstract class CliqueActivity extends AppCompatActivity implements CliqueActivity_Interface4CliqueService {
@@ -38,7 +40,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     private ServiceConnection rsConn;
     private Handler handler = new Handler();
     private HeartbeatLoop heartbeatLoop = new HeartbeatLoop();
-    private int heartBeatTime = 0;  // 0 is disabled, anything is time in milliseconds
+    private int heartbeatTime = 0;  // 0 is disabled, anything is time in milliseconds
 
     /**
      * get instance of running service, it only returns the interface meant for activities to prevent CliqueActivity subclasses to call
@@ -58,11 +60,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
         }
     }
 
-    public CliqueDb_Interface getCliqueDb() {
-        return CliqueSQLite.getInstance(getApplicationContext());
-    }
-
-    protected CliquePreferences getCliquePreferences() {
+    public CliquePreferences getCliquePreferences() {
         return CliquePreferences.getInstance(getApplicationContext());
     }
 
@@ -70,6 +68,8 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CliqueSQLite.init(this);        // This is important, it allows the static methods to use the right context
+        // TODO: state in a 'static' class such as CliqueSQLite is kind of bad, should services and fragments also all call init() to prevent errors in some circumstances?
     }
 
     /**
@@ -132,6 +132,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
      */
     @Override
     protected void onStart() {
+        super.onStart();
         rsConn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -152,7 +153,6 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
             }
         };
         bindIfRunningCliqueService();
-        super.onStart();
     }
 
     /**
@@ -180,7 +180,8 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     @Override
     protected void onResume() {
         super.onResume();
-        if(heartBeatTime != 0) handler.postDelayed(heartbeatLoop, heartBeatTime);
+        assertAuthCredentials();
+        if(heartbeatTime != 0) handler.postDelayed(heartbeatLoop, heartbeatTime);
     }
 
     @Override
@@ -228,6 +229,20 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     }
 
     /**
+     * Checks if there is a login and key present in the sharedpreferences,
+     * if there is not: launch the login activity that will help creating these
+     * override this function in the login activity itself (for obvious reasons)
+     */
+    protected void assertAuthCredentials() {
+        Log.i(TAG, "checking for account credentials");
+        if (getCliquePreferences().getAccountLogin() == null || getCliquePreferences().getAccountKeyb64() == null || getCliquePreferences().getAccountId() == 0) {
+            Log.i(TAG, "account login or key missing, launching sign in activity");
+            Intent intent = new Intent(this, CliqueActivity_Login.class);
+            startActivity(intent);
+        }
+    }
+
+    /**
      * code snipppet from http://stackoverflow.com/questions/600207/how-to-check-if-a-service-is-running-in-android
      * checks if a Service is running
      * TODO: (optimize) might have better solution
@@ -256,7 +271,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     }
 
     protected void enableHeartBeat(int milliseconds) {
-        heartBeatTime = milliseconds;
+        heartbeatTime = milliseconds;
     }
 
     /**
@@ -270,7 +285,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
         @Override
         public void run() {
             heartBeatCallBack();
-            handler.postDelayed(heartbeatLoop, heartBeatTime);
+            handler.postDelayed(heartbeatLoop, heartbeatTime);
         }
     }
 }

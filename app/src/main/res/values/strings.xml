@@ -34,6 +34,11 @@
     <string name="error_field_required">This field is required</string>
     <string name="error_username_invalid">This username is invalid</string>
 
+    <!-- Related to the create account dialog -->
+    <string name="createaccount_login">login</string>
+    <string name="createaccount_password">password</string>
+    <string name="createaccount_nickname">nickname</string>
+
     <!-- Related to the Contacts activity -->
     <string name="contacts_tab_ping">PING</string>
     <string name="contacts_tab_mycontacts">MY CONTACTS</string>

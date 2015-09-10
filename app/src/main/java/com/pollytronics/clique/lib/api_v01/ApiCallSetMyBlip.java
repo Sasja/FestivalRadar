@@ -2,6 +2,7 @@ package com.pollytronics.clique.lib.api_v01;
 
 import android.util.Log;
 
+import com.pollytronics.clique.lib.CliqueApiCall;
 import com.pollytronics.clique.lib.base.Blip;
 
 import org.json.JSONException;
@@ -11,10 +12,11 @@ import org.json.JSONObject;
  * posts your last blip to the api
  */
 @SuppressWarnings("FieldCanBeLocal")
+@Deprecated
 public class ApiCallSetMyBlip extends CliqueApiCall {
     private final String TAG = "ApiCallSetMyBlip";
 
-    private final String apiResourceName = "blips";
+    private final String apiResourceName = "api/v1/blips";
     private final long selfId;
     private String body;
     private boolean fullyInitialized = false;

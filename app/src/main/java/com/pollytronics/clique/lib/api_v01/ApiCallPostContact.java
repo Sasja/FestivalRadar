@@ -2,18 +2,21 @@ package com.pollytronics.clique.lib.api_v01;
 
 import android.util.Log;
 
+import com.pollytronics.clique.lib.CliqueApiCall;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * adds a link in the api that allows contactId to see you
  */
+@Deprecated
 public class ApiCallPostContact extends CliqueApiCall {
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "ApiCallPostContact";
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final String apiResourceName = "contacts";
+    private final String apiResourceName = "api/v1/contacts";
 
     private final long selfId;
     private String body;

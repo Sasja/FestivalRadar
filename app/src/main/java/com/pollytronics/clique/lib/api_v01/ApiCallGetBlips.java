@@ -1,5 +1,6 @@
 package com.pollytronics.clique.lib.api_v01;
 
+import com.pollytronics.clique.lib.CliqueApiCall;
 import com.pollytronics.clique.lib.base.Blip;
 
 import org.json.JSONArray;
@@ -14,12 +15,14 @@ import java.util.List;
  * result can be obtained by getBlipList()
  * using this api call the response will contain "userid" fields that will be stored in the optional ownerId attribute of the Blips
  */
+
+@Deprecated
 public class ApiCallGetBlips extends CliqueApiCall {
     @SuppressWarnings("unused")
     protected final String TAG = "ApiCallGetBlips";
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final String apiResourceName = "blips";
+    private final String apiResourceName = "api/v1/blips";
     private final List<Blip> blips = new ArrayList<>();
     private final long selfId;
     private boolean fullyInitialized = false;

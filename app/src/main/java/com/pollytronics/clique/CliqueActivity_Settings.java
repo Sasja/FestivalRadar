@@ -3,7 +3,6 @@ package com.pollytronics.clique;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,14 +17,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.pollytronics.clique.lib.CliqueActivity;
-import com.pollytronics.clique.lib.api_v01.ApiCallGetProfile;
-import com.pollytronics.clique.lib.api_v01.ApiCallPostProfile;
-import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.base.Profile;
 import com.pollytronics.clique.lib.database.CliqueDbException;
-
-import org.json.JSONException;
-
-import java.io.IOException;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbSelfProfile;
 
 /**
  * TODO: (syncing) syncing local and remote database for self profile should happen more elegantly, now its done at hoc and prone to all kinds of problems
@@ -60,35 +54,12 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         CheckBox enableSunChechBox = (CheckBox) findViewById(R.id.checkbox_enable_sun);
         enableSunChechBox.setChecked(getCliquePreferences().getSunEnabled());
 
-        try {
-            setIdEditText.setHint(Long.toString(getCliqueDb().getSelfContact().getGlobalId()));
-        } catch (CliqueDbException e) {
-            e.printStackTrace();
-        }
+        setIdEditText.setHint(Long.toString(getCliquePreferences().getAccountId()));
 
         setIdButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Long id;
-                try {
-                    id = Long.decode(setIdEditText.getText().toString());
-                } catch (NumberFormatException e) {
-                    Log.i(TAG, "thats not a number, cant set this ID");
-                    return;
-                }
-                Contact selfContact;
-                try {
-                    selfContact = getCliqueDb().getSelfContact();
-                } catch (CliqueDbException e) {
-                    e.printStackTrace();
-                    return;
-                }
-                selfContact.setGlobalId(id);
-                try {
-                    getCliqueDb().updateSelfContact(selfContact);
-                } catch (CliqueDbException e) {
-                    e.printStackTrace();
-                }
+                Toast.makeText(getApplicationContext(), "don't be silly", Toast.LENGTH_SHORT).show();   //TODO: this should disappear
             }
         });
 
@@ -99,15 +70,15 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
                     String name = setNameEditText.getText().toString();
-                    Log.i(TAG, "updating remote self profile");
-                    new setRemoteProfileNameTask(name).execute();
                     Log.i(TAG, "updating local self profile");
                     try {
-                        getCliqueDb().updateSelfContact(getCliqueDb().getSelfContact().setName(name));
+                        DbSelfProfile.set(new Profile(name));
                     } catch (CliqueDbException e) {
                         e.printStackTrace();
                         Log.i(TAG, "could not update local profile");
                     }
+                    Log.i(TAG, "updating remote self profile");
+                    CliqueSyncer.getInstance(CliqueActivity_Settings.this).poke();  // TODO: get rid of that context shit
                 } else {
                     Toast.makeText(getApplicationContext(), "no network", Toast.LENGTH_SHORT).show();
                 }
@@ -117,18 +88,22 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
         enableCompassCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getCliquePreferences().setCompassEnabled(((CheckBox)v).isChecked());
+                getCliquePreferences().setCompassEnabled(((CheckBox) v).isChecked());
             }
         });
 
         enableSunChechBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getCliquePreferences().setSunEnabled(((CheckBox)v).isChecked());
+                getCliquePreferences().setSunEnabled(((CheckBox) v).isChecked());
             }
         });
 
-        new getRemoteProfileNameIntoHintTask().execute();
+        try {
+            setNameEditText.setHint(DbSelfProfile.get().getName());
+        } catch (CliqueDbException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -156,98 +131,5 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
-    }
-
-    private class setRemoteProfileNameTask extends AsyncTask<Void, Void, String> {
-        private ApiCallPostProfile postProfile;
-
-        private boolean apiCallSucceeded = false;
-
-        public setRemoteProfileNameTask(String name) {
-            Contact myProfile;
-            try {
-                myProfile = getCliqueDb().getSelfContact();
-            } catch (CliqueDbException e) {
-                e.printStackTrace();
-                return;
-            }
-            myProfile.setName(name);
-            try {
-                postProfile = new ApiCallPostProfile(myProfile);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {
-            Log.i(TAG, "nothing to do on onPreExecute");
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            Log.i(TAG, "calling api from setRemoteProfileNameTask");
-            try {
-                try {
-                    postProfile.callAndParse();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                apiCallSucceeded = true;
-            } catch (IOException e) {
-                Log.i(TAG,"IOException: unable to complete all API requests");
-                return "IOException: unable to complete all API requests";
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            if(apiCallSucceeded) {
-                Log.i(TAG, "posting new name succeeded");
-                Toast.makeText(getApplicationContext(), "new name updated", Toast.LENGTH_SHORT).show();
-            } else {
-                Log.i(TAG, "posting new name to server failed");
-                Toast.makeText(getApplicationContext(), "name update failed", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private class getRemoteProfileNameIntoHintTask extends AsyncTask<Void, Void, String> {
-        private ApiCallGetProfile getProfile;
-
-        private String remoteName = "";
-        private boolean apiCallSucceeded = false;
-
-        @Override
-        protected void onPreExecute() {
-            try {
-                getProfile = new ApiCallGetProfile(getCliqueDb().getSelfContact().getGlobalId());
-            } catch (CliqueDbException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                getProfile.callAndParse();
-                apiCallSucceeded = true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "IOException: unable to complete api requests";
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            if (apiCallSucceeded) {
-                Contact contact = getProfile.getContact();
-                if(contact != null) setNameEditText.setHint(contact.getName());
-            }
-        }
     }
 }

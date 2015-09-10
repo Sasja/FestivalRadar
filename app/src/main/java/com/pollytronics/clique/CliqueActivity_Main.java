@@ -1,6 +1,5 @@
 package com.pollytronics.clique;
 
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,6 +16,10 @@ import com.pollytronics.clique.lib.CliqueActivity;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.database.CliqueDbException;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbBlip;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbProfile;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbSelfBlip;
 import com.pollytronics.clique.lib.gui_elements.RadarView;
 import com.pollytronics.clique.lib.tools.nature.SunRelativePosition;
 
@@ -80,15 +83,15 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
 
         radarView.setZoomRadius(getCliquePreferences().getZoomRadius());
 
-        try {
-            if(getCliqueDb().getSelfContact() == null) {
-                Log.i(TAG, "selfContact == null, so starting login/create account activity");
-                Intent intent = new Intent(this, CliqueActivity_Login.class);
-                startActivity(intent);
-            }
-        } catch (CliqueDbException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            if(getCliqueDb().getSelfContact() == null) {
+//                Log.i(TAG, "selfContact == null, so starting login/create account activity");
+//                Intent intent = new Intent(this, CliqueActivity_Login.class);
+//                startActivity(intent);
+//            }
+//        } catch (CliqueDbException e) {
+//            e.printStackTrace();
+//        }
         feedDataToRadarView();
     }
 
@@ -138,22 +141,23 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     private void feedDataToRadarView(){
         Blip centerLocation = null;
         try {
-            centerLocation = getCliqueDb().getLastSelfBlip();
+            centerLocation = DbSelfBlip.getLast();
         } catch (CliqueDbException e) {
             e.printStackTrace();
         }
         radarView.setCenterLocation(centerLocation);
         radarView.removeAllContacts();
-        List<Contact> contacts;
+        List<Long> contactIds;
         try {
-            contacts = getCliqueDb().getAllContacts();
+            contactIds = DbContact.getIds();
         } catch (CliqueDbException e) {
             e.printStackTrace();
             return;
         }
-        for(Contact c:contacts){
+        for(long cid:contactIds){
             try {
-                radarView.updateContact(c, getCliqueDb().getLastBlip(c));
+                Contact c = new Contact(cid, DbProfile.get(cid));
+                radarView.updateContact(c, DbBlip.getLast(cid));
             } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
@@ -162,7 +166,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
             SunRelativePosition sunRelativePosition = new SunRelativePosition();
             Blip position = null;
             try {
-                position = getCliqueDb().getLastSelfBlip();
+                position = DbSelfBlip.getLast();
             } catch (CliqueDbException e) {
                 e.printStackTrace();
             }

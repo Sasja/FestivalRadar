@@ -1,5 +1,7 @@
 package com.pollytronics.clique.lib.api_v01;
 
+import com.pollytronics.clique.lib.CliqueApiCall;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,9 +14,10 @@ import java.util.List;
  * only one attribute is different between the two subclasses in the api call
  * Note that only ids are transfered, not full contact info
  */
+@Deprecated
 public abstract class ApiCallGetContactIdsAbstract extends CliqueApiCall {
     @SuppressWarnings("FieldCanBeLocal")
-    final String apiResourceName = "contacts";
+    final String apiResourceName = "api/v1/contacts";
     final long selfId;
     @SuppressWarnings("unused")
     private final String TAG = "ApiCallGetContactIdsAbstract";

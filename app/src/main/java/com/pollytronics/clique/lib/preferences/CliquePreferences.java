@@ -22,6 +22,10 @@ public class CliquePreferences {
     private static final int UPDATE_RATE_BALANCED = 1;
     private static final int UPDATE_RATE_HI_PERFORMANCE = 2;
     private static final String UPDATE_RATE = "updateRate";
+    private static final String ACCOUNT_LOGIN = "accountLogin";
+    private static final String ACCOUNT_KEYB64 = "accountKeyB64";
+    private static final String ACCOUNT_ID = "accountId";
+
     private static final boolean COMPASS_ENABLED_DEFAULT = true;
     private static final boolean SUN_ENABLED_DEFAULT = false;
     private static final int UPDATE_RATE_DEFAULT = UPDATE_RATE_BALANCED;
@@ -31,6 +35,10 @@ public class CliquePreferences {
     private static CliquePreferences instance = null;
     private final SharedPreferences preferences;
 
+    /**
+     * private constructor to make sure it instances are only created through getInstance
+     * @param context
+     */
     private CliquePreferences(Context context){
         preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
@@ -100,4 +108,13 @@ public class CliquePreferences {
 
     public double  getZoomRadius() { return preferences.getFloat(ZOOM_RADIUS, ZOOM_RADIUS_DEFAULT); }
     public void setZoomRadius(double zoomRadius) { preferences.edit().putFloat(ZOOM_RADIUS, (float) zoomRadius).apply(); }
+
+    public String getAccountLogin() { return preferences.getString(ACCOUNT_LOGIN, null); }
+    public void setAccountLogin(String login) { preferences.edit().putString(ACCOUNT_LOGIN, login).apply(); }
+
+    public String getAccountKeyb64() { return preferences.getString(ACCOUNT_KEYB64, null); }
+    public void setAccountKeyb64(String key)  { preferences.edit().putString(ACCOUNT_KEYB64, key).apply(); }
+
+    public int getAccountId() { return preferences.getInt(ACCOUNT_ID, 0); }
+    public void setAccountId(int id) { preferences.edit().putInt(ACCOUNT_ID, id).apply(); }
 }

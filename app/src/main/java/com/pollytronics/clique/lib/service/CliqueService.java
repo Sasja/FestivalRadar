@@ -14,8 +14,6 @@ import com.pollytronics.clique.R;
 import com.pollytronics.clique.SubService_Cloud_2;
 import com.pollytronics.clique.SubService_Localisation;
 import com.pollytronics.clique.lib.CliqueActivity_Interface4CliqueService;
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
-import com.pollytronics.clique.lib.database.CliqueSQLite.CliqueSQLite;
 
 /**
  * The CliqueService class provides access to active CliqueActivity instances if any for SubServices. (e.g. to notify them of new data to present)
@@ -34,14 +32,6 @@ public class CliqueService extends Service implements CliqueService_Interface4Su
     private Boolean raRegistered = false;
 
     public CliqueService() {}
-
-    /**
-     * Convenience method to retrieve the database instance.
-     * @return the database instance
-     */
-    public CliqueDb_Interface getCliqueDb() {
-        return CliqueSQLite.getInstance(this);
-    }
 
     /**
      * Forwards onCreate() call to all subServices.

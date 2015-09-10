@@ -15,6 +15,7 @@ import com.pollytronics.clique.lib.CliqueActivity;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostProfile;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.database.CliqueDbException;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbSelfProfile;
 
 import org.json.JSONException;
 
@@ -102,7 +103,7 @@ public class CliqueActivity_Welcome_deprec extends CliqueActivity {
                 Log.i(TAG, "posting new profile and retrieving userid succeeded");
                 Log.i(TAG, "received userid="+newUserProfile.getGlobalId()+" now storing in locally");
                 try {
-                    getCliqueDb().updateSelfContact(newUserProfile);
+                    DbSelfProfile.set(newUserProfile);
                 } catch (CliqueDbException e) {
                     e.printStackTrace();
                 }

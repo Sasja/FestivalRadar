@@ -1,5 +1,6 @@
 package com.pollytronics.clique.lib.api_v01;
 
+import com.pollytronics.clique.lib.CliqueApiCall;
 import com.pollytronics.clique.lib.base.Contact;
 
 import org.json.JSONArray;
@@ -13,11 +14,12 @@ import java.util.List;
  * provides a list of contacts that pinged along with me
  */
 @SuppressWarnings("FieldCanBeLocal")
+@Deprecated
 public class ApiCallGetPings extends CliqueApiCall {
     @SuppressWarnings("unused")
     protected final String TAG = "ApiCallGetPings";
 
-    private final String apiResourceName = "pings";
+    private final String apiResourceName = "api/v1/pings";
 
     private final List<Contact> pings = new ArrayList<>();
     private final long selfId;

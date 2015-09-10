@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pollytronics.clique.R;
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
 
 
 /**
@@ -25,10 +24,6 @@ public class MyViewPagerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_viewpagerdummy, container, false);
-    }
-
-    protected CliqueDb_Interface getCligueDb() {
-        return ((CliqueActivity) getActivity()).getCliqueDb();
     }
 
     public void notifyDatabaseUpdate() {

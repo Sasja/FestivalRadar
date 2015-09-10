@@ -23,6 +23,7 @@ import com.pollytronics.clique.lib.api_v01.ApiCallGetProfile;
 import com.pollytronics.clique.lib.api_v01.ApiCallPostContact;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.database.CliqueDbException;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
 
 import org.json.JSONException;
 
@@ -119,7 +120,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     public void addNewContact(Contact contact) {
         Log.i(TAG, "adding contact locally");
         try {
-            getCliqueDb().addContact(contact);
+            DbContact.add(contact.getGlobalId());   // TODO: when should the profiles be added???
         } catch (CliqueDbException e) {
             e.printStackTrace();
         }
@@ -139,12 +140,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         final ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()){
-            long selfId = 0;
-            try {
-                selfId = getCliqueDb().getSelfContact().getGlobalId();
-            } catch (CliqueDbException e) {
-                e.printStackTrace();
-            }
+            long selfId = getCliquePreferences().getAccountId();
             long deleteId = selectedContact.getGlobalId();
             final ApiCallDeleteContact deleteContact = new ApiCallDeleteContact(selfId, deleteId);
             Thread thread = new Thread(new Runnable() {
@@ -163,7 +159,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
             thread.start();
             Log.i(TAG, "deleting selected radar contact (id=" + deleteId + ")");
             try {
-                getCliqueDb().removeContact(selectedContact);
+                DbContact.remove(selectedContact.getGlobalId());    // TODO: what about profiles?
             } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
@@ -212,11 +208,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         protected void onPreExecute() {
             Log.i(TAG, "gathering own use id");
             long selfId = 0;
-            try {
-                selfId = getCliqueDb().getSelfContact().getGlobalId();
-            } catch (CliqueDbException e) {
-                e.printStackTrace();
-            }
+                selfId = getCliquePreferences().getAccountId();
             long contactId = contact.getGlobalId();
             try {
                 postContact = new ApiCallPostContact(selfId, contactId);
@@ -289,18 +281,14 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         protected void onPreExecute() {
             // get selfId (into ApiCall objects)
             long selfId = 0;
-            try {
-                selfId = getCliqueDb().getSelfContact().getGlobalId();
-            } catch (CliqueDbException e) {
-                e.printStackTrace();
-            }
+            selfId = getCliquePreferences().getAccountId();
             apiCallPostContact = new ApiCallPostContact(selfId);
             apiCallGetContactsSeeme = new ApiCallGetContactIdsSeeme(selfId);
             apiCallGetContactsISee = new ApiCallGetContactIdsISee(selfId);
             // construct list of ids in local contacts
             try {
-                for (Contact c : getCliqueDb().getAllContacts()) {
-                    con.add(c.getGlobalId());
+                for (long cid : DbContact.getIds()) {
+                    con.add(cid);
                 }
             } catch (CliqueDbException e) {
                 e.printStackTrace();
@@ -366,7 +354,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                         Log.i(TAG, "adding contact to local contacts (autoaccept): " + id);
                     }
                     try {
-                        getCliqueDb().addContact(newContacts.get(id));
+                        DbContact.add(id);      // TODO: what about profiles?
                     } catch (CliqueDbException e) {
                         e.printStackTrace();
                     }
@@ -374,7 +362,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                 for (long id : toDeleteFromCon) {
                     Log.i(TAG, "deleting contact from local list (triggered by remote delete): " + id);
                     try {
-                        getCliqueDb().removeContactById(id);
+                        DbContact.remove(id);   // TODO: what about profiles?
                     } catch (CliqueDbException e) {
                         e.printStackTrace();
                     }

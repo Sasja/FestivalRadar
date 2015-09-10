@@ -2,15 +2,19 @@ package com.pollytronics.clique.lib.api_v01;
 
 import android.util.Log;
 
+import com.pollytronics.clique.lib.CliqueApiCall;
+
 /**
  * requests deletion of the link between a user and his contact
  */
+
+@Deprecated
 public class ApiCallDeleteContact extends CliqueApiCall {
     @SuppressWarnings("FieldCanBeLocal")
     private final String TAG = "ApiCallDeleteContact";
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final String apiResourceName = "contacts";
+    private final String apiResourceName = "api/v1/contacts";
     private final long selfId;
     private final long deleteId;
     private boolean fullyInitialized = false;

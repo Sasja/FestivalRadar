@@ -1,5 +1,6 @@
 package com.pollytronics.clique.lib.api_v01;
 
+import com.pollytronics.clique.lib.CliqueApiCall;
 import com.pollytronics.clique.lib.base.Contact;
 
 import org.json.JSONException;
@@ -12,10 +13,11 @@ import org.json.JSONObject;
  * TODO: (feature) post profile will only use the name and id at the moment and set other attributes to constants...
  */
 @SuppressWarnings("FieldCanBeLocal")
+@Deprecated
 public class ApiCallPostProfile extends CliqueApiCall {
     private final String TAG = "ApiCallPostProfile";
 
-    private final String apiResourceName = "profiles";
+    private final String apiResourceName = "api/v1/profiles";
 
     private final long selfId;
     private Contact profileReceive;

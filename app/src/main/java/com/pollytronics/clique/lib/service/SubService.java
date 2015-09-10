@@ -3,7 +3,6 @@ package com.pollytronics.clique.lib.service;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.pollytronics.clique.lib.database.CliqueDb_Interface;
 import com.pollytronics.clique.lib.preferences.CliquePreferences;
 
 /**
@@ -38,8 +37,6 @@ public abstract class SubService {
     }
 
     protected CliqueService_Interface4SubService getCliqueService() { return rs; }
-
-    protected CliqueDb_Interface getCliqueDb() { return rs.getCliqueDb(); }
 
     protected CliquePreferences getCliquePreferences() {return CliquePreferences.getInstance(rs.getApplicationContext());}
 

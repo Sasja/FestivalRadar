@@ -1,6 +1,7 @@
-package com.pollytronics.clique.lib.api_v01;
+package com.pollytronics.clique.lib;
 
 import android.util.Log;
+import android.util.Pair;
 
 import org.json.JSONException;
 
@@ -11,10 +12,11 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This Class and subclasses are meant as an abstraction layer between the app and the api,
- * small api modifications should only demand small changes here and nowhere else.
  *
  * An object of this class is used with a AsyncTadk and handles communication with the api as follows:
  * 1) It is initiated with some parameters
@@ -29,13 +31,14 @@ import java.net.URL;
  *
  * TODO: (syncing) optimise server connection for multiple api calls, when to call disconnect, how long are connections kept open, ...
  * TODO: (api) allow connecting to a testing api by changing baseUrl
+ * TODO: fix duplicatebaseURL
  *
  */
 @SuppressWarnings("FieldCanBeLocal")
 abstract public class CliqueApiCall {
     //final String baseUrl = "https://cliqueserver.herokuapp.com/api/v1/";  // piggyback heroku ssl
     //final String baseUrl = "https://cliquedev.herokuapp.com/api/v1/";     // piggyback heroku ssl
-    final String baseUrl = "http://192.168.44.162:1337/api/v1/";
+    protected final String baseUrl = "http://192.168.44.162:1337/";
     private final String TAG = "CliqueApiCall";
 
     /**
@@ -45,7 +48,7 @@ abstract public class CliqueApiCall {
      */
     protected abstract boolean isFullyInitialized();
 
-    //public void collectData(CliqueDb_Interface db) {}
+    //public void collectData(CliqueDb_Interface4Local db) {}
 
     /**
      * must return "GET" or "POST" or any implemented other http method
@@ -65,6 +68,8 @@ abstract public class CliqueApiCall {
      */
     @SuppressWarnings("WeakerAccess")
     protected String getApiBodyString() { return ""; }
+
+    protected List<Pair<String,String>> getExtraHeaders() {return new ArrayList<Pair<String, String>>();}
 
     /**
      * this method needs to interpret the api reply and store it in the object in a way that can be retrieved later,
@@ -97,6 +102,10 @@ abstract public class CliqueApiCall {
         conn.setRequestMethod(method);
         conn.setDoInput(true);
         Log.i(TAG, method + " " + myUrl);
+        for (Pair<String,String> header : getExtraHeaders()) {
+            conn.setRequestProperty(header.first, header.second);
+            Log.i(TAG, "setting header: " + header.first + " : " + header.second);
+        }
         if(method.equals("POST")) {
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");

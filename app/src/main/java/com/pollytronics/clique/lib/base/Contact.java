@@ -11,32 +11,25 @@ import org.json.JSONObject;
  *
  * TODO: (feature) add marker icon and color stuff
  */
-public class Contact{
-
+public class Contact extends Profile {
     private static final String TAG="Contact";
 
-    private String name;
     private long globalId;
 
     public Contact(JSONObject profileJSON) throws JSONException {
-        if (profileJSON == null) throw new JSONException("null JSONObject passed to Contact constructor)");
-        name = profileJSON.getString("nick");
+        super(profileJSON);
         globalId = profileJSON.getLong("userid");
     }
 
+    @Deprecated
     public Contact(long globalId, String name) {
-        this.name = name;
+        super(name);
         this.globalId = globalId;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    @SuppressWarnings("UnusedReturnValue")
-    public Contact setName(String name) {
-        this.name = name;
-        return this;
+    public Contact(long id, Profile profile) {
+        super(profile);
+        this.globalId = id;
     }
 
     public long getGlobalId() {
@@ -48,10 +41,5 @@ public class Contact{
         Log.i(TAG, "WARNING: setGlobalId(), should only be called for testing purposes");
         this.globalId = globalId;
         return this;
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

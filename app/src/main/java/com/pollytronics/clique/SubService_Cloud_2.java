@@ -9,8 +9,8 @@ import android.util.Log;
 import com.pollytronics.clique.lib.api_v01.ApiCallGetBlips;
 import com.pollytronics.clique.lib.api_v01.ApiCallSetMyBlip;
 import com.pollytronics.clique.lib.base.Blip;
-import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.database.CliqueDbException;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbSelfBlip;
 import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.lib.service.SubService;
 
@@ -27,7 +27,7 @@ import java.util.List;
  *
  * TODO: (syncing) minimize tcp connection lifetime to minimize load on server
  * TODO: (errorhandling) look for printStacktrace try catch blocks everywhere and fix it
- * TODO: (syncing) sync sometimes fails... ivestigate!
+ * TODO: (syncing) sync sometimes fails... investigate!
  * TODO: (syncing) i believe this will generate a shitload of duplicate blips
  * http://developer.android.com/training/basics/network-ops/connecting.html
  *
@@ -37,7 +37,7 @@ public class SubService_Cloud_2 extends SubService {
 
     private final String TAG = "SubService_Cloud_2";
     private int updateTime_ms;
-    private boolean cleaningUp = false;     //a flag so the network pull loop will stop posting itself
+    private boolean cleaningUp = false;     // a flag so the network pull loop will stop posting itself
     private final Runnable cloudLoop = new Runnable() {
         @Override
         public void run() {
@@ -46,7 +46,12 @@ public class SubService_Cloud_2 extends SubService {
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
                     Log.i(TAG, "network available: syncing data");
-                    new SyncToWebserviceTask().execute();
+
+                    //FIXME testing ---------------------------
+                    //new SyncToWebserviceTask().execute();
+                    CliqueSyncer.getInstance(getCliqueService().getContext()).poke();
+                    //FIXME testing ---------------------------
+
                     getMainHandler().removeCallbacks(cloudLoop);    //make sure we dont have 2 loops
                     if(!cleaningUp) getMainHandler().postDelayed(cloudLoop,updateTime_ms);
                 } else {
@@ -81,7 +86,7 @@ public class SubService_Cloud_2 extends SubService {
 
     @Override
     public void onRegister() {
-        Log.i(TAG,"onRegister");
+        Log.i(TAG, "onRegister");
     }
 
     @Override
@@ -96,8 +101,6 @@ public class SubService_Cloud_2 extends SubService {
         Log.i(TAG, "set updateTime to (ms) " + Integer.toString(updateTime_ms));
         getMainHandler().post(cloudLoop);
     }
-
-
 
     /**
      * This class is used to bundle all the interactions that happen with the api into one AsyncTask
@@ -116,15 +119,10 @@ public class SubService_Cloud_2 extends SubService {
         @Override
         protected void onPreExecute() {
             Log.i(TAG, "gathering the data i need to send to webservice");
-            long selfId = 0;
-            try {
-                selfId = getCliqueDb().getSelfContact().getGlobalId();
-            } catch (CliqueDbException e) {
-                e.printStackTrace();
-            }
+            long selfId = getCliquePreferences().getAccountId();
             Blip lastBlip = null;
             try {
-                lastBlip = getCliqueDb().getLastSelfBlip();
+                lastBlip = DbSelfBlip.getLast();
             } catch (CliqueDbException e) {
                 e.printStackTrace();
             }
@@ -162,18 +160,10 @@ public class SubService_Cloud_2 extends SubService {
                 Log.i(TAG, "using/aplying the responses of the webservice");
                 List<Blip> blips = getBlips.getBlipList();
                 for(Blip b : blips) {
-                    Contact contact = null;
                     try {
-                        contact = getCliqueDb().getContactById(b.getOwnerId());
+                        com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbBlip.add(b.getOwnerId(), b);   // TODO: decide if Blips can contain owner id or not
                     } catch (CliqueDbException e) {
                         e.printStackTrace();
-                    }
-                    if(contact != null) {   // check if it is known locally on device
-                        try {
-                            getCliqueDb().addBlip(b, contact);
-                        } catch (CliqueDbException e) {
-                            e.printStackTrace();
-                        }
                     }
                 }
                 getCliqueService().notifyNewData();

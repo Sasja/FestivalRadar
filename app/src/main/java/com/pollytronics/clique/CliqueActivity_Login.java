@@ -2,20 +2,18 @@ package com.pollytronics.clique;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,18 +24,17 @@ import com.pollytronics.clique.lib.api_v02.ApiCallGetValidatekey;
 import com.pollytronics.clique.lib.api_v02.ApiCallPostAccounts;
 import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.CliqueDbRecreate;
+import com.pollytronics.clique.lib.tools.MyAssortedTools;
+import com.pollytronics.clique.lib.tools.MyCrypto;
 
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 //import android.app.DialogFragment;
 
 /**
  * TODO: when pressing "back" from login screen, shit happens
- * TODO: move the hide keyboard subroutine to a more appropriate place in the project
  * TODO: make sure the optional message json-entry in always checked before read, as it is optional
  * TODO: error handling!
  * TODO: initial sync after logging in, not sure if that has to happen in this class though
@@ -98,39 +95,26 @@ public class CliqueActivity_Login extends CliqueActivity {
 
     @Override
     /**
-     * must override this cliqueActivity function to as this login activity is started when theres no credentials
+     * Any Clique acitvity will check for credentials in sharedpreferences in onResume()
+     * using this method and start a Login_activity if none are found.
+     * So were basically preventing an infinite loop here.
      */
-    protected void assertAuthCredentials() {
-    }
+    protected void assertAuthCredentials() { }
 
-    // yuck! the following lines are to hide the keyboard (http://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard)
-    // yuck android, thanks rmirabelle
-    private static void hide_keyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = activity.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if(view == null) {
-            view = new View(activity);
-        }
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    // TODO: shouldn't this be called with username/pass as parameters or smth?
-    public void attemptLogin() {
+    /**
+     * handle the GUI event of a login attempt, check formatting of fields and
+     * suggest to user what to change
+     */
+    private void attemptLogin() {
         if (mAuthTask != null) {
             return;
         }
-
         mUserNameView.setError(null);
         mPasswordView.setError(null);
-
         String username = mUserNameView.getText().toString();
         String password = mPasswordView.getText().toString();
-
         boolean cancel = false;
         View focusView = null;
-
         if (TextUtils.isEmpty(password)) {
             mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
@@ -152,20 +136,20 @@ public class CliqueActivity_Login extends CliqueActivity {
         if (cancel) {
             focusView.requestFocus();
         } else {
+            MyAssortedTools.hide_keyboard(this);
             try {
                 mAuthTask = new UserLoginTask(username, password);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new Error();
             }
-            hide_keyboard(this);
             mAuthTask.execute();
         }
     }
 
     // TODO: why is this using parameters and attemptLogin isn't. it doesn't feel right.
-    // TODO: duplicate code alert!
-    public void attemptCreateAccount(String username, String pass, String nickname) {
+    // TODO: also: duplicate code alert!
+    private void attemptCreateAccount(String username, String pass, String nickname) {
         if (mCreateAccountTask != null) {
             return;
         }
@@ -198,18 +182,11 @@ public class CliqueActivity_Login extends CliqueActivity {
         if (cancel) {
             focusView.requestFocus();
         } else {
-            try {
-                mCreateAccountTask = new CreateAccountTask(username, pass);
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new Error();
-            }
-            hide_keyboard(this);
+            MyAssortedTools.hide_keyboard(this);
+            mCreateAccountTask = new CreateAccountTask(username, pass);
             mCreateAccountTask.execute();
         }
     }
-
-
 
     private boolean isUsernameValid(String username) {
         return username.length() >= 5;
@@ -219,29 +196,36 @@ public class CliqueActivity_Login extends CliqueActivity {
         return password.length() >= 5;
     }
 
-    public void showProgress(final boolean show) {
+    private enum ProgressBarState { LOGIN, WAIT, DONE }
+    private void showProgress(final ProgressBarState show) {
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        mLoginFormView.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+
+        mLoginFormView.setVisibility(show == ProgressBarState.WAIT || show == ProgressBarState.DONE  ? View.GONE : View.VISIBLE);
+        mLoginFormView.animate().setDuration(shortAnimTime).alpha(show == ProgressBarState.WAIT || show == ProgressBarState.DONE ? 0 : 1).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                mLoginFormView.setVisibility(show == ProgressBarState.WAIT || show == ProgressBarState.DONE ? View.GONE : View.VISIBLE);
             }
         });
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mProgressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+        mProgressView.setVisibility(show == ProgressBarState.WAIT ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(show == ProgressBarState.WAIT ? 1 : 0).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                mProgressView.setVisibility(show == ProgressBarState.WAIT ? View.VISIBLE : View.GONE);
             }
         });
     }
 
+    /**
+     * Java thing: an enum is by definition a static class, and you can't declare static classes within a non-static member class,
+     * so you can't use enums within member classes :(
+     * UserLoginTask also can't be made static as it then wouldn't have access its parents attributes anymore.
+     */
     private class UserLoginTask extends AsyncTask<Void, Void, Integer> {
-        private final int AUTH_SUCCESS = 1;
-        private final int NEW_USERNAME = 2;
-        private final int WRONG_PASSWD = 3;
-        private final int  OTHER_ERROR = 4;
+        private static final int AUTH_SUCCESS = 1;
+        private static final int NEW_USERNAME = 2;
+        private static final int WRONG_PASSWD = 3;
+        private static final int  OTHER_ERROR = 4;
 
         private final String mUsername;
         private final String mPassword;
@@ -258,7 +242,7 @@ public class CliqueActivity_Login extends CliqueActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgress(true);
+            showProgress(ProgressBarState.WAIT);
         }
 
         @Override
@@ -269,13 +253,14 @@ public class CliqueActivity_Login extends CliqueActivity {
             //       if key valid   -> trigger username/key storage and STOP
             //       if key invalid -> trigger wrong password hint and STOP
             try {
+                SystemClock.sleep(5000); //FIXME
                 ApiCallGetSalts getSalts = new ApiCallGetSalts(mUsername);
                 getSalts.callAndParse();
                 if(!getSalts.getCallSuccess()) {
                     return NEW_USERNAME;
                 }
                 this.cs_b64 = getSalts.getCs();
-                this.key_b64 = calcKey64(cs_b64, mPassword);
+                this.key_b64 = MyCrypto.calcKey64(cs_b64, mPassword);
                 ApiCallGetValidatekey validate = new ApiCallGetValidatekey(mUsername,key_b64);
                 validate.callAndParse();
                 if(validate.isCallSuccess()) {
@@ -287,9 +272,7 @@ public class CliqueActivity_Login extends CliqueActivity {
                     if(m != null) Log.i(TAG, "api message= " + m);
                     return WRONG_PASSWD;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
             return OTHER_ERROR;
@@ -298,19 +281,21 @@ public class CliqueActivity_Login extends CliqueActivity {
         @Override
         protected void onPostExecute(Integer loginResult) {
             mAuthTask = null;
-            showProgress(false);
             switch (loginResult) {
                 case AUTH_SUCCESS:
                     getCliquePreferences().setAccountLogin(mUsername);
                     getCliquePreferences().setAccountKeyb64(key_b64);
                     getCliquePreferences().setAccountId(accountId);
+                    showProgress(ProgressBarState.DONE);
                     finish();
                     break;
                 case WRONG_PASSWD:
+                    showProgress(ProgressBarState.LOGIN);
                     mPasswordView.setError(getString(R.string.error_password_incorrect));
                     mPasswordView.requestFocus();
                     break;
                 case NEW_USERNAME:
+                    showProgress(ProgressBarState.LOGIN);
                     Log.i(TAG, "unknown username, lets suggest creating a new account with it.");
                     CreateNewAccountDialog createNewAccountDialog =
                             CreateNewAccountDialog.newInstance(mUsername, mPassword, "anon");
@@ -325,14 +310,14 @@ public class CliqueActivity_Login extends CliqueActivity {
         @Override
         protected void onCancelled() {
             mAuthTask = null;
-            showProgress(false);
+            showProgress(ProgressBarState.LOGIN);
         }
     }
 
     private class CreateAccountTask extends AsyncTask<Void, Void, Integer> {
-        private final int CREATE_SUCCESS = 1;
+        private final int   CREATE_SUCCESS = 1;
         private final int CREATE_NOSUCCESS = 2;
-        private final int  OTHER_ERROR = 4;
+        private final int      OTHER_ERROR = 3;
 
         private final String mUsername;
         private final String mPassword;
@@ -351,16 +336,17 @@ public class CliqueActivity_Login extends CliqueActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgress(true);
+            showProgress(ProgressBarState.WAIT);
         }
 
         @Override
         protected Integer doInBackground(Void... params) {
             try {
-                cs_b64 = generateSaltb64();
-                key_b64 = calcKey64(cs_b64, mPassword);
-                cs2_b64 = generateSaltb64();
-                key2_b64 = calcKey64(cs2_b64, mPassword);
+                SystemClock.sleep(5000); //FIXME
+                cs_b64 = MyCrypto.generateSaltb64();
+                key_b64 = MyCrypto.calcKey64(cs_b64, mPassword);
+                cs2_b64 = MyCrypto.generateSaltb64();
+                key2_b64 = MyCrypto.calcKey64(cs2_b64, mPassword);
                 ApiCallPostAccounts createAccount = new ApiCallPostAccounts(mUsername,cs_b64,key_b64,cs2_b64,key2_b64);
                 createAccount.callAndParse();
                 if(createAccount.getCallSuccess()) {
@@ -372,9 +358,7 @@ public class CliqueActivity_Login extends CliqueActivity {
                     if(m != null) Log.i(TAG, "api message= " + m);
                     return CREATE_NOSUCCESS;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
             return OTHER_ERROR;
@@ -383,15 +367,16 @@ public class CliqueActivity_Login extends CliqueActivity {
         @Override
         protected void onPostExecute(Integer loginResult) {
             mCreateAccountTask = null;
-            showProgress(false);
             switch (loginResult) {
                 case CREATE_SUCCESS:
                     getCliquePreferences().setAccountLogin(mUsername);
                     getCliquePreferences().setAccountKeyb64(key_b64);
                     getCliquePreferences().setAccountId(accountId);
+                    showProgress(ProgressBarState.DONE);
                     finish();
                     break;
                 default:
+                    showProgress(ProgressBarState.LOGIN);
                     Log.i(TAG, "api call POST accounts failed, not doing anything");
             }
         }
@@ -399,12 +384,13 @@ public class CliqueActivity_Login extends CliqueActivity {
         @Override
         protected void onCancelled() {
             mCreateAccountTask = null;
-            showProgress(false);
+            showProgress(ProgressBarState.LOGIN);
         }
     }
 
 
     public static class CreateNewAccountDialog extends DialogFragment {
+
         static CreateNewAccountDialog newInstance(String login, String pass, String nick) {
             CreateNewAccountDialog dialogFrag = new CreateNewAccountDialog();
             Bundle args = new Bundle();
@@ -435,7 +421,8 @@ public class CliqueActivity_Login extends CliqueActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             Log.i(TAG, "account creation confirmed, lets try this");
                             ((CliqueActivity_Login) getActivity())
-                                    .attemptCreateAccount(loginEdit.getText().toString(),
+                                    .attemptCreateAccount(
+                                            loginEdit.getText().toString(),
                                             passEdit.getText().toString(),
                                             nickEdit.getText().toString());
                         }
@@ -449,26 +436,4 @@ public class CliqueActivity_Login extends CliqueActivity {
             return dialog;
         }
     }
-
-    private String generateSaltb64() {
-        Log.i(TAG,"WARNING GENERATING A RANDOM SALT USING A CONSTANT!!!!!!");
-        return "VX4IAeia5bX/jwe15x0s5SwpfgIB5mXbaea5hVDVDjfNBMmf+HUYzqfFCQE8dqoOEK5SowWRo+IjTnrOwvH4Lg==";
-    }
-
-    private String calcKey64(String salt64, String pass) {
-        byte[] salt = Base64.decode(salt64, Base64.DEFAULT);
-        byte[] passbytes = pass.getBytes();
-        byte[] concat = new byte[salt.length + passbytes.length];
-        byte[] key = null;
-        System.arraycopy(salt, 0, concat, 0, salt.length);
-        System.arraycopy(passbytes, 0, concat, salt.length, passbytes.length);
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
-            key = md.digest(concat);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return Base64.encodeToString(key, Base64.NO_WRAP);
-    }
-
 }

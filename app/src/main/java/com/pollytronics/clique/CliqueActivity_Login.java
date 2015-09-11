@@ -253,7 +253,6 @@ public class CliqueActivity_Login extends CliqueActivity {
             //       if key valid   -> trigger username/key storage and STOP
             //       if key invalid -> trigger wrong password hint and STOP
             try {
-                SystemClock.sleep(5000); //FIXME
                 ApiCallGetSalts getSalts = new ApiCallGetSalts(mUsername);
                 getSalts.callAndParse();
                 if(!getSalts.getCallSuccess()) {
@@ -342,7 +341,6 @@ public class CliqueActivity_Login extends CliqueActivity {
         @Override
         protected Integer doInBackground(Void... params) {
             try {
-                SystemClock.sleep(5000); //FIXME
                 cs_b64 = MyCrypto.generateSaltb64();
                 key_b64 = MyCrypto.calcKey64(cs_b64, mPassword);
                 cs2_b64 = MyCrypto.generateSaltb64();

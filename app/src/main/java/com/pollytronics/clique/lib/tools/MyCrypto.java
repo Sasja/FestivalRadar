@@ -9,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Created by pollywog on 9/11/15.
  * TODO: make the generate salt actually generate a salt instead of using a constant
+ * FIXME: really
  */
 public class MyCrypto {
 

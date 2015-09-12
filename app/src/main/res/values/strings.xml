@@ -62,11 +62,9 @@
     <!-- Related to the Settings activity -->
     <string name="settings_button_setname">set name</string>
     <string name="settings_change_name_instruction">change your profile name</string>
-    <string name="settings_change_id_instruction">can\'t touch this!</string>
     <string name="update_rate">update rate:</string>
     <string name="checkbox_enable_compas">enable compass</string>
     <string name="checkbox_enable_sun">show current sun position</string>
-    <string name="settings_button_setid">set globalId</string>
 
     <!-- Related to the About activity -->
     <string name="text_about">

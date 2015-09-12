@@ -12,6 +12,7 @@ import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.CliqueSQLite;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbBlip;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbContact;
+import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbProfile;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbSelfBlip;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbSelfProfile;
 import com.pollytronics.clique.lib.preferences.CliquePreferences;
@@ -20,7 +21,6 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by pollywog on 9/7/15.
@@ -31,14 +31,15 @@ import java.util.Map;
  *
  * only call poke, and call it from the main thread! This will make sure all local changes at the moment of calling will be sent as soon as possible.
  *
+ * TODO: find a way to trigger a login when authentication fails (eg user changed password using other device)
+ *
  */
 public class CliqueSyncer {
     private static final String TAG = "CliqueSyncer";
 
     private static CliqueSyncer instance = null;
-
     private SynchronizeTask synchronizeTask = null;
-    private boolean extraRun = false;
+    private boolean extraRun = false;       //TODO: make the extra run if necessary
 
     private CliquePreferences prefs;
 
@@ -61,8 +62,7 @@ public class CliqueSyncer {
      *
      * when poked it means there is new dirty data that should be uploaded to the server
      */
-    public void
-    poke() {
+    public void poke() {
         try {
             CliqueSQLite.increaseGlobalDirtyCounter();
             Log.i(TAG, "increased the globaldirtycounter to " + CliqueSQLite.getGlobalDirtyCounter());
@@ -172,18 +172,17 @@ public class CliqueSyncer {
                         Log.i(TAG, "new nickname received from the webservice! (" + syncApiCall.getNewNickname() + ")");
                         DbSelfProfile.update(new Profile(syncApiCall.getNewNickname()), maxDirtyCounter);
                     }
-                    // new contacts and profiles?
+                    // contact adds and deletes?
                     List<Long> addContactIds = syncApiCall.getNewContactAdds();
-                    Map<Long, String> profileNames = syncApiCall.getNewProfileNames();
-                    if(addContactIds.size() > 0) {
-                        Log.i(TAG, "received n contact adds from server: n = " + addContactIds.size());
-                        for(Long id : addContactIds) {
-                            String nick = profileNames.containsKey(id) ? profileNames.get(id) : "anon";
-                            DbContact.add(id, maxDirtyCounter);
-                        }
-                    }
-
-                    // new profiles? TODO
+                    if(addContactIds.size() > 0) Log.i(TAG, "received n contact adds from server: n = " + addContactIds.size());
+                    for(Long id : addContactIds) DbContact.add(id, maxDirtyCounter);
+                    List<Long> delContactIds = syncApiCall.getNewContactDels();
+                    if(delContactIds.size() > 0) Log.i(TAG, "received n contact dels from server: n = " + delContactIds.size());
+                    for(Long id : delContactIds) DbContact.remove(id, maxDirtyCounter);
+                    // new profiles?
+                    List<Pair<Profile, Long>> newProfiles = syncApiCall.getNewProfiles();
+                    if(newProfiles.size() > 0) Log.i(TAG, "received n new profiles from the server: n = " + newProfiles.size());
+                    for(Pair<Profile, Long> pr_id : newProfiles) DbProfile.add(pr_id.second, pr_id.first);
                     // ping TODO
                     // if we succesfully got this far, the lastSync may be increased as we never need to get this data again
                     CliqueSQLite.setLastSync(syncApiCall.getNewLastSync());

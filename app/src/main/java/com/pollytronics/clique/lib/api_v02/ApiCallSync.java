@@ -4,15 +4,14 @@ import android.util.Pair;
 
 import com.pollytronics.clique.lib.CliqueApiCall;
 import com.pollytronics.clique.lib.base.Blip;
+import com.pollytronics.clique.lib.base.Profile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by pollywog on 9/7/15.
@@ -33,7 +32,7 @@ public class ApiCallSync extends CliqueApiCall {
     private String newNickname = null;
     private List<Long> newContactAdds = new ArrayList<>();
     private List<Long> newContactDels = new ArrayList<>();
-    private Map<Long, String> newProfileNames = new HashMap<>();
+    private List<Pair<Profile, Long>> newProfiles = new ArrayList<>();
 
     public ApiCallSync(String username, String key) throws JSONException {
         headers.add(new Pair<String, String>("username", username));
@@ -115,7 +114,7 @@ public class ApiCallSync extends CliqueApiCall {
             if(profileJS.has("nick")) this.newNickname = profileJS.getString("nick");
         }
 
-        // new contacts?
+        // new contacts?    // TODO: figure out the right behaviour for syncing and connecting to users
         if(job.has("contacts")) {
             JSONObject contactJS = job.getJSONObject("contacts");
             if(contactJS.has("add")) {
@@ -126,8 +125,8 @@ public class ApiCallSync extends CliqueApiCall {
                     newContactAdds.add(id);
                 }
             }
-            if(contactJS.has("del")) {
-                JSONArray delsJS = contactJS.getJSONArray("del");
+            if(contactJS.has("delete")) {
+                JSONArray delsJS = contactJS.getJSONArray("delete");
                 for(int i=0; i < delsJS.length(); i++) {
                     JSONObject delJS = delsJS.getJSONObject(i);
                     long id = delJS.getLong("id");
@@ -140,12 +139,11 @@ public class ApiCallSync extends CliqueApiCall {
                     JSONObject profileJS = contactProfilesJS.getJSONObject(i);
                     long id = profileJS.getLong("id");
                     String nick = profileJS.getString("nick");
-                    newProfileNames.put(id, nick);
+                    newProfiles.add(new Pair<Profile, Long>(new Profile(nick),id));
                 }
             }
         }
 
-        // new profiles? TODO
         // ping TODO
         if(job.has("ping")) {
             JSONArray pingJS = job.getJSONArray("ping");
@@ -157,7 +155,8 @@ public class ApiCallSync extends CliqueApiCall {
     public List<Pair<Blip, Long>> getNewBlips() { return newBlips; }
     public String getNewNickname() { return newNickname; }
     public List<Long> getNewContactAdds() { return newContactAdds; }
-    public Map<Long, String> getNewProfileNames() { return newProfileNames; }
+    public List<Long> getNewContactDels() { return newContactDels; }
+    public List<Pair<Profile, Long>> getNewProfiles() {return newProfiles; }
     public boolean isAuthSuccess() { return authSuccess; }
     public boolean isCallSuccess() { return callSuccess; }
 }

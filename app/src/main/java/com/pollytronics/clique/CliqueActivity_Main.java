@@ -30,7 +30,6 @@ import java.util.List;
  * Main app activity, it should give an overview of the situation and provide a simple GUI for
  * the most likely actions a user would want to perform.
  * TODO: (errorhandling) what to do with all the printStackTrace calls all over the code?
- * TODO: where and how should the presence of a valid login key be checked? should we do startactivityfor result or not?...
  * TODO: now the app will run in the presence of any key, even if invalid, that would be bad
  */
 public class CliqueActivity_Main extends CliqueActivity implements SensorEventListener {
@@ -47,7 +46,6 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cliqueactivity_main);
-
         toggleService = (Switch) findViewById(R.id.toggle_service);
         toggleService.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -61,11 +59,10 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
                 }
             }
         });
-
         radarView = (RadarView) findViewById(R.id.radar_view);
         radarView.setBearing(0);
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);   // might return null!
+        mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);   // TODO: might return null!
         enableHeartBeat(5000);  // will refresh view every 5 seconds regardless of new data (dot color needs to change)
     }
 
@@ -77,21 +74,9 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
             mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_GAME);  // motoG reports 7mA batt drain for mRotation.getPower()
         }
         if(!compassEnabled) { radarView.setBearing(0); }
-
         sunEnabled = getCliquePreferences().getSunEnabled();
         radarView.setSunEnabled(sunEnabled);
-
         radarView.setZoomRadius(getCliquePreferences().getZoomRadius());
-
-//        try {
-//            if(getCliqueDb().getSelfContact() == null) {
-//                Log.i(TAG, "selfContact == null, so starting login/create account activity");
-//                Intent intent = new Intent(this, CliqueActivity_Login.class);
-//                startActivity(intent);
-//            }
-//        } catch (CliqueDbException e) {
-//            e.printStackTrace();
-//        }
         feedDataToRadarView();
     }
 

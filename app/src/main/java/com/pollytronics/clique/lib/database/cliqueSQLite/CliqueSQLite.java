@@ -25,7 +25,7 @@ import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.Cliqu
  */
 public final class CliqueSQLite {
     public static final String DATABASE_NAME = "Clique.db";
-    public static final int DATABASE_VERSION = 13;   // increasing this will wipe all local databases on update
+    public static final int DATABASE_VERSION = 14;   // increasing this will wipe all local databases on update
     private static final String TAG="CliqueSQLite";
 
     private static CliqueDbHelper cliqueDbHelper = null;

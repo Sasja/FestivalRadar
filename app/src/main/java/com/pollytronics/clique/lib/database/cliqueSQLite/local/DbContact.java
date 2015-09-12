@@ -21,7 +21,7 @@ public class DbContact extends BaseORM {
 
     private static final String TAG = "DbContact";
 
-    public static List<Long> getIds() throws CliqueDbException {
+    public static List<Long> getIcanSee() throws CliqueDbException {
         final List<Long> contactIds = new ArrayList<>();
         CliqueDbQuery query = new CliqueDbQuery() {
             @Override
@@ -35,7 +35,64 @@ public class DbContact extends BaseORM {
         };
         query.setTable(ContactEntry.TABLE_NAME);
         query.setProjection(new String[]{ContactEntry.COLUMN_NAME_ID});
-        query.setSelection(ContactEntry.COLUMN_NAME_SOFTDELETE + " = 0", null);
+        query.setSelection(ContactEntry.COLUMN_NAME_ICANSEE + " = 1", null);
+        query.execute();
+        return contactIds;
+    }
+
+    public static List<Long> getcanSeeme() throws CliqueDbException {
+        final List<Long> contactIds = new ArrayList<>();
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            public void parseCursor(Cursor c) throws CliqueDbException {
+                for(int i=0; i < c.getCount(); i++) {
+                    c.moveToPosition(i);
+                    long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_ID));
+                    contactIds.add(id);
+                }
+            }
+        };
+        query.setTable(ContactEntry.TABLE_NAME);
+        query.setProjection(new String[]{ContactEntry.COLUMN_NAME_ID});
+        query.setSelection(ContactEntry.COLUMN_NAME_CANSEEME + " = 1", null);
+        query.execute();
+        return contactIds;
+    }
+
+    public static List<Long> getAll() throws CliqueDbException {
+        final List<Long> contactIds = new ArrayList<>();
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            public void parseCursor(Cursor c) throws CliqueDbException {
+                for(int i=0; i < c.getCount(); i++) {
+                    c.moveToPosition(i);
+                    long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_ID));
+                    contactIds.add(id);
+                }
+            }
+        };
+        query.setTable(ContactEntry.TABLE_NAME);
+        query.setProjection(new String[]{ContactEntry.COLUMN_NAME_ID});
+        query.execute();
+        return contactIds;
+    }
+
+    public static List<Long> getFullyPaired() throws CliqueDbException {
+        final List<Long> contactIds = new ArrayList<>();
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            public void parseCursor(Cursor c) throws CliqueDbException {
+                for(int i=0; i < c.getCount(); i++) {
+                    c.moveToPosition(i);
+                    long id = c.getLong(c.getColumnIndexOrThrow(ContactEntry.COLUMN_NAME_ID));
+                    contactIds.add(id);
+                }
+            }
+        };
+        query.setTable(ContactEntry.TABLE_NAME);
+        query.setProjection(new String[]{ContactEntry.COLUMN_NAME_ID});
+        query.setSelection(ContactEntry.COLUMN_NAME_CANSEEME + " = 1 AND " +
+                ContactEntry.COLUMN_NAME_ICANSEE + " = 1", null);
         query.execute();
         return contactIds;
     }
@@ -45,7 +102,7 @@ public class DbContact extends BaseORM {
         CliqueDbUpdate update = new CliqueDbUpdate();
         update.setTable(ContactEntry.TABLE_NAME);
         ContentValues content = new ContentValues();
-        content.put(ContactEntry.COLUMN_NAME_SOFTDELETE, 1);
+        content.put(ContactEntry.COLUMN_NAME_CANSEEME, 0);
         content.put(ContactEntry.COLUMN_NAME_DIRTYCOUNTER, currentDirtyCounter);
         update.setValues(content);
         update.setWhere(ContactEntry.COLUMN_NAME_ID + " = " + Long.toString(id), null);
@@ -57,7 +114,7 @@ public class DbContact extends BaseORM {
         CliqueDbUpdate update = new CliqueDbUpdate();
         update.setTable(ContactEntry.TABLE_NAME);
         ContentValues content = new ContentValues();
-        content.put(ContactEntry.COLUMN_NAME_SOFTDELETE, 0);
+        content.put(ContactEntry.COLUMN_NAME_CANSEEME, 1);
         content.put(ContactEntry.COLUMN_NAME_DIRTYCOUNTER, currentDirtyCounter);
         update.setValues(content);
         update.setWhere(ContactEntry.COLUMN_NAME_ID + " = " + Long.toString(id), null);
@@ -68,13 +125,13 @@ public class DbContact extends BaseORM {
         CliqueDbInsert insert = new CliqueDbInsert();
         insert.setTable(ContactEntry.TABLE_NAME);
         content = new ContentValues();
-        content.put(ContactEntry.COLUMN_NAME_SOFTDELETE, 0);
+        content.put(ContactEntry.COLUMN_NAME_CANSEEME, 1);
         content.put(ContactEntry.COLUMN_NAME_DIRTYCOUNTER, currentDirtyCounter);
         insert.setValues(content);
         insert.execute();
     }
 
-    public static boolean isContact(long id) throws CliqueDbException {
+    public static boolean canIsee(long id) throws CliqueDbException {
         final boolean[] result = new boolean[1];
         CliqueDbQuery query = new CliqueDbQuery() {
             @Override
@@ -83,8 +140,23 @@ public class DbContact extends BaseORM {
             }
         };
         query.setTable(ContactEntry.TABLE_NAME);
-        query.setSelection(ContactEntry.COLUMN_NAME_ID + " = " + Long.toString(id) +
-                ContactEntry.COLUMN_NAME_SOFTDELETE + " = 0", null);
+        query.setSelection(ContactEntry.COLUMN_NAME_ID + " = " + Long.toString(id) + " AND " +
+                ContactEntry.COLUMN_NAME_ICANSEE + " = 1", null);
+        query.execute();
+        return result[0];
+    }
+
+    public static boolean canSeeme(long id) throws CliqueDbException {
+        final boolean[] result = new boolean[1];
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            public void parseCursor(Cursor c) throws CliqueDbException {
+                result[0] = c.getCount() >= 0;
+            }
+        };
+        query.setTable(ContactEntry.TABLE_NAME);
+        query.setSelection(ContactEntry.COLUMN_NAME_ID + " = " + Long.toString(id) + " AND " +
+                ContactEntry.COLUMN_NAME_CANSEEME + " = 1", null);
         query.execute();
         return result[0];
     }

@@ -134,7 +134,7 @@ public class CliqueActivity_Main extends CliqueActivity implements SensorEventLi
         radarView.removeAllContacts();
         List<Long> contactIds;
         try {
-            contactIds = DbContact.getIds();
+            contactIds = DbContact.getFullyPaired();
         } catch (CliqueDbException e) {
             e.printStackTrace();
             return;

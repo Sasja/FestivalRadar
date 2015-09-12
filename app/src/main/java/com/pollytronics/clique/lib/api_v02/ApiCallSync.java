@@ -30,8 +30,10 @@ public class ApiCallSync extends CliqueApiCall {
     private double newLastSync = 0;
     private List<Pair<Blip, Long>> newBlips = new ArrayList<>();
     private String newNickname = null;
-    private List<Long> newContactAdds = new ArrayList<>();
-    private List<Long> newContactDels = new ArrayList<>();
+    private List<Long> newIcanSeeAdds = new ArrayList<>();
+    private List<Long> newIcanSeeDels = new ArrayList<>();
+    private List<Long> newCanSeeMeAdds = new ArrayList<>();
+    private List<Long> newCanSeeMeDels = new ArrayList<>();
     private List<Pair<Profile, Long>> newProfiles = new ArrayList<>();
 
     public ApiCallSync(String username, String key) throws JSONException {
@@ -50,7 +52,7 @@ public class ApiCallSync extends CliqueApiCall {
     }
 
     //TODO: this is nor efficient or very elegant
-    public void addContact(long id) throws JSONException {
+    public void addCanSeeme(long id) throws JSONException {
         JSONObject newEntry = new JSONObject().put("id", id);
         JSONObject contactsJS = bodyJS.has("contacts") ? bodyJS.getJSONObject("contacts") : new JSONObject();
         JSONArray adds = contactsJS.has("add") ? contactsJS.getJSONArray("add") : new JSONArray();
@@ -60,15 +62,16 @@ public class ApiCallSync extends CliqueApiCall {
     }
 
     //TODO: this is duplicate code
-    public void delContact(long id) throws JSONException {
+    public void delCanSeeme(long id) throws JSONException {
         JSONObject newEntry = new JSONObject().put("id", id);
         JSONObject contactsJS = bodyJS.has("contacts") ? bodyJS.getJSONObject("contacts") : new JSONObject();
-        JSONArray dels = contactsJS.has("del") ? contactsJS.getJSONArray("del") : new JSONArray();
+        JSONArray dels = contactsJS.has("delete") ? contactsJS.getJSONArray("delete") : new JSONArray();
         dels.put(newEntry);
-        contactsJS.put("del", dels);
+        contactsJS.put("delete", dels);
         bodyJS.put("contacts",contactsJS);
     }
 
+    //TODO: this is nor efficient or very elegant
     public void addBlip(Blip blip) throws JSONException {
         JSONObject newEntry = new JSONObject().put("lat",blip.getLatitude()).put("lon", blip.getLongitude()).put("utc_s", blip.getUtc_s());
         JSONArray blipsJS = bodyJS.has("blips") ? bodyJS.getJSONArray("blips") : new JSONArray();
@@ -117,20 +120,42 @@ public class ApiCallSync extends CliqueApiCall {
         // new contacts?    // TODO: figure out the right behaviour for syncing and connecting to users
         if(job.has("contacts")) {
             JSONObject contactJS = job.getJSONObject("contacts");
-            if(contactJS.has("add")) {
-                JSONArray addsJS = contactJS.getJSONArray("add");
-                for(int i=0; i < addsJS.length(); i++) {
-                    JSONObject addJS = addsJS.getJSONObject(i);
-                    long id = addJS.getLong("id");
-                    newContactAdds.add(id);
+            if(contactJS.has("icansee")) {
+                JSONObject icansee = contactJS.getJSONObject("icansee");
+                if(icansee.has("add")) {
+                    JSONArray addsJS = icansee.getJSONArray("add");
+                    for(int i=0; i < addsJS.length(); i++) {
+                        JSONObject addJS = addsJS.getJSONObject(i);
+                        long id = addJS.getLong("id");
+                        newIcanSeeAdds.add(id);
+                    }
+                }
+                if(icansee.has("delete")) {
+                    JSONArray delsJS = icansee.getJSONArray("delete");
+                    for(int i=0; i < delsJS.length(); i++) {
+                        JSONObject delJS = delsJS.getJSONObject(i);
+                        long id = delJS.getLong("id");
+                        newIcanSeeDels.add(id);
+                    }
                 }
             }
-            if(contactJS.has("delete")) {
-                JSONArray delsJS = contactJS.getJSONArray("delete");
-                for(int i=0; i < delsJS.length(); i++) {
-                    JSONObject delJS = delsJS.getJSONObject(i);
-                    long id = delJS.getLong("id");
-                    newContactDels.add(id);
+            if(contactJS.has("canseeme")) {
+                JSONObject canseeme = contactJS.getJSONObject("canseeme");
+                if(canseeme.has("add")) {
+                    JSONArray addsJS = canseeme.getJSONArray("add");
+                    for(int i=0; i < addsJS.length(); i++) {
+                        JSONObject addJS = addsJS.getJSONObject(i);
+                        long id = addJS.getLong("id");
+                        newCanSeeMeAdds.add(id);
+                    }
+                }
+                if(canseeme.has("delete")) {
+                    JSONArray delsJS = canseeme.getJSONArray("delete");
+                    for(int i=0; i < delsJS.length(); i++) {
+                        JSONObject delJS = delsJS.getJSONObject(i);
+                        long id = delJS.getLong("id");
+                        newCanSeeMeDels.add(id);
+                    }
                 }
             }
             if(contactJS.has("profiles")) {
@@ -154,8 +179,10 @@ public class ApiCallSync extends CliqueApiCall {
     public String getCallMessage() { return callMessage; }
     public List<Pair<Blip, Long>> getNewBlips() { return newBlips; }
     public String getNewNickname() { return newNickname; }
-    public List<Long> getNewContactAdds() { return newContactAdds; }
-    public List<Long> getNewContactDels() { return newContactDels; }
+    public List<Long> getNewIcanSeeAdds() { return newIcanSeeAdds; }
+    public List<Long> getNewIcanSeeDels() { return newIcanSeeDels; }
+    public List<Long> getNewCanSeeMeAdds() { return newCanSeeMeAdds; }
+    public List<Long> getNewCanSeeMeDels() { return newCanSeeMeDels; }
     public List<Pair<Profile, Long>> getNewProfiles() {return newProfiles; }
     public boolean isAuthSuccess() { return authSuccess; }
     public boolean isCallSuccess() { return callSuccess; }

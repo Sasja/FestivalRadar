@@ -115,6 +115,17 @@ public class CliqueSyncer {
                     syncApiCall.setNickname(newSelfProfile.getName());   // TODO: generify!
                 }
 
+                // contacts
+                List<Long> addCanSeeMe = DbContact.getAdded(maxDirtyCounter);
+                if(addCanSeeMe.size() > 0) {
+                    Log.i(TAG, "found n new contacts that may see me to upload: " + addCanSeeMe.size());
+                    for(Long id:addCanSeeMe) syncApiCall.addCanSeeme(id);
+                }
+                List<Long> delCanSeeMe = DbContact.getDeleted(maxDirtyCounter);
+                if(delCanSeeMe.size() > 0) {
+                    Log.i(TAG, "found n contacts to remotely delete: " + delCanSeeMe.size());
+                    for(Long id:delCanSeeMe) syncApiCall.delCanSeeme(id);
+                }
                 // ping TODO
             } catch (CliqueDbException | JSONException e) {
                 e.printStackTrace();
@@ -173,12 +184,19 @@ public class CliqueSyncer {
                         DbSelfProfile.update(new Profile(syncApiCall.getNewNickname()), maxDirtyCounter);
                     }
                     // contact adds and deletes?
-                    List<Long> addContactIds = syncApiCall.getNewContactAdds();
-                    if(addContactIds.size() > 0) Log.i(TAG, "received n contact adds from server: n = " + addContactIds.size());
-                    for(Long id : addContactIds) DbContact.add(id, maxDirtyCounter);
-                    List<Long> delContactIds = syncApiCall.getNewContactDels();
-                    if(delContactIds.size() > 0) Log.i(TAG, "received n contact dels from server: n = " + delContactIds.size());
-                    for(Long id : delContactIds) DbContact.remove(id, maxDirtyCounter);
+                    List<Long> canSeeMeAdds = syncApiCall.getNewCanSeeMeAdds();
+                    if(canSeeMeAdds.size() > 0) Log.i(TAG, "received n canseeme-contact adds from server: n = " + canSeeMeAdds.size());
+                    for(Long id : canSeeMeAdds) DbContact.addCanSeeMe(id, maxDirtyCounter);
+                    List<Long> canSeeMeDels = syncApiCall.getNewCanSeeMeDels();
+                    if(canSeeMeDels.size() > 0) Log.i(TAG, "received n canseeme-contact dels from server: n = " + canSeeMeDels.size());
+                    for(Long id : canSeeMeDels) DbContact.removeCanSeeMe(id, maxDirtyCounter);
+                    List<Long> iCanSeeAdds = syncApiCall.getNewIcanSeeAdds();
+                    if(iCanSeeAdds.size() > 0) Log.i(TAG, "received n icansee-contact adds from server: n = " + iCanSeeAdds.size());
+                    for(Long id : iCanSeeAdds) DbContact.addIcanSee(id);
+                    List<Long> iCanSeeDels = syncApiCall.getNewIcanSeeDels();
+                    if(iCanSeeDels.size() > 0) Log.i(TAG, "received n icansee-contact dels from server: n = " + iCanSeeDels.size());
+                    for(Long id : iCanSeeDels) DbContact.removeIcanSee(id);
+
                     // new profiles?
                     List<Pair<Profile, Long>> newProfiles = syncApiCall.getNewProfiles();
                     if(newProfiles.size() > 0) Log.i(TAG, "received n new profiles from the server: n = " + newProfiles.size());

@@ -19,8 +19,10 @@ public class DbStructure {
     public static class ContactEntry implements BaseColumns {
         public static final String TABLE_NAME = "contacts";
         public static final String COLUMN_NAME_ID ="id";
-        public static final String COLUMN_NAME_SOFTDELETE="softdelete";
-        public static final String COLUMN_NAME_DIRTYCOUNTER="dirtyCounter";
+        //public static final String COLUMN_NAME_SOFTDELETE="softdelete"; // is not used as can see me does this now
+        public static final String COLUMN_NAME_DIRTYCOUNTER = "dirtyCounter";
+        public static final String COLUMN_NAME_ICANSEE = "iCanSee";
+        public static final String COLUMN_NAME_CANSEEME = "canSeeMe";
     }
 
     public static class ProfileEntry implements BaseColumns {
@@ -79,10 +81,12 @@ public class DbStructure {
 
             Log.i(TAG, "recreating all tables in local database");
             db.execSQL("CREATE TABLE " + ContactEntry.TABLE_NAME + " ( " +
-                    ContactEntry._ID + " INTEGER PRIMARY KEY," +
-                    ContactEntry.COLUMN_NAME_ID + " INTEGER, " +
-                    ContactEntry.COLUMN_NAME_SOFTDELETE + " INTEGER DEFAULT 0, " +
-                    ContactEntry.COLUMN_NAME_DIRTYCOUNTER + " LONG )");
+                    ContactEntry._ID +                      " INTEGER PRIMARY KEY," +
+                    ContactEntry.COLUMN_NAME_ID +           " INTEGER, " +
+                    //ContactEntry.COLUMN_NAME_SOFTDELETE +   " INTEGER DEFAULT 0, " +
+                    ContactEntry.COLUMN_NAME_CANSEEME +     " INTEGER DEFAULT 0, " +
+                    ContactEntry.COLUMN_NAME_ICANSEE +      " INTEGER DEFAULT 0, " +
+                    ContactEntry.COLUMN_NAME_DIRTYCOUNTER + " INTEGER DEFAULT 0)");
             db.execSQL("CREATE TABLE " + ProfileEntry.TABLE_NAME + " ( " +
                     ProfileEntry._ID +                      " INTEGER PRIMARY KEY, " +
                     ProfileEntry.COLUMN_NAME_ID +           " INTEGER, " +
@@ -102,10 +106,10 @@ public class DbStructure {
                     SelfBlipEntry.COLUMN_NAME_LAT +          " REAL, " +
                     SelfBlipEntry.COLUMN_NAME_LON +          " REAL, " +
                     SelfBlipEntry.COLUMN_NAME_UTC_S +        " REAL, " +
-                    SelfBlipEntry.COLUMN_NAME_DIRTYCOUNTER + " INTEGER )");
+                    SelfBlipEntry.COLUMN_NAME_DIRTYCOUNTER + " INTEGER DEFAULT 0)");
             db.execSQL("CREATE TABLE " + SyncStatus.TABLE_NAME + " ( " +
                     SyncStatus.COLUMN_NAME_GLOBALDIRTYCOUNTER + " INTEGER, " +
-                    SyncStatus.COLUMN_NAME_LASTSYNC + " REAL )");
+                    SyncStatus.COLUMN_NAME_LASTSYNC +           " REAL )");
 
             // enter an initial selfContact
             ContentValues contentValues = new ContentValues();

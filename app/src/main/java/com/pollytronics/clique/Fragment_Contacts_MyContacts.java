@@ -51,7 +51,7 @@ public class Fragment_Contacts_MyContacts extends MVP_Fragment_Contacts {
         List<Long> contactIds;
         List<Contact> contacts = new ArrayList<>();
         try {
-            contactIds = DbContact.getIds();
+            contactIds = DbContact.getcanSeeme();
             for(long cid : contactIds) {
                 contacts.add(new Contact(cid, DbProfile.get(cid)));
             }

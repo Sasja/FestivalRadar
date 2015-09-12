@@ -81,15 +81,6 @@
                 android:value="com.pollytronics.clique.CliqueActivity_Main" />
         </activity>
         <activity
-            android:name=".CliqueActivity_Welcome_deprec"
-            android:label="@string/title_activity_welcome"
-            android:parentActivityName=".CliqueActivity_Main"
-            tools:ignore="UnusedAttribute" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.pollytronics.clique.CliqueActivity_Main" />
-        </activity>
-        <activity
             android:name=".CliqueActivity_Login"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="stateHidden">

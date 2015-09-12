@@ -4,7 +4,6 @@ package com.pollytronics.clique;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,15 +14,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.pollytronics.clique.lib.api_v01.ApiCallGetPings;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
 
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,7 +46,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
                 ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()){
-                    new PingTask().execute();
+//                    new PingTask().execute();
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "pinging...", Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
@@ -89,55 +83,55 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
      * TODO: (api) do the post api call once it is really implemented and the waiting and whatnot
      *
      */
-    private class PingTask extends AsyncTask<Void, Void, String> {
-        private ApiCallGetPings getPings;
-        private boolean apiCallSucceeded = false;
-
-        @Override
-        protected void onPreExecute() {
-            Log.i(TAG, "gathering own user id");
-            getPings = new ApiCallGetPings(getContactActivity().getCliquePreferences().getAccountId());
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            Log.i(TAG, "calling api from PingTask");
-            try {
-                getPings.callAndParse();
-                apiCallSucceeded = true;
-            } catch (IOException e) {
-                Log.i(TAG, "IOException: unable to complete API requests");
-                return "IOException: unable to complete API requests";
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            if(apiCallSucceeded) {
-                Log.i(TAG, "using/aplying the responses of the webservice");
-                List<Contact> apiContacts = getPings.getAllPingContacts();
-                List<Contact> allReadyKnown = new ArrayList<>();
-                for (Contact c : apiContacts) {
-                    Log.i(TAG, String.format("checking if contact %s is allready known",c.getName()));
-                    try {
-                        if(DbContact.isContact(c.getGlobalId())) {
-                            allReadyKnown.add(c);
-                            Log.i(TAG, String.format("yup %s is allready known", c.getName()));
-                        }
-                    } catch (CliqueDbException e) {
-                        e.printStackTrace();
-                    }
-                }
-                apiContacts.removeAll(allReadyKnown);
-                fillListViewFromList(listView, apiContacts);
-            } else {
-                Log.i(TAG, "the api call has failed, not doing anything in onPostExcecute");
-            }
-        }
-    }
+//    private class PingTask extends AsyncTask<Void, Void, String> {
+//        private ApiCallGetPings getPings;
+//        private boolean apiCallSucceeded = false;
+//
+//        @Override
+//        protected void onPreExecute() {
+//            Log.i(TAG, "gathering own user id");
+//            getPings = new ApiCallGetPings(getContactActivity().getCliquePreferences().getAccountId());
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            Log.i(TAG, "calling api from PingTask");
+//            try {
+//                getPings.callAndParse();
+//                apiCallSucceeded = true;
+//            } catch (IOException e) {
+//                Log.i(TAG, "IOException: unable to complete API requests");
+//                return "IOException: unable to complete API requests";
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            if(apiCallSucceeded) {
+//                Log.i(TAG, "using/aplying the responses of the webservice");
+//                List<Contact> apiContacts = getPings.getAllPingContacts();
+//                List<Contact> allReadyKnown = new ArrayList<>();
+//                for (Contact c : apiContacts) {
+//                    Log.i(TAG, String.format("checking if contact %s is allready known",c.getName()));
+//                    try {
+//                        if(DbContact.canIsee(c.getGlobalId())) {
+//                            allReadyKnown.add(c);
+//                            Log.i(TAG, String.format("yup %s is allready known", c.getName()));
+//                        }
+//                    } catch (CliqueDbException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                apiContacts.removeAll(allReadyKnown);
+//                fillListViewFromList(listView, apiContacts);
+//            } else {
+//                Log.i(TAG, "the api call has failed, not doing anything in onPostExcecute");
+//            }
+//        }
+//    }
 
     private class CliqueContactAdapter extends ArrayAdapter<Contact> {
 
@@ -157,15 +151,21 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
                 @Override
                 public void onClick(View v) {
                     Log.i(TAG, "onClick()... adding contact");
-                    ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                    if (networkInfo != null && networkInfo.isConnected()){
-                        getContactActivity().addNewContact(contact);
+                    try {
+                        DbContact.add(contact.getGlobalId());
                         remove(contact);
-                    } else {
-                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "no network", Toast.LENGTH_SHORT);
-                        toast.show();
+                    } catch (CliqueDbException e) {
+                        e.printStackTrace();
                     }
+//                    ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+//                    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+//                    if (networkInfo != null && networkInfo.isConnected()){
+//                        getContactActivity().addNewContact(contact);
+//                        remove(contact);
+//                    } else {
+//                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "no network", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                    }
                 }
             });
             Button ignoreButt = (Button) view.findViewById(R.id.button_ping_ignore);

@@ -234,7 +234,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
      * override this function in the login activity itself (for obvious reasons)
      */
     protected void assertAuthCredentials() {
-        Log.i(TAG, "checking for account credentials");
+        Log.i(TAG, "asserting presence of account credentials (not validating them)");
         if (getCliquePreferences().getAccountLogin() == null || getCliquePreferences().getAccountKeyb64() == null || getCliquePreferences().getAccountId() == 0) {
             Log.i(TAG, "account login or key missing, launching sign in activity");
             Intent intent = new Intent(this, CliqueActivity_Login.class);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +21,11 @@ import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
 
 import java.util.List;
 
+
 /**
  * TODO: (syncing) fix duplicate code everywhere checking for network availability (also other files)
  * TODO: (gui) animate adding/ignoring contact (add => fly to the right, ignore => shrink or dissolve or smth)
  * TODO: (syncing) turning screen will not remember the contacts in the ping list(figure out working with Bundle savedinstance state in onCreate)
- * TODO: (syncing) maybe the pingtask belongs in the activity class?
  * TODO: (syncing) some feedback when pinging is in progress (see basicsyncadapter demo for inspiration (progressbar))
  *
  */
@@ -33,22 +34,28 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
     private static final String TAG = "Frag_Contacts_Ping";
 
     private ListView listView;
+    private PingLoop pingLoop = null;
+    private Handler handler = new Handler();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contacts_ping, container, false);
         listView = (ListView) view.findViewById(R.id.listview_ping);
-        Button pingButt = (Button) view.findViewById(R.id.button_ping);
+        final Button pingButt = (Button) view.findViewById(R.id.button_ping);
         pingButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                if (networkInfo != null && networkInfo.isConnected()){
+                if (networkInfo != null && networkInfo.isConnected()) {
 //                    new PingTask().execute();
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "pinging...", Toast.LENGTH_SHORT);
                     toast.show();
+                    Log.i(TAG, "starting ping");
+                    handler.removeCallbacks(pingLoop);  // make sure there's not two running
+                    pingLoop = new PingLoop();
+                    handler.postDelayed(pingLoop, 2000);
                 } else {
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "no network", Toast.LENGTH_SHORT);
                     toast.show();
@@ -177,6 +184,26 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
             });
             return view;
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        handler.removeCallbacks(pingLoop);
+    }
+
+    private class PingLoop implements Runnable {
+        private int remaining = 9;
+        @Override
+        public void run() {
+            Log.i(TAG, "calling pingLoopHandler, remaining = " + remaining);
+            pingLoopHandler();
+            if(--remaining > 0) handler.postDelayed(pingLoop, 2000);
+        }
+    }
+
+    private void pingLoopHandler() {
+        Log.i(TAG, "ping!");
     }
 
 }

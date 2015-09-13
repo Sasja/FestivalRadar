@@ -1,5 +1,6 @@
 package com.pollytronics.clique.lib.api_v02;
 
+import android.util.Log;
 import android.util.Pair;
 
 import com.pollytronics.clique.lib.CliqueApiCall;
@@ -15,6 +16,7 @@ import java.util.List;
 
 /**
  * Created by pollywog on 9/7/15.
+ * TODO: what if some of those methods such as setpinggetset are called twice?
  */
 public class ApiCallSync extends CliqueApiCall {
     private final String TAG = "ApiCallSync";
@@ -35,6 +37,7 @@ public class ApiCallSync extends CliqueApiCall {
     private List<Long> newCanSeeMeAdds = new ArrayList<>();
     private List<Long> newCanSeeMeDels = new ArrayList<>();
     private List<Pair<Profile, Long>> newProfiles = new ArrayList<>();
+    private List<Pair<Long, String>> newPings = new ArrayList<>();
 
     public ApiCallSync(String username, String key) throws JSONException {
         headers.add(new Pair<String, String>("username", username));
@@ -79,6 +82,11 @@ public class ApiCallSync extends CliqueApiCall {
         bodyJS.put("blips", blipsJS);
     }
 
+    public void setPingGetSet(boolean get, boolean set) throws JSONException{
+        JSONObject pingJS = new JSONObject().put("get", get).put("set", set);
+        bodyJS.put("ping", pingJS);
+    }
+
     @Override
     protected boolean isFullyInitialized() { return fullyInitialized; }
 
@@ -106,6 +114,7 @@ public class ApiCallSync extends CliqueApiCall {
             JSONArray blipsJS = job.getJSONArray("blips");
             for(int i=0; i < blipsJS.length(); i++) {
                 JSONObject blipJS = blipsJS.getJSONObject(i);
+                Log.i(TAG, "blipJS = " + blipJS.toString());
                 Blip blip = new Blip(blipJS.getDouble("lat"), blipJS.getDouble("lon"), blipJS.getDouble("utc_s"));
                 long id = blipJS.getLong("id");
                 newBlips.add(new Pair<Blip, Long>(blip, id));
@@ -169,9 +178,15 @@ public class ApiCallSync extends CliqueApiCall {
             }
         }
 
-        // ping TODO
+        // new pings?
         if(job.has("ping")) {
-            JSONArray pingJS = job.getJSONArray("ping");
+            JSONArray pingsJS = job.getJSONArray("ping");
+            for(int i=0; i < pingsJS.length(); i++) {
+                JSONObject pingJS = pingsJS.getJSONObject(i);
+                long id = pingJS.getLong("id");
+                String nick = pingJS.getString("nick");
+                newPings.add(new Pair<Long, String>(id, nick));
+            }
         }
     }
 
@@ -184,6 +199,7 @@ public class ApiCallSync extends CliqueApiCall {
     public List<Long> getNewCanSeeMeAdds() { return newCanSeeMeAdds; }
     public List<Long> getNewCanSeeMeDels() { return newCanSeeMeDels; }
     public List<Pair<Profile, Long>> getNewProfiles() {return newProfiles; }
+    public List<Pair<Long, String>> getNewPings() { return newPings; }
     public boolean isAuthSuccess() { return authSuccess; }
     public boolean isCallSuccess() { return callSuccess; }
 }

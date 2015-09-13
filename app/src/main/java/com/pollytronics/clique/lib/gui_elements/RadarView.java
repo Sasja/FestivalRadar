@@ -95,7 +95,7 @@ public class RadarView extends View {
 
         painter.crosshairs();
         painter.scaleCircles();
-        for(Contact c:contacts.values()){
+        if(centerLocation != null) for(Contact c:contacts.values()){    // TODO: this will prevent null pointer exceptions, but see if it can be done more nicely
             Blip b = lastBlips.get(c.getGlobalId());
             if(b != null) {
                 painter.blip(b, c);

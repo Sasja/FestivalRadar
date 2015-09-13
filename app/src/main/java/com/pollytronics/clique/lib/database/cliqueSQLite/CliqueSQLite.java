@@ -24,8 +24,6 @@ import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.Cliqu
  * TODO: (syncing) clean up the database now and then to maintain a maximum number of blips per user
  */
 public final class CliqueSQLite {
-    public static final String DATABASE_NAME = "Clique.db";
-    public static final int DATABASE_VERSION = 14;   // increasing this will wipe all local databases on update
     private static final String TAG="CliqueSQLite";
 
     private static CliqueDbHelper cliqueDbHelper = null;

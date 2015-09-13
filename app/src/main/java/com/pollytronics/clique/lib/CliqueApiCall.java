@@ -129,20 +129,21 @@ abstract public class CliqueApiCall {
     }
 
     /**
-     * This method will read up to 8KB bytes from a stream of UTF-8 and return a string of it.
+     * This method will read up to 16KB bytes from a stream of UTF-8 and return a string of it.
+     * TODO: is it necessary to allocate 16K every time?
      * @param is inputStream
      * @return String
-     * @throws IOException when more than 8KB was in the stream
+     * @throws IOException when more than 16KB was in the stream
      */
     private String readInputStream(InputStream is) throws IOException {
-        final int bufferSize = 8 * 1024;
+        final int bufferSize = 16 * 1024;
         Reader reader = new InputStreamReader(is, "UTF-8");
         char[] buffer = new char[bufferSize];
         int charsRead = reader.read(buffer,0,bufferSize);
         int length = charsRead;
         Log.i(TAG, "charsRead = " + charsRead + "   length = " + length);
         while((charsRead != -1) && (length < bufferSize)) {
-            charsRead = reader.read(buffer, charsRead, bufferSize-charsRead);
+            charsRead = reader.read(buffer, length, charsRead);
             if (charsRead > 0) length += charsRead;
             Log.i(TAG, "charsRead = " + charsRead + "   length = " + length);
         }

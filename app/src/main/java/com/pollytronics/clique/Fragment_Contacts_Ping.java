@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.pollytronics.clique.lib.base.Contact;
+import com.pollytronics.clique.lib.base.Profile;
 import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
+import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbPing;
+import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbProfile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -53,9 +58,14 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "pinging...", Toast.LENGTH_SHORT);
                     toast.show();
                     Log.i(TAG, "starting ping");
-                    handler.removeCallbacks(pingLoop);  // make sure there's not two running
+                    try {
+                        com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbPing.flush();
+                    } catch (CliqueDbException e) {
+                        e.printStackTrace();
+                    }
+                    handler.removeCallbacks(pingLoop);  // make sure ther// e's not two running
                     pingLoop = new PingLoop();
-                    handler.postDelayed(pingLoop, 2000);
+                    pingLoop.run();
                 } else {
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "no network", Toast.LENGTH_SHORT);
                     toast.show();
@@ -77,69 +87,6 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         aListView.setAdapter(adapter);
     }
 
-
-    /**
-     * this class  will try to update aListview after it has
-     * queried the webservice for other contacts. It should only display contacts
-     * that aren't known yet.
-     *
-     * 1) do the api call for POST ping
-     * 2) wait a few seconds, then do the GET ping api call
-     * 2) update the listView through the CliqueContactAdapter
-     *
-     * TODO: (api) do the post api call once it is really implemented and the waiting and whatnot
-     *
-     */
-//    private class PingTask extends AsyncTask<Void, Void, String> {
-//        private ApiCallGetPings getPings;
-//        private boolean apiCallSucceeded = false;
-//
-//        @Override
-//        protected void onPreExecute() {
-//            Log.i(TAG, "gathering own user id");
-//            getPings = new ApiCallGetPings(getContactActivity().getCliquePreferences().getAccountId());
-//        }
-//
-//        @Override
-//        protected String doInBackground(Void... params) {
-//            Log.i(TAG, "calling api from PingTask");
-//            try {
-//                getPings.callAndParse();
-//                apiCallSucceeded = true;
-//            } catch (IOException e) {
-//                Log.i(TAG, "IOException: unable to complete API requests");
-//                return "IOException: unable to complete API requests";
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String s) {
-//            if(apiCallSucceeded) {
-//                Log.i(TAG, "using/aplying the responses of the webservice");
-//                List<Contact> apiContacts = getPings.getAllPingContacts();
-//                List<Contact> allReadyKnown = new ArrayList<>();
-//                for (Contact c : apiContacts) {
-//                    Log.i(TAG, String.format("checking if contact %s is allready known",c.getName()));
-//                    try {
-//                        if(DbContact.canIsee(c.getGlobalId())) {
-//                            allReadyKnown.add(c);
-//                            Log.i(TAG, String.format("yup %s is allready known", c.getName()));
-//                        }
-//                    } catch (CliqueDbException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                apiContacts.removeAll(allReadyKnown);
-//                fillListViewFromList(listView, apiContacts);
-//            } else {
-//                Log.i(TAG, "the api call has failed, not doing anything in onPostExcecute");
-//            }
-//        }
-//    }
-
     private class CliqueContactAdapter extends ArrayAdapter<Contact> {
 
         private static final int layout_resource = R.layout.list_item_ping;
@@ -153,26 +100,19 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
             View view = super.getView(position, convertView, parent);
             final Contact contact = getItem(position);
             // TODO: (gui) further apply the values of contact to the view object
-            Button connectButt = (Button) view.findViewById(R.id.button_ping_connect);
+            final Button connectButt = (Button) view.findViewById(R.id.button_ping_connect);
             connectButt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.i(TAG, "onClick()... adding contact");
                     try {
                         DbContact.add(contact.getGlobalId());
+                        DbProfile.add(contact.getGlobalId(), contact);
+                        DbPing.remove(contact.getGlobalId());
                         remove(contact);
                     } catch (CliqueDbException e) {
                         e.printStackTrace();
                     }
-//                    ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-//                    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-//                    if (networkInfo != null && networkInfo.isConnected()){
-//                        getContactActivity().addNewContact(contact);
-//                        remove(contact);
-//                    } else {
-//                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "no network", Toast.LENGTH_SHORT);
-//                        toast.show();
-//                    }
                 }
             });
             Button ignoreButt = (Button) view.findViewById(R.id.button_ping_ignore);
@@ -193,17 +133,37 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
     }
 
     private class PingLoop implements Runnable {
-        private int remaining = 9;
+        private static final int NLOOPS = 10;
+        private static final int PERIOD_MS = 2000;
+        private int remaining = NLOOPS;
         @Override
         public void run() {
             Log.i(TAG, "calling pingLoopHandler, remaining = " + remaining);
-            pingLoopHandler();
-            if(--remaining > 0) handler.postDelayed(pingLoop, 2000);
+            if(remaining == NLOOPS){
+                CliqueSyncer.getInstance(getActivity()).pokePingGetSet(true, true);
+            }
+            else {
+                CliqueSyncer.getInstance(getActivity()).pokePingGetSet(true, false);
+            }
+            if (--remaining > 0) handler.postDelayed(pingLoop, PERIOD_MS);
         }
     }
 
-    private void pingLoopHandler() {
-        Log.i(TAG, "ping!");
+    /**
+     * TODO: this is pretty retarded, clean it up
+     */
+    @Override
+    public void notifyDatabaseUpdate() {
+        super.notifyDatabaseUpdate();
+        try {
+            List<Pair<Long, String>> pings = DbPing.getPings();
+            List<Contact> pingContacts = new ArrayList<>();
+            if(pings != null) {
+                for(Pair<Long, String> ping : pings) pingContacts.add(new Contact(ping.first, new Profile(ping.second)));
+            }
+            fillListViewFromList(listView, pingContacts);
+        } catch (CliqueDbException e) {
+            e.printStackTrace();
+        }
     }
-
 }

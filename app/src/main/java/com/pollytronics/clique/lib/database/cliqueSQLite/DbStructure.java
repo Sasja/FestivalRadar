@@ -14,6 +14,8 @@ import android.util.Log;
  * TODO: onUpgrade() and onDowngrade() simply discards all data at the moment
  */
 public class DbStructure {
+    public static final int DATABASE_VERSION = 15;   // increasing this will wipe all local databases on update
+    public static final String DATABASE_NAME = "Clique.db";
     private static final String TAG = "DbStructure";
 
     public static class ContactEntry implements BaseColumns {
@@ -59,9 +61,16 @@ public class DbStructure {
         public static final String COLUMN_NAME_LASTSYNC = "lastsync";
     }
 
+    public static class PingEntry implements BaseColumns{
+        public static final String TABLE_NAME = "pingResults";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_NICK = "nick";
+        public static final String COLUMN_NAME_DISTANCE = "distance";
+    }
+
     public static class CliqueDbHelper extends SQLiteOpenHelper {
         public CliqueDbHelper(Context context) {
-            super(context, CliqueSQLite.DATABASE_NAME, null, CliqueSQLite.DATABASE_VERSION);
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
         @Override
@@ -71,21 +80,22 @@ public class DbStructure {
 
         //TODO: if upgrading to new db that has removed some tables they will not be dropped by dropAllTables, find better way to drop all tables!
         public static void recreateCliqueDb(SQLiteDatabase db) {
-            Log.i(TAG,"WARNING: dropping all tables in local database.");
+            Log.i(TAG, "WARNING: dropping all tables in local database.");
             db.execSQL("DROP TABLE IF EXISTS " + ContactEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + ProfileEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + BlipEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + SelfProfileEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + SelfBlipEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + SyncStatus.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + PingEntry.TABLE_NAME);
 
             Log.i(TAG, "recreating all tables in local database");
             db.execSQL("CREATE TABLE " + ContactEntry.TABLE_NAME + " ( " +
-                    ContactEntry._ID +                      " INTEGER PRIMARY KEY," +
-                    ContactEntry.COLUMN_NAME_ID +           " INTEGER, " +
+                    ContactEntry._ID + " INTEGER PRIMARY KEY," +
+                    ContactEntry.COLUMN_NAME_ID + " INTEGER, " +
                     //ContactEntry.COLUMN_NAME_SOFTDELETE +   " INTEGER DEFAULT 0, " +
-                    ContactEntry.COLUMN_NAME_CANSEEME +     " INTEGER DEFAULT 0, " +
-                    ContactEntry.COLUMN_NAME_ICANSEE +      " INTEGER DEFAULT 0, " +
+                    ContactEntry.COLUMN_NAME_CANSEEME + " INTEGER DEFAULT 0, " +
+                    ContactEntry.COLUMN_NAME_ICANSEE + " INTEGER DEFAULT 0, " +
                     ContactEntry.COLUMN_NAME_DIRTYCOUNTER + " INTEGER DEFAULT 0)");
             db.execSQL("CREATE TABLE " + ProfileEntry.TABLE_NAME + " ( " +
                     ProfileEntry._ID +                      " INTEGER PRIMARY KEY, " +
@@ -102,7 +112,7 @@ public class DbStructure {
                     SelfProfileEntry.COLUMN_NAME_NICK +           " TEXT, " +
                     SelfProfileEntry.COLUMN_NAME_DIRTYCOUNTER +   " INTEGER )");
             db.execSQL("CREATE TABLE " + SelfBlipEntry.TABLE_NAME + " ( " +
-                    SelfBlipEntry._ID +                      " INTEGER PRIMARY KEY," +
+                    SelfBlipEntry._ID +                      " INTEGER PRIMARY KEY, " +
                     SelfBlipEntry.COLUMN_NAME_LAT +          " REAL, " +
                     SelfBlipEntry.COLUMN_NAME_LON +          " REAL, " +
                     SelfBlipEntry.COLUMN_NAME_UTC_S +        " REAL, " +
@@ -110,6 +120,11 @@ public class DbStructure {
             db.execSQL("CREATE TABLE " + SyncStatus.TABLE_NAME + " ( " +
                     SyncStatus.COLUMN_NAME_GLOBALDIRTYCOUNTER + " INTEGER, " +
                     SyncStatus.COLUMN_NAME_LASTSYNC +           " REAL )");
+            db.execSQL("CREATE TABLE " + PingEntry.TABLE_NAME + " ( " +
+                    PingEntry._ID +                             " INTEGER PRIMARY KEY, " +
+                    PingEntry.COLUMN_NAME_ID +                  " INTEGER, " +
+                    PingEntry.COLUMN_NAME_NICK +                " TEXT, " +
+                    PingEntry.COLUMN_NAME_DISTANCE +            " REAL )");
 
             // enter an initial selfContact
             ContentValues contentValues = new ContentValues();

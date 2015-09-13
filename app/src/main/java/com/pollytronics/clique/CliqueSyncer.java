@@ -12,6 +12,7 @@ import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.CliqueSQLite;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbBlip;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbContact;
+import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbPing;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbProfile;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbSelfBlip;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbSelfProfile;
@@ -32,6 +33,7 @@ import java.util.List;
  * only call poke, and call it from the main thread! This will make sure all local changes at the moment of calling will be sent as soon as possible.
  *
  * TODO: find a way to trigger a login when authentication fails (eg user changed password using other device)
+ * TODO: will the sync routine keep running when poked again while in doInBackground?
  *
  */
 public class CliqueSyncer {
@@ -63,6 +65,12 @@ public class CliqueSyncer {
      * when poked it means there is new dirty data that should be uploaded to the server
      */
     public void poke() {
+        pokePingGetSet(false, false);
+    }
+
+    //TODO: this is not the most elegant or even right way to allow setting of ping get/set in api call
+    //TODO: consider a pingPoke arriving while the task is in doInBackground...
+    public void pokePingGetSet(boolean get, boolean set) {
         try {
             CliqueSQLite.increaseGlobalDirtyCounter();
             Log.i(TAG, "increased the globaldirtycounter to " + CliqueSQLite.getGlobalDirtyCounter());
@@ -71,6 +79,8 @@ public class CliqueSyncer {
                 return;
             } else {
                 synchronizeTask = new SynchronizeTask();
+                synchronizeTask.pingSet = set;
+                synchronizeTask.pingGet = get;
                 synchronizeTask.execute();
             }
         } catch (CliqueDbException e) {
@@ -85,6 +95,8 @@ public class CliqueSyncer {
 
         long maxDirtyCounter; // all entries with a dirtycountervalue higher than 0 and lower to this must be uploaded
         ApiCallSync syncApiCall;
+        boolean pingGet = false;
+        boolean pingSet = false;
 
         /**
          * Before calling the api in doInBackground all data needs to be gathered,
@@ -126,7 +138,8 @@ public class CliqueSyncer {
                     Log.i(TAG, "found n contacts to remotely delete: " + delCanSeeMe.size());
                     for(Long id:delCanSeeMe) syncApiCall.delCanSeeme(id);
                 }
-                // ping TODO
+                // ping
+                if(pingGet || pingSet) syncApiCall.setPingGetSet(pingGet, pingSet);
             } catch (CliqueDbException | JSONException e) {
                 e.printStackTrace();
             }
@@ -201,7 +214,19 @@ public class CliqueSyncer {
                     List<Pair<Profile, Long>> newProfiles = syncApiCall.getNewProfiles();
                     if(newProfiles.size() > 0) Log.i(TAG, "received n new profiles from the server: n = " + newProfiles.size());
                     for(Pair<Profile, Long> pr_id : newProfiles) DbProfile.add(pr_id.second, pr_id.first);
-                    // ping TODO
+
+                    // new ping data?
+                    List<Pair<Long, String>> newPings = syncApiCall.getNewPings();
+                    if(newPings.size() > 0) {
+                        Log.i(TAG, "received pings, flushing old pings, and adding new ones");
+                        DbPing.flush();
+                        for(int i=0; i < newPings.size(); i++) {
+                            Long id = newPings.get(i).first;
+                            String nick = newPings.get(i).second;
+                            DbPing.add(id, nick, (double) i);   // just pass the rank to the distance for now
+                        }
+                    }
+
                     // if we succesfully got this far, the lastSync may be increased as we never need to get this data again
                     CliqueSQLite.setLastSync(syncApiCall.getNewLastSync());
                 } catch (CliqueDbException e) {

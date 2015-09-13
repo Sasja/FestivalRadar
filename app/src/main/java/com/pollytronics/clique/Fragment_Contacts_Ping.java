@@ -108,7 +108,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
                     try {
                         DbContact.add(contact.getGlobalId());
                         DbProfile.add(contact.getGlobalId(), contact);
-                        DbPing.remove(contact.getGlobalId());
+                        DbPing.remove(contact.getGlobalId());  // TODO: sadly, it doesn't work like this
                         remove(contact);
                     } catch (CliqueDbException e) {
                         e.printStackTrace();

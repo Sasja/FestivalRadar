@@ -127,6 +127,7 @@ public class DbContact extends BaseORM {
         content = new ContentValues();
         content.put(ContactEntry.COLUMN_NAME_CANSEEME, 1);
         content.put(ContactEntry.COLUMN_NAME_DIRTYCOUNTER, currentDirtyCounter);
+        content.put(ContactEntry.COLUMN_NAME_ID, id);
         insert.setValues(content);
         insert.execute();
     }

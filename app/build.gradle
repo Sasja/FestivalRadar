@@ -8,8 +8,8 @@ android {
         applicationId "com.pollytronics.clique"      // if this is changed google play will consider it a new app
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 11
-        versionName "1.2.b"
+        versionCode 12
+        versionName "2.0.b"
     }
     buildTypes {
         release {

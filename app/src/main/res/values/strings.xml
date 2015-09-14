@@ -65,22 +65,23 @@
 
     <!-- Related to the About activity -->
     <string name="text_about">
-        \nnot a release version
-        \nlast release below:
+        <!--\nnot a release version-->
+        <!--\nlast release below:-->
+        <!--\n-->
+        \n<b>Clique 2.0.b</b>
         \n
-        \n<b>Clique 1.2.b</b>
-        \n
-        \n<u>updates since 1.1.0.a:</u>
-        \n - migrated to a new app in google play
-        \n - connects to a separate development webservice and database
-        \n
-        \nThere is no encryption yet so all your location updates are public as well as your username, but no other info such as real name, phone number, other profiles…
+        \n<u>updates since 1.2.b:</u>
+        \n - secure user accounts!
+        \n - pair with friends with \'ping\' based on location and timing
+        \n - api/v2 is much more networking-efficient
+        \n - some privacy! however, invites are still silently autoaccepted at the moment
+        \n - lot\'s of new bugs for you to discover!
+        \n - and much more
         \n
         \nLet me know whenever something doesn\'t work or just tell me what you like or dislike and what features you would like to see in the future.
         \n
         \nthanks for testing!
         \nalexander.steen.gent@gmail.com</string>
-
 
     <!-- Related to the Debug activity -->
 

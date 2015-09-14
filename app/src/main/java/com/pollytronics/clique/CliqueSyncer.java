@@ -189,6 +189,7 @@ public class CliqueSyncer {
                             long id = pair.second;
                             DbBlip.add(id, blip);
                         }
+                        DbBlip.keepNEntriesForEachId(10);
                     }
                     // new nickname?
                     String newNick = syncApiCall.getNewNickname();

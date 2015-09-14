@@ -101,6 +101,7 @@ public class SubService_Localisation extends SubService implements
     private void addBlipFromLocation(Location location) {
         try {
             DbSelfBlip.add(new Blip(location));
+            DbSelfBlip.keepNEntries(10);
         } catch (CliqueDbException e) {
             e.printStackTrace();
         }

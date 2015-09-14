@@ -29,6 +29,7 @@
     <string name="error_password_incorrect">incorrect password</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_username_invalid">This username is invalid</string>
+    <string name="dialog_create_new_account">Create new account with these credentials?</string>
 
     <!-- Related to the create account dialog -->
     <string name="createaccount_login">login</string>
@@ -91,6 +92,7 @@
     <string name="no_data_yet">no data yet</string>
     <string name="dialog_no">no</string>
     <string name="dialog_yes">yes</string>
+    <string name="dialog_cancel">cancel</string>
 
     <!-- Related to blip time/age formatting -->
     <plurals name="timeformatting_sec">
@@ -114,7 +116,4 @@
     </plurals>
     <string name="timeformatting_over_a_week">over a week</string>
     <string name="timeformatting_ago">ago</string>
-
-    <string name="hello_world">Hello world!</string>
-
 </resources>

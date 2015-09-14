@@ -261,7 +261,7 @@ public class CliqueActivity_Login extends CliqueActivity {
                     showProgress(ProgressBarState.LOGIN);
                     Log.i(TAG, "unknown username, lets suggest creating a new account with it.");
                     CreateNewAccountDialog createNewAccountDialog = new CreateNewAccountDialog();
-                    createNewAccountDialog.setValues(mUsername, mPassword, "anon");
+                    createNewAccountDialog.setValues(mUsername, mPassword, mUsername);
                     createNewAccountDialog.show(getSupportFragmentManager(), "createNewAccountDialog");
                     break;
                 case OTHER_ERROR:
@@ -304,15 +304,15 @@ public class CliqueActivity_Login extends CliqueActivity {
             nickEdit.setText(getArguments().getString("nick"));
             AlertDialog dialog = new AlertDialog.Builder(getActivity())
                     .setView(dialogContentView)
-                    .setMessage("Create new account with these credentials?")
-                    .setPositiveButton("sure", new DialogInterface.OnClickListener() {
+                    .setMessage(R.string.dialog_create_new_account)
+                    .setPositiveButton(getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing here, but leave this override in place or button might not be created on older api
                             // This method is overrided again in onStart()
                         }
                     })
-                    .setNegativeButton("nope", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Log.i(TAG, "account creation canceled, letting dialog finish");

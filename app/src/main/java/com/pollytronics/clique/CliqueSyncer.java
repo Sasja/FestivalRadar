@@ -34,6 +34,7 @@ import java.util.List;
  *
  * TODO: find a way to trigger a login when authentication fails (eg user changed password using other device)
  * TODO: will the sync routine keep running when poked again while in doInBackground?
+ * TODO: find out how this class should work together with activities and service so this class can send a signal back to its calling class (if it's still there) to say it's done (notify new data)
  *
  */
 public class CliqueSyncer {

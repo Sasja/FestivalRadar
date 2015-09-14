@@ -37,8 +37,8 @@ import java.util.List;
 @SuppressWarnings("FieldCanBeLocal")
 abstract public class CliqueApiCall {
     //protected final String baseUrl = "https://cliqueserver.herokuapp.com/";  // piggyback heroku ssl
-    protected final String baseUrl = "https://cliquedev.herokuapp.com/";     // piggyback heroku ssl
-    //protected final String baseUrl = "http://192.168.44.162:1337/";
+    //protected final String baseUrl = "https://cliquedev.herokuapp.com/";     // piggyback heroku ssl
+    protected final String baseUrl = "http://192.168.44.162:1337/";
     private final String TAG = "CliqueApiCall";
 
     /**

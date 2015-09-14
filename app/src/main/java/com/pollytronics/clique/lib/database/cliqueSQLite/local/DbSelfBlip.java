@@ -9,6 +9,7 @@ import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.BaseORM;
 import com.pollytronics.clique.lib.database.cliqueSQLite.CliqueSQLite;
 import com.pollytronics.clique.lib.database.cliqueSQLite.DbStructure.SelfBlipEntry;
+import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.CliqueDbExecSQL;
 import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.CliqueDbInsert;
 import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.CliqueDbQuery;
 
@@ -55,7 +56,29 @@ public class DbSelfBlip extends BaseORM{
         return blip[0];
     }
 
-    public static void keepNEntries(int n) throws CliqueDbException {
-        Log.i(TAG, "WARNING: keepNEntries not implemented yet so local database will keep growing!");
+    public static void keepNEntries(Integer n) throws CliqueDbException {
+        final Integer[] count = new Integer[1];
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            public void parseCursor(Cursor c) throws CliqueDbException {
+                c.moveToPosition(0);
+                count[0] = c.getInt(0);
+            }
+        };
+        query.setTable(SelfBlipEntry.TABLE_NAME);
+        query.setProjection(new String[]{"COUNT(*)"});
+        query.execute();
+        Log.i(TAG, "total number of SelfBlips in local storage = " + count[0].toString());
+        Log.i(TAG, "now limiting amount of SelfBlips to n = " + n.toString());
+
+        CliqueDbExecSQL execSQL = new CliqueDbExecSQL();
+        execSQL.setSqlQuery("" +
+                "DELETE FROM " + SelfBlipEntry.TABLE_NAME + " " +
+                "WHERE + " + SelfBlipEntry.TABLE_NAME + "." + SelfBlipEntry._ID + " NOT IN ( " +
+                    "SELECT " + SelfBlipEntry._ID + " FROM " + SelfBlipEntry.TABLE_NAME + " " +
+                    "ORDER BY " + SelfBlipEntry.COLUMN_NAME_UTC_S + " DESC " +
+                    "LIMIT " + n.toString() + " " +
+                ") ");
+        execSQL.execute();
     }
 }

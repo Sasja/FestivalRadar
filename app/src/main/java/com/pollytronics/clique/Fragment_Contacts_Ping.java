@@ -107,8 +107,8 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
                     Log.i(TAG, "onClick()... adding contact");
                     try {
                         DbContact.add(contact.getGlobalId());
-                        DbProfile.add(contact.getGlobalId(), contact);
-                        DbPing.remove(contact.getGlobalId());  // TODO: sadly, it doesn't work like this
+                        DbProfile.add(contact.getGlobalId(), contact); // needs to be overwritten later as ping does not give full profile details
+                        DbPing.remove(contact.getGlobalId());  // remove it instantly from the listView
                         remove(contact);
                     } catch (CliqueDbException e) {
                         e.printStackTrace();
@@ -158,8 +158,12 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         try {
             List<Pair<Long, String>> pings = DbPing.getPings();
             List<Contact> pingContacts = new ArrayList<>();
+            List<Long> allreadyAdded = DbContact.getcanSeeme();
             if(pings != null) {
-                for(Pair<Long, String> ping : pings) pingContacts.add(new Contact(ping.first, new Profile(ping.second)));
+                for(Pair<Long, String> ping : pings) {
+                    // must make sure i don't have the contact added locally allready
+                    if(!allreadyAdded.contains(ping.first)) pingContacts.add(new Contact(ping.first, new Profile(ping.second)));
+                }
             }
             fillListViewFromList(listView, pingContacts);
         } catch (CliqueDbException e) {

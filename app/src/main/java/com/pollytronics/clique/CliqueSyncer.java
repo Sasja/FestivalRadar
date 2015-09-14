@@ -200,12 +200,19 @@ public class CliqueSyncer {
                     List<Long> canSeeMeAdds = syncApiCall.getNewCanSeeMeAdds();
                     if(canSeeMeAdds.size() > 0) Log.i(TAG, "received n canseeme-contact adds from server: n = " + canSeeMeAdds.size());
                     for(Long id : canSeeMeAdds) DbContact.addCanSeeMe(id, maxDirtyCounter);
+
                     List<Long> canSeeMeDels = syncApiCall.getNewCanSeeMeDels();
                     if(canSeeMeDels.size() > 0) Log.i(TAG, "received n canseeme-contact dels from server: n = " + canSeeMeDels.size());
                     for(Long id : canSeeMeDels) DbContact.removeCanSeeMe(id, maxDirtyCounter);
+
                     List<Long> iCanSeeAdds = syncApiCall.getNewIcanSeeAdds();
                     if(iCanSeeAdds.size() > 0) Log.i(TAG, "received n icansee-contact adds from server: n = " + iCanSeeAdds.size());
                     for(Long id : iCanSeeAdds) DbContact.addIcanSee(id);
+                    for(Long id: iCanSeeAdds) { // TODO: remove this block and implement some proper contact management
+                        Log.i(TAG, "WARNING: autoaccepting matching with user_id = " + id.toString());
+                        com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact.add(id);
+                    }
+
                     List<Long> iCanSeeDels = syncApiCall.getNewIcanSeeDels();
                     if(iCanSeeDels.size() > 0) Log.i(TAG, "received n icansee-contact dels from server: n = " + iCanSeeDels.size());
                     for(Long id : iCanSeeDels) DbContact.removeIcanSee(id);

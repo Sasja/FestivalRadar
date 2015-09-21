@@ -87,7 +87,8 @@ abstract public class CliqueApiCall {
     /**
      * This method will throw an IOException when having any problems with the httprequest including any non 200 http status code.
      * It does not check for network connection.
-     * TODO: (bug) figure out what would happen if called without a connection?
+     * TODO: (bug) figure out what would happen if called without a connection? (see also builder todo comment)
+     * TODO: consider disabling keepalive to save server resources?
      * @param method must be "GET" or "POST" or "DELETE"
      * @param myUrl the full url of the http request
      * @param myBody the json string of the body
@@ -124,7 +125,7 @@ abstract public class CliqueApiCall {
             return readInputStream(is);
         } finally {
             is.close();
-            //conn.disconnect();    // This should be called once when no other calls to the server will be made in the near future (put it at the end of a sync routine maybe)
+            conn.disconnect();    // TODO: figure out how to minimize server resource use
             // see http://docs.oracle.com/javase/7/docs/api/java/net/HttpURLConnection.html#disconnect%28%29
         }
     }

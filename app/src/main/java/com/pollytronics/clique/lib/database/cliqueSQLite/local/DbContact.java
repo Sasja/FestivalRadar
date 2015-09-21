@@ -21,6 +21,11 @@ public class DbContact extends BaseORM {
 
     private static final String TAG = "DbContact";
 
+    /**
+     * Prevent class instantiation
+     */
+    private DbContact() {}
+
     public static List<Long> getIcanSee() throws CliqueDbException {
         final List<Long> contactIds = new ArrayList<>();
         CliqueDbQuery query = new CliqueDbQuery() {

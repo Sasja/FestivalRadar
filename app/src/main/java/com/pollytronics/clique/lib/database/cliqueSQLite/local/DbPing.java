@@ -17,6 +17,11 @@ import java.util.List;
 public class DbPing {
     private static final String TAG = "DbPing";
 
+    /**
+     * Prevent class instantiation
+     */
+    private DbPing() {}
+
     public static List<Pair<Long, String>> getPings() throws CliqueDbException {
         final List<Pair<Long, String>> pings = new ArrayList<>();
         final CliqueDbQuery query = new CliqueDbQuery() {

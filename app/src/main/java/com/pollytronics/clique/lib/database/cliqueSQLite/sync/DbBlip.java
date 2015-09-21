@@ -13,8 +13,12 @@ import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.Cliqu
  * Created by pollywog on 9/9/15.
  */
 public class DbBlip extends BaseORM {
-
     private final static String TAG = "DbBlip";
+
+    /**
+     * Prevent class instantiation
+     */
+    private DbBlip() {}
 
     public static void add(long id, Blip blip) throws CliqueDbException {
         CliqueDbInsert insert = new CliqueDbInsert();

@@ -17,6 +17,11 @@ public class DbProfile extends BaseORM {
 
     private static final String TAG = "DbProfile";
 
+    /**
+     * Prevent class instantiation
+     */
+    private DbProfile() {}
+
     public static Profile get(final long id) throws CliqueDbException {
         final Profile[] profile = new Profile[1];
         CliqueDbQuery query = new CliqueDbQuery() {

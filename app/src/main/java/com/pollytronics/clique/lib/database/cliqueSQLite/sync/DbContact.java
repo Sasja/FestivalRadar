@@ -22,6 +22,11 @@ import java.util.List;
 public class DbContact {
 
     /**
+     * Prevent class instantiation
+     */
+    private DbContact() {}
+
+    /**
      * The only values that can be changed on the server are the canseeme values,
      * so those are the only values that are related to the dirtycounter also.
      * @param maxDirtyCounter

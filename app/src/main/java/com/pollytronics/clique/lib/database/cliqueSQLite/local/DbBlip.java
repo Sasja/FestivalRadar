@@ -16,6 +16,11 @@ public class DbBlip extends BaseORM {
 
     private static final String TAG = "DbBlip";
 
+    /**
+     * Prevent class instantiation
+     */
+    private DbBlip() {}
+
     public static Blip getLast(final long id) throws CliqueDbException {
         final Blip[] blip = new Blip[1];
         CliqueDbQuery query = new CliqueDbQuery() {

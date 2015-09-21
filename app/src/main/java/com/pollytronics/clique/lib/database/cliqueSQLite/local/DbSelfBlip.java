@@ -19,6 +19,11 @@ import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.Cliqu
 public class DbSelfBlip extends BaseORM{
     private static final String TAG = "DbSelfBlip";
 
+    /**
+     * Prevent class instantiation
+     */
+    private DbSelfBlip() {}
+
     public static void add(Blip blip) throws CliqueDbException {
         long currentDirtyCounter = CliqueSQLite.getGlobalDirtyCounter();
         CliqueDbInsert insert = new CliqueDbInsert();

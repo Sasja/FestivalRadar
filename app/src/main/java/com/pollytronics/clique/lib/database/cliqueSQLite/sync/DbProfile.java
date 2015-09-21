@@ -15,6 +15,11 @@ import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.Cliqu
  */
 public class DbProfile extends BaseORM {
 
+    /**
+     * Prevent class instantiation
+     */
+    private DbProfile() {}
+
     public static void add(long id, Profile profile) throws CliqueDbException {
         CliqueDbUpdate update = new CliqueDbUpdate();
         update.setTable(ProfileEntry.TABLE_NAME);

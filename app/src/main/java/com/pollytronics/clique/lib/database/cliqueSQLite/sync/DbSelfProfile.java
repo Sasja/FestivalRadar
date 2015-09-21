@@ -14,8 +14,12 @@ import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.Cliqu
  * Created by pollywog on 9/9/15.
  */
 public class DbSelfProfile extends BaseORM {
-
     private static final String TAG = "DbSelfProfile";
+
+    /**
+     * Prevent class instantiation
+     */
+    private DbSelfProfile() {}
 
     public static Profile getChanged(long maxDirtyCounter) throws CliqueDbException {
         final Profile[] profile = new Profile[1];

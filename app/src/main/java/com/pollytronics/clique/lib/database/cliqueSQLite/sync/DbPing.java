@@ -11,6 +11,12 @@ import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.Cliqu
  * Created by pollywog on 9/13/15.
  */
 public class DbPing {
+
+    /**
+     * Prevent class instantiation
+     */
+    private DbPing() {}
+
     public static void flush() throws CliqueDbException {
         CliqueDbDelete delete = new CliqueDbDelete();
         delete.setTable(PingEntry.TABLE_NAME);

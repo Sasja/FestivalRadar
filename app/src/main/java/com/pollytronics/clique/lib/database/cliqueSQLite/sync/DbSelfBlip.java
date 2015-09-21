@@ -17,6 +17,12 @@ import java.util.List;
  * Created by pollywog on 9/9/15.
  */
 public class DbSelfBlip extends BaseORM {
+
+    /**
+     * Prevent class instantiation
+     */
+    private DbSelfBlip() {}
+
     public static List<Blip> getNew(long maxDirtyCounter) throws CliqueDbException {
         final List<Blip> blips = new ArrayList<>();
         CliqueDbQuery query = new CliqueDbQuery() {

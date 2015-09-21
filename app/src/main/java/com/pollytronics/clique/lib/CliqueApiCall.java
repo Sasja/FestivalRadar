@@ -32,7 +32,7 @@ import java.util.List;
  * TODO: (syncing) optimise server connection for multiple api calls, when to call disconnect, how long are connections kept open, ...
  * TODO: (api) allow connecting to a testing api by changing baseUrl
  * TODO: fix duplicatebaseURL
- * TODO: apply the builder pattern properly instead of the JavaBeans pattern (see Effective Java, item 2)
+ * TODO: apply the builder pattern properly instead of the JavaBeans pattern (see Effective Java 2nd Edition, item 2/page14)
  *
  */
 @SuppressWarnings("FieldCanBeLocal")

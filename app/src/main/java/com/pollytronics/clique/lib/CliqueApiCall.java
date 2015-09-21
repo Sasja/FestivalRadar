@@ -34,6 +34,7 @@ import java.util.List;
  * TODO: fix duplicatebaseURL
  * TODO: apply the builder pattern properly instead of the JavaBeans pattern (see Effective Java 2nd Edition, item 2/page14)
  * TODO: consider adding log warnings to the "safety net finalizers" of the objects that need finalization (see Effective Java 2nd Edition, item 7/page29)
+ * TODO: this class should probably move to the api_package and become package private there. having two api packages in the app does not make a lot of sense anyway.
  *
  */
 @SuppressWarnings("FieldCanBeLocal")

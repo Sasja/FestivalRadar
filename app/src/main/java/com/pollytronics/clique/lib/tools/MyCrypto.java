@@ -15,6 +15,11 @@ public class MyCrypto {
 
     private static final String TAG = "MyCrypto";
 
+    /**
+     * prevent instantiation with private constructor
+     */
+    private MyCrypto() {}
+
     public static String generateSaltb64() {
         Log.i(TAG, "WARNING GENERATING A RANDOM SALT USING A CONSTANT!!!!!!");
         return "VX4IAeia5bX/jwe15x0s5SwpfgIB5mXbaea5hVDVDjfNBMmf+HUYzqfFCQE8dqoOEK5SowWRo+IjTnrOwvH4Lg==";

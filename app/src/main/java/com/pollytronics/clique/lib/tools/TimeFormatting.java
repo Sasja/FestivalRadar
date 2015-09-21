@@ -6,6 +6,12 @@ import android.content.res.Resources;
 import com.pollytronics.clique.R;
 
 public class TimeFormatting {
+
+    /**
+     * Prevent instantiation with private constructor
+     */
+    private TimeFormatting() {}
+
     /**
      * Turns an amount of seconds into a descriptive string.
      *

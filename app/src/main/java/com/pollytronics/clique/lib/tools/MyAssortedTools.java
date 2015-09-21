@@ -9,6 +9,11 @@ import android.view.inputmethod.InputMethodManager;
  */
 public class MyAssortedTools {
 
+    /**
+     * prevent instantiation with private constructor
+     */
+    private MyAssortedTools() {}
+
     // yuck! the following lines are to hide the keyboard (http://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard)
     // yuck android, thanks rmirabelle
     public static void hide_keyboard(Activity activity) {

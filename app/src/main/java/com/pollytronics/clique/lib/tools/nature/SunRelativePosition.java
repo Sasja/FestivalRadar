@@ -597,7 +597,6 @@ public class SunRelativePosition {
      */
     public void setTwilight(final double twilight) throws IllegalArgumentException {
         if (twilight<-90 || twilight>-90) {
-            // TODO: provides a better (localized) message.
             throw new IllegalArgumentException(String.valueOf(twilight));
         }
         this.twilight = twilight;

@@ -30,7 +30,7 @@ import java.util.List;
  * Main app activity, it should give an overview of the situation and provide a simple GUI for
  * the most likely actions a user would want to perform.
  * TODO: (errorhandling) what to do with all the printStackTrace calls all over the code?
- * TODO: now the app will run in the presence of any key, even if invalid, that would be bad
+ * TODO: (code) now the app will run in the presence of any key, even if invalid, that would be bad
  */
 public class CliqueActivity_Main extends CliqueActivity implements SensorEventListener {
 

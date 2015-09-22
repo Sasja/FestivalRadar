@@ -14,7 +14,7 @@ import com.pollytronics.clique.lib.service.SubService;
  * periodically pulls and pushes data from server and updates the local database
  * This class uses the api_vxx methods to do the actual api calls
  *
- * TODO: (syncing) minimize tcp connection lifetime to minimize load on server
+ * TODO: (optimization) minimize tcp connection lifetime to minimize load on server
  * TODO: (errorhandling) look for printStacktrace try catch blocks everywhere and fix it
  * TODO: (syncing) sync sometimes fails... investigate!
  * TODO: (syncing) i believe this will generate a shitload of duplicate blips

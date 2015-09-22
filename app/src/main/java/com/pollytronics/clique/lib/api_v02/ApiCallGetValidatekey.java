@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: figure out the datatypes used for account id everywhere in the app/server/communication and see if problems could arise
+ * TODO: (code) figure out the datatypes used for account id everywhere in the app/server/communication and see if problems could arise
  * Created by pollywog on 9/3/15.
  */
 public class ApiCallGetValidatekey extends CliqueApiCall {

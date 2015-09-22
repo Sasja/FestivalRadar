@@ -150,7 +150,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
     }
 
     /**
-     * TODO: this is pretty retarded, clean it up
+     * TODO: (code) this is pretty retarded, clean it up
      */
     @Override
     public void notifyDatabaseUpdate() {

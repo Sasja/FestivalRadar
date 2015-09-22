@@ -30,7 +30,7 @@ import com.pollytronics.clique.lib.service.CliqueService_Interface4CliqueActivit
  * This class is responsible for managing the connection to the CliqueService
  * It also provides a few services such as getCliqueDb, getCliquePreferences, hearbeatLoop
  * and it also checks for authentication credentials (if not disabled through overriding the function)
- * TODO: (gui) can i use a more funky Theme such as Holo.Light.DarkActionBar with AppCompatActivity??
+ * TODO: (UI) can i use a more funky Theme such as Holo.Light.DarkActionBar with AppCompatActivity??
  */
 public abstract class CliqueActivity extends AppCompatActivity implements CliqueActivity_Interface4CliqueService {
 
@@ -69,7 +69,7 @@ public abstract class CliqueActivity extends AppCompatActivity implements Clique
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CliqueSQLite.init(this);        // This is important, it allows the static methods to use the right context
-        // TODO: state in a 'static' class such as CliqueSQLite is kind of bad, should services and fragments also all call init() to prevent errors in some circumstances?
+        // TODO: (code) state in a 'static' class such as CliqueSQLite is kind of bad, should services and fragments also all call init() to prevent errors in some circumstances?
     }
 
     /**

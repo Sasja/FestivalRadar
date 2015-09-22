@@ -63,7 +63,7 @@ class RadarView_Painter {
      * @param blip the blip to represent
      */
     private void calcScreenXY(ScreenCoords screenCoords, Blip blip) {
-        double dLat = blip.getLatitude() - centerLocation.getLatitude();    //TODO: i managed to get nullpointerException on centerLocation, fix this!
+        double dLat = blip.getLatitude() - centerLocation.getLatitude();    //TODO: (bug) i managed to get nullpointerException on centerLocation, fix this!
         double dLon = blip.getLongitude() - centerLocation.getLongitude();
         double dLatMeters = Math.toRadians(dLat) * EARTH_RADIUS; // good enough as dLat << EARTH_RADIUS
         double dLonMeters = Math.toRadians(dLon) * EARTH_RADIUS * cos(centerLocation.getLatitude());

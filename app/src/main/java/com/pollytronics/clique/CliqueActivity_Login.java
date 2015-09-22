@@ -36,11 +36,11 @@ import java.io.IOException;
 //import android.app.DialogFragment;
 
 /**
- * TODO: when pressing "back" from login screen, shit happens
- * TODO: make sure the optional message json-entry in always checked before read, as it is optional
- * TODO: error handling! and all kinds of server/network error handling
- * TODO: initial sync after logging in, not sure if that has to happen in this class though
- * TODO: when turning screen orientation while doInBackground, the app will crash (use SystemClock.sleep() to reproduce)
+ * TODO: (UI) when pressing "back" from login screen, shit happens
+ * TODO: (code) make sure the optional message json-entry in always checked before read, as it is optional
+ * TODO: (errorhandling) error handling! and all kinds of server/network error handling
+ * TODO: (code) initial sync after logging in, not sure if that has to happen in this class though
+ * TODO: (bug) when turning screen orientation while doInBackground, the app will crash (use SystemClock.sleep() to reproduce)
  */
 public class CliqueActivity_Login extends CliqueActivity {
 

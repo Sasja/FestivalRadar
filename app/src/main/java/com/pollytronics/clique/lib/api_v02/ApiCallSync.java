@@ -16,7 +16,8 @@ import java.util.List;
 
 /**
  * Created by pollywog on 9/7/15.
- * TODO: what if some of those methods such as setpinggetset are called twice?
+ * TODO: (bug) what if some of those methods such as setpinggetset are called twice?
+ * TODO: (feature) remove the auto-accept behaviour and develop a request/accept flow.
  */
 public class ApiCallSync extends CliqueApiCall {
     private final String TAG = "ApiCallSync";
@@ -54,7 +55,7 @@ public class ApiCallSync extends CliqueApiCall {
         bodyJS.put("profile",profileJS);
     }
 
-    //TODO: this is nor efficient or very elegant
+    //TODO: (code) this is nor efficient or very elegant
     public void addCanSeeme(long id) throws JSONException {
         JSONObject newEntry = new JSONObject().put("id", id);
         JSONObject contactsJS = bodyJS.has("contacts") ? bodyJS.getJSONObject("contacts") : new JSONObject();
@@ -64,7 +65,7 @@ public class ApiCallSync extends CliqueApiCall {
         bodyJS.put("contacts",contactsJS);
     }
 
-    //TODO: this is duplicate code
+    //TODO: (code) this is duplicate code
     public void delCanSeeme(long id) throws JSONException {
         JSONObject newEntry = new JSONObject().put("id", id);
         JSONObject contactsJS = bodyJS.has("contacts") ? bodyJS.getJSONObject("contacts") : new JSONObject();
@@ -74,7 +75,7 @@ public class ApiCallSync extends CliqueApiCall {
         bodyJS.put("contacts",contactsJS);
     }
 
-    //TODO: this is nor efficient or very elegant
+    //TODO: (code) this is nor efficient or very elegant
     public void addBlip(Blip blip) throws JSONException {
         JSONObject newEntry = new JSONObject().put("lat",blip.getLatitude()).put("lon", blip.getLongitude()).put("utc_s", blip.getUtc_s());
         JSONArray blipsJS = bodyJS.has("blips") ? bodyJS.getJSONArray("blips") : new JSONArray();
@@ -126,7 +127,7 @@ public class ApiCallSync extends CliqueApiCall {
             if(profileJS.has("nick")) this.newNickname = profileJS.getString("nick");
         }
 
-        // new contacts?    // TODO: figure out the right behaviour for syncing and connecting to users
+        // new contacts?
         if(job.has("contacts")) {
             JSONObject contactJS = job.getJSONObject("contacts");
             if(contactJS.has("icansee")) {

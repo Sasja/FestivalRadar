@@ -21,7 +21,7 @@ import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
 
 /**
  * TODO: (syncing) Study https://developer.android.com/training/sync-adapters/index.html and consider implementing such a thing
- * TODO: receiving database update notifications every three seconds when in contacts activity!?! why is that?
+ * TODO: (code) receiving database update notifications every three seconds when in contacts activity!?! why is that?
  */
 public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     @SuppressWarnings("unused")
@@ -76,7 +76,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         addFragment(Fragment_Contacts_Remote.class, getString(R.string.contacts_tab_remote));           // 2
     }
 
-//    //TODO: what is this for again?
+//    //TODO: (code) what is this for again?
 //    public Fragment_Contacts_Ping getF_Ping() {             return (Fragment_Contacts_Ping)         getFragmentByNr(0); }
 //    public Fragment_Contacts_MyContacts getF_MyContacts() { return (Fragment_Contacts_MyContacts)   getFragmentByNr(1); }
 //    public Fragment_Contacts_Remote getF_Remote() {         return (Fragment_Contacts_Remote)       getFragmentByNr(2); }
@@ -107,7 +107,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
                             Log.i(TAG, "deleting selected contact locally");
                             try {
                                 DbContact.remove(getArguments().getLong("id"));
-                                ((MVP_Activity_Contacts) getActivity()).notifyDatabaseUpdate(); //TODO: this might be dangerous
+                                ((MVP_Activity_Contacts) getActivity()).notifyDatabaseUpdate(); //TODO: (code) this might be dangerous
                             } catch (CliqueDbException e) {
                                 e.printStackTrace();
                             }

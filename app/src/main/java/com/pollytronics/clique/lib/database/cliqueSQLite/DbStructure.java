@@ -11,7 +11,7 @@ import android.util.Log;
  * This Class has static members that describe and store the table and column names
  * It also provides The CliqueDbHelper Class that handles database creation and updating
  *
- * TODO: onUpgrade() and onDowngrade() simply discards all data at the moment
+ * TODO: (code) onUpgrade() and onDowngrade() simply discards all data at the moment
  */
 public class DbStructure {
     public static final int DATABASE_VERSION = 15;   // increasing this will wipe all local databases on update
@@ -78,7 +78,7 @@ public class DbStructure {
             recreateCliqueDb(db);
         }
 
-        //TODO: if upgrading to new db that has removed some tables they will not be dropped by dropAllTables, find better way to drop all tables!
+        //TODO: (code) if upgrading to new db that has removed some tables they will not be dropped by dropAllTables, find better way to drop all tables!
         public static void recreateCliqueDb(SQLiteDatabase db) {
             Log.i(TAG, "WARNING: dropping all tables in local database.");
             db.execSQL("DROP TABLE IF EXISTS " + ContactEntry.TABLE_NAME);

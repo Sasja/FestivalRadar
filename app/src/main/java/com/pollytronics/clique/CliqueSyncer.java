@@ -32,9 +32,9 @@ import java.util.List;
  *
  * only call poke, and call it from the main thread! This will make sure all local changes at the moment of calling will be sent as soon as possible.
  *
- * TODO: find a way to trigger a login when authentication fails (eg user changed password using other device)
- * TODO: will the sync routine keep running when poked again while in doInBackground?
- * TODO: find out how this class should work together with activities and service so this class can send a signal back to its calling class (if it's still there) to say it's done (notify new data)
+ * TODO: (UI, bug) find a way to trigger a login when authentication fails (eg user changed password using other device)
+ * TODO: (bug) will the sync routine keep running when poked again while in doInBackground?
+ * TODO: (code) find out how this class should work together with activities and service so this class can send a signal back to its calling class (if it's still there) to say it's done (notify new data)
  *
  */
 public class CliqueSyncer {
@@ -42,7 +42,7 @@ public class CliqueSyncer {
 
     private static CliqueSyncer instance = null;
     private SynchronizeTask synchronizeTask = null;
-    private boolean extraRun = false;       //TODO: make the extra run if necessary
+    private boolean extraRun = false;       //TODO: (code) make the extra run if necessary
 
     private CliquePreferences prefs;
 
@@ -69,8 +69,8 @@ public class CliqueSyncer {
         pokePingGetSet(false, false);
     }
 
-    //TODO: this is not the most elegant or even right way to allow setting of ping get/set in api call
-    //TODO: consider a pingPoke arriving while the task is in doInBackground...
+    //TODO: (code) this is not the most elegant or even right way to allow setting of ping get/set in api call
+    //TODO: (code, bug) consider a pingPoke arriving while the task is in doInBackground...
     public void pokePingGetSet(boolean get, boolean set) {
         try {
             CliqueSQLite.increaseGlobalDirtyCounter();
@@ -125,7 +125,7 @@ public class CliqueSyncer {
                 Profile newSelfProfile = DbSelfProfile.getChanged(maxDirtyCounter);
                 if(newSelfProfile != null) {
                     Log.i(TAG, "detected a new nickname : " + newSelfProfile.getName());
-                    syncApiCall.setNickname(newSelfProfile.getName());   // TODO: generify!
+                    syncApiCall.setNickname(newSelfProfile.getName());   // TODO: (code) generify!
                 }
 
                 // contacts
@@ -210,7 +210,7 @@ public class CliqueSyncer {
                     List<Long> iCanSeeAdds = syncApiCall.getNewIcanSeeAdds();
                     if(iCanSeeAdds.size() > 0) Log.i(TAG, "received n icansee-contact adds from server: n = " + iCanSeeAdds.size());
                     for(Long id : iCanSeeAdds) DbContact.addIcanSee(id);
-                    for(Long id: iCanSeeAdds) { // TODO: remove this block and implement some proper contact management
+                    for(Long id: iCanSeeAdds) { // TODO: (feature) remove this block and implement some proper contact management
                         Log.i(TAG, "WARNING: autoaccepting matching with user_id = " + id.toString());
                         com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact.add(id);
                     }

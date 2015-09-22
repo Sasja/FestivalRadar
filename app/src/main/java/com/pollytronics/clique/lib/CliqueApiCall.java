@@ -29,12 +29,11 @@ import java.util.List;
  *
  * These classes should take care of all the JSON stuff and just throw JSONExceptions to be handled higher up.
  *
- * TODO: (syncing) optimise server connection for multiple api calls, when to call disconnect, how long are connections kept open, ...
- * TODO: (api) allow connecting to a testing api by changing baseUrl
- * TODO: fix duplicatebaseURL
- * TODO: apply the builder pattern properly instead of the JavaBeans pattern (see Effective Java 2nd Edition, item 2/page14)
- * TODO: consider adding log warnings to the "safety net finalizers" of the objects that need finalization (see Effective Java 2nd Edition, item 7/page29)
- * TODO: this class should probably move to the api_package and become package private there. having two api packages in the app does not make a lot of sense anyway.
+ * TODO: (optimize) optimize server connection for multiple api calls, when to call disconnect, how long are connections kept open, ...
+ * TODO: (feature) allow connecting to a testing api by changing baseUrl
+ * TODO: (code) apply the builder pattern properly instead of the JavaBeans pattern (see Effective Java 2nd Edition, item 2/page14)
+ * TODO: (code) consider adding log warnings to the "safety net finalizers" of the objects that need finalization (see Effective Java 2nd Edition, item 7/page29)
+ * TODO: (code) this class should probably move to the api_package and become package private there. having two api packages in the app does not make a lot of sense anyway.
  *
  */
 @SuppressWarnings("FieldCanBeLocal")
@@ -90,7 +89,7 @@ abstract public class CliqueApiCall {
      * This method will throw an IOException when having any problems with the httprequest including any non 200 http status code.
      * It does not check for network connection.
      * TODO: (bug) figure out what would happen if called without a connection? (see also builder todo comment)
-     * TODO: consider disabling keepalive to save server resources?
+     * TODO: (code) consider disabling keepalive to save server resources?
      * @param method must be "GET" or "POST" or "DELETE"
      * @param myUrl the full url of the http request
      * @param myBody the json string of the body
@@ -127,14 +126,14 @@ abstract public class CliqueApiCall {
             return readInputStream(is);
         } finally {
             is.close();
-            conn.disconnect();    // TODO: figure out how to minimize server resource use
+            conn.disconnect();    // TODO: (optimize) figure out how to minimize server resource use
             // see http://docs.oracle.com/javase/7/docs/api/java/net/HttpURLConnection.html#disconnect%28%29
         }
     }
 
     /**
      * This method will read up to 16KB bytes from a stream of UTF-8 and return a string of it.
-     * TODO: is it necessary to allocate 16K every time?
+     * TODO: (optimize) is it necessary to allocate 16K every time?
      * @param is inputStream
      * @return String
      * @throws IOException when more than 16KB was in the stream

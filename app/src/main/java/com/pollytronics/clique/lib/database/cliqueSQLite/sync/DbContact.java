@@ -17,7 +17,7 @@ import java.util.List;
  *
  * remember that the dirtycounter only is used for uploading canseeme,
  * icansee always blindly follows what the server says
- * TODO: think about cleaning up, when can i actually delete rows?
+ * TODO: (code) think about cleaning up, when can i actually delete rows?
  */
 public class DbContact {
 
@@ -76,7 +76,7 @@ public class DbContact {
     }
 
     /**
-     * TODO: might want to clean up (delete) when both flags canseeme and ican see are 0?
+     * TODO: (code) might want to clean up (delete) when both flags canseeme and ican see are 0?
      */
     public static void clearDirtyCounters(long maxDirtyCounter) throws CliqueDbException {
         CliqueDbUpdate update = new CliqueDbUpdate();

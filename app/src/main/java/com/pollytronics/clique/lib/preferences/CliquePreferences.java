@@ -11,7 +11,7 @@ import android.util.Log;
  *
  * The instance should always be obtained through getInstance(), convenience methods such as getCliquePreferences() are provided for this in a few base classes.
  * Not threadsafe.
- * TODO: if the singleton pattern is necessary, consider using the sigle-element enumn type pattern (cfr Effective Java 2nd Edition, item 3, page 18)
+ * TODO: (code) if the singleton pattern is necessary, consider using the sigle-element enumn type pattern (cfr Effective Java 2nd Edition, item 3, page 18)
  */
 public class CliquePreferences {
     private static final String TAG = "CliquePreferences";

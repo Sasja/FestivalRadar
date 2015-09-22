@@ -60,22 +60,6 @@ public class CliqueActivity_Settings extends CliqueActivity implements AdapterVi
                     e.printStackTrace();
                 }
                 // i see no need to sync remotely here:
-//                ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-//                if (networkInfo != null && networkInfo.isConnected()) {
-//                    String name = setNameEditText.getText().toString();
-//                    Log.i(TAG, "updating local self profile");
-//                    try {
-//                        DbSelfProfile.set(new Profile(name));
-//                    } catch (CliqueDbException e) {
-//                        e.printStackTrace();
-//                        Log.i(TAG, "could not update local profile");
-//                    }
-//                     Log.i(TAG, "updating remote self profile by syncing");
-//                     CliqueSyncer.getInstance(CliqueActivity_Settings.this).poke();  // TODO: get rid of that context shit? or not? figure it out
-//                } else {
-//                    Toast.makeText(getApplicationContext(), "no network", Toast.LENGTH_SHORT).show();
-//                }
             }
         });
 

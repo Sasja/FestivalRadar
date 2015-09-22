@@ -2,10 +2,7 @@ package com.pollytronics.clique;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -18,6 +15,7 @@ import com.pollytronics.clique.lib.CliqueActivity_MyViewPagerAct;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
+import com.pollytronics.clique.lib.tools.MyAssortedTools;
 
 /**
  * TODO: (syncing) Study https://developer.android.com/training/sync-adapters/index.html and consider implementing such a thing
@@ -51,9 +49,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_sync_contacts) {
-            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
+            if (MyAssortedTools.isNetworkAvailable(this)) {
                 Log.i(TAG, "syncing contact data");
                 CliqueSyncer.getInstance(this).poke();
             } else {

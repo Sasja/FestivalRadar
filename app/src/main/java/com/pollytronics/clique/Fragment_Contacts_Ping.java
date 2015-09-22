@@ -2,8 +2,6 @@ package com.pollytronics.clique;
 
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -22,6 +20,7 @@ import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
 import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbPing;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbProfile;
+import com.pollytronics.clique.lib.tools.MyAssortedTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,9 +53,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         pingButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                if (networkInfo != null && networkInfo.isConnected()) {
+                if (MyAssortedTools.isNetworkAvailable(getActivity())) {
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "pinging...", Toast.LENGTH_SHORT);
                     toast.show();
                     Log.i(TAG, "starting ping");

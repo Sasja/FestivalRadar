@@ -1,12 +1,10 @@
 package com.pollytronics.clique;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.pollytronics.clique.lib.service.CliqueService;
 import com.pollytronics.clique.lib.service.SubService;
+import com.pollytronics.clique.lib.tools.MyAssortedTools;
 
 /**
  * Cloud SubService 2
@@ -31,9 +29,7 @@ public class SubService_Cloud_2 extends SubService {
         @Override
         public void run() {
             try{
-                ConnectivityManager connMgr = (ConnectivityManager) getCliqueService().getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                if (networkInfo != null && networkInfo.isConnected()) {
+                if (MyAssortedTools.isNetworkAvailable(getCliqueService().getContext())) {
                     Log.i(TAG, "network available: syncing data");
                     CliqueSyncer.getInstance(getCliqueService().getContext()).poke();
                     getMainHandler().removeCallbacks(cloudLoop);    //make sure we dont have 2 loops

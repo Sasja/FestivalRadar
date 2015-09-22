@@ -45,6 +45,7 @@ public class CliqueSyncer {
     private boolean extraRun = false;       //TODO: (code) make the extra run if necessary
 
     private CliquePreferences prefs;
+    private Context applicationContext;
 
     public static CliqueSyncer getInstance(Context context) {
         if (instance == null) {
@@ -58,6 +59,7 @@ public class CliqueSyncer {
     private CliqueSyncer(Context context) {
         Log.i(TAG, "Creating new instance of CliqueSyncer");
         prefs = CliquePreferences.getInstance(context);
+        applicationContext = context.getApplicationContext();
     }
 
     /**

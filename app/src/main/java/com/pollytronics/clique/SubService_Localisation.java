@@ -120,9 +120,6 @@ public class SubService_Localisation extends SubService implements
             addBlipFromLocation(mLastLocation);
         } else {
             Log.i(TAG, "could not obtain last location from google location service");
-//            Log.i(TAG, "will use fake location for testing on emulator");
-//            mLastLocation = new Blip(51.072478 + (new Random().nextDouble()-.5)*.003, 3.709913 + (new Random().nextDouble()-.5)*.003, System.currentTimeMillis()/1000);
-//            addBlipFromLocation(mLastLocation);
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
    }
@@ -133,15 +130,11 @@ public class SubService_Localisation extends SubService implements
     }
 
     /**
-     * TODO: (debugging) remove this testing location faking
      * @param connectionResult
      */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.i(TAG, "Connection to google location services failed!: "+connectionResult.toString());
-//        Log.i(TAG, "will fake location for testing");
-//        mLastLocation = new Blip(51.072478 + (new Random().nextDouble()-.5)*.003, 3.709913 + (new Random().nextDouble()-.5)*.003, System.currentTimeMillis()/1000);
-//        addBlipFromLocation(mLastLocation);
     }
 
     @Override

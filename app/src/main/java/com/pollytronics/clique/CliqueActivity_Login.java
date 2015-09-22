@@ -215,14 +215,13 @@ public class CliqueActivity_Login extends CliqueActivity {
             //       if key valid   -> trigger username/key storage and STOP
             //       if key invalid -> trigger wrong password hint and STOP
             try {
-                //SystemClock.sleep(3000);
                 ApiCallGetSalts getSalts = new ApiCallGetSalts(mUsername);
                 getSalts.callAndParse();
                 if(!getSalts.getCallSuccess()) {
                     return NEW_USERNAME;
                 }
                 this.cs_b64 = getSalts.getCs();
-                this.key_b64 = MyCrypto.calcKey64(cs_b64, mPassword);
+                this.key_b64 = MyCrypto.calcKey64(cs_b64, mPassword);   //TODO: prevent null pointer exception!
                 ApiCallGetValidatekey validate = new ApiCallGetValidatekey(mUsername,key_b64);
                 validate.callAndParse();
                 if(validate.isCallSuccess()) {

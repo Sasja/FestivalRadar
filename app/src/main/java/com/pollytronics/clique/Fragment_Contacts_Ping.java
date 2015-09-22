@@ -32,6 +32,8 @@ import java.util.List;
  * TODO: (gui) animate adding/ignoring contact (add => fly to the right, ignore => shrink or dissolve or smth)
  * TODO: (syncing) turning screen will not remember the contacts in the ping list(figure out working with Bundle savedinstance state in onCreate)
  * TODO: (syncing) some feedback when pinging is in progress (see basicsyncadapter demo for inspiration (progressbar))
+ * TODO: (code) remove the duplicate code for showing toasts
+ * TODO: (feature) implement the ignore button
  *
  */
 public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
@@ -45,6 +47,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i(TAG, "onCreateView()");
         View view = inflater.inflate(R.layout.fragment_contacts_ping, container, false);
         listView = (ListView) view.findViewById(R.id.listview_ping);
         final Button pingButt = (Button) view.findViewById(R.id.button_ping);
@@ -54,7 +57,6 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
                 ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
-//                    new PingTask().execute();
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "pinging...", Toast.LENGTH_SHORT);
                     toast.show();
                     Log.i(TAG, "starting ping");
@@ -63,7 +65,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
                     } catch (CliqueDbException e) {
                         e.printStackTrace();
                     }
-                    handler.removeCallbacks(pingLoop);  // make sure ther// e's not two running
+                    handler.removeCallbacks(pingLoop);  // make sure there's not two running
                     pingLoop = new PingLoop();
                     pingLoop.run();
                 } else {
@@ -76,7 +78,7 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
     }
 
     private void fillListViewFromList(ListView aListView, List<Contact> contacts) {
-        Log.i(TAG, "filling listView with cliquecontacts retrieved from api");
+        Log.i(TAG, "running fillListViewFromList()");
         CliqueContactAdapter adapter = (CliqueContactAdapter) aListView.getAdapter();
         if (adapter == null) {
             adapter = new CliqueContactAdapter(getActivity(), contacts);
@@ -88,7 +90,6 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
     }
 
     private class CliqueContactAdapter extends ArrayAdapter<Contact> {
-
         private static final int layout_resource = R.layout.list_item_ping;
 
         public CliqueContactAdapter(Context context, List<Contact> objects) {
@@ -108,8 +109,8 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
                     try {
                         DbContact.add(contact.getGlobalId());
                         DbProfile.add(contact.getGlobalId(), contact); // needs to be overwritten later as ping does not give full profile details
-                        DbPing.remove(contact.getGlobalId());  // remove it instantly from the listView
-                        remove(contact);
+                        DbPing.remove(contact.getGlobalId());
+                        remove(contact);                                // remove it instantly from the listView
                     } catch (CliqueDbException e) {
                         e.printStackTrace();
                     }

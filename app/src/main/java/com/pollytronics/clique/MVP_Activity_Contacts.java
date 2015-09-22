@@ -89,6 +89,7 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
         mDialog.show(getSupportFragmentManager(), "DeleteContactDialog");
     }
 
+    // TODO: (code) this does not belong here
     public static class TemporaryDeleteDialog extends DialogFragment {
         @NonNull
         @Override

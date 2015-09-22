@@ -99,7 +99,7 @@ abstract public class CliqueApiCall {
     private String myHttpRequest(String method, String myUrl, String myBody) throws IOException {
         URL url = new URL(myUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(5000);
+        conn.setReadTimeout(10000); // must be high when using the free heroku server that falls asleep. 10secs seems to work, 5secs not.
         conn.setConnectTimeout(10000);
         if(!(method.equals("GET") || method.equals("POST") || method.equals("DELETE"))) throw new RuntimeException(method + " http method not supported");
         conn.setRequestMethod(method);
@@ -119,7 +119,7 @@ abstract public class CliqueApiCall {
         }
         conn.connect();
         int response = conn.getResponseCode();
-        if(response!=200) throw new IOException(String.format("HTTP RESPONSE CODE = %d", response));
+        if(response!=200) throw new IOException(String.format("HTTP RESPONSE CODE != 200 (%d)", response));
 
         InputStream is = conn.getInputStream();
         try {

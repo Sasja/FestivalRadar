@@ -99,11 +99,12 @@ public class CliqueSyncer {
      * The this class is the heart of the CliqueSyncer class, the CliqueSyncer class just makes sure one of these is running when necessary
      */
     private class SynchronizeTask extends AsyncTask<Void,Void,Integer> {
-        private static final int    SUCCESS = 1;
-        private static final int NO_SUCCESS = 2;
-        private static final int NO_NETWORK = 3;
-        private static final int   IO_ERROR = 4;
-        private static final int JSON_ERROR = 5;
+        private static final int        SUCCESS = 1;
+        private static final int     NO_SUCCESS = 2;
+        private static final int     NO_NETWORK = 3;
+        private static final int       IO_ERROR = 4;
+        private static final int     JSON_ERROR = 5;
+        private static final int NOT_AUTHORIZED = 6;
 
         long maxDirtyCounter; // all entries with a dirtycountervalue higher than 0 and lower to this must be uploaded
         ApiCallSync syncApiCall;
@@ -168,7 +169,11 @@ public class CliqueSyncer {
             try {
                 // make and parse the syncApiCall
                 syncApiCall.callAndParse();
-                return SUCCESS;
+                if(syncApiCall.isAuthSuccess()) {
+                    return SUCCESS;
+                } else {
+                    return NOT_AUTHORIZED;
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
                 return JSON_ERROR;
@@ -209,6 +214,11 @@ public class CliqueSyncer {
                         Toast.makeText(toastContext, "Server unreachable", Toast.LENGTH_SHORT).show();
                     }
                     return;
+                case NOT_AUTHORIZED:
+                    if (toastContext != null) {
+                        // TODO: trigger appropriate action here
+                        Toast.makeText(toastContext, "Not authorized", Toast.LENGTH_SHORT).show();
+                    }
             }
             // else it must have been succesfull.
             try {

@@ -19,7 +19,7 @@ import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbSelfProfile;
 import com.pollytronics.clique.lib.tools.MyAssortedTools;
 
 /**
- * blah
+ * TODO: why is there syncing triggered when starting this activity?
  */
 public class CliqueActivity_Settings extends CliqueActivity implements AdapterView.OnItemSelectedListener{
 

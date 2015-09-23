@@ -1,15 +1,13 @@
 package com.pollytronics.clique.lib.tools;
 
 import android.util.Base64;
-import android.util.Log;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 /**
  * Created by pollywog on 9/11/15.
- * TODO: (bug, code) make the generate salt actually generate a salt instead of using a constant
- * FIXME: really
  */
 public class MyCrypto {
 
@@ -21,8 +19,9 @@ public class MyCrypto {
     private MyCrypto() {}
 
     public static String generateSaltb64() {
-        Log.i(TAG, "WARNING GENERATING A RANDOM SALT USING A CONSTANT!!!!!!");
-        return "VX4IAeia5bX/jwe15x0s5SwpfgIB5mXbaea5hVDVDjfNBMmf+HUYzqfFCQE8dqoOEK5SowWRo+IjTnrOwvH4Lg==";
+        byte[] salt = new byte[64];
+        new SecureRandom().nextBytes(salt);
+        return Base64.encodeToString(salt, Base64.NO_WRAP);
     }
 
     public static String calcKey64(String salt64, String pass) {

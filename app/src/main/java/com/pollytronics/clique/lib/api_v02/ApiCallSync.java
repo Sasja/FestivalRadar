@@ -17,7 +17,6 @@ import java.util.Set;
 
 /**
  * Created by pollywog on 9/7/15.
- * TODO: (feature) remove the auto-accept behaviour and develop a request/accept flow.
  */
 public class ApiCallSync extends CliqueApiCall {
     private static final String TAG = "ApiCallSync";

@@ -26,11 +26,8 @@ import java.util.List;
 
 
 /**
- * TODO: (syncing) fix duplicate code everywhere checking for network availability (also other files)
  * TODO: (gui) animate adding/ignoring contact (add => fly to the right, ignore => shrink or dissolve or smth)
  * TODO: (syncing) turning screen will not remember the contacts in the ping list(figure out working with Bundle savedinstance state in onCreate)
- * TODO: (syncing) some feedback when pinging is in progress (see basicsyncadapter demo for inspiration (progressbar))
- * TODO: (code) remove the duplicate code for showing toasts
  * TODO: (feature) implement the ignore button
  *
  */

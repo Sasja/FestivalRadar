@@ -17,7 +17,6 @@ import java.util.Set;
 
 /**
  * Created by pollywog on 9/7/15.
- * TODO: (bug) what if some of those methods such as setpinggetset are called twice?
  * TODO: (feature) remove the auto-accept behaviour and develop a request/accept flow.
  */
 public class ApiCallSync extends CliqueApiCall {
@@ -175,7 +174,6 @@ public class ApiCallSync extends CliqueApiCall {
             JSONObject profileJS = new JSONObject().put("nick", request.nick);
             bodyJS.put("profile",profileJS);
         }
-
         JSONArray adds = null, dels = null;
         if(request.canSeeMeAdds.size() > 0) {
             adds = new JSONArray();
@@ -197,7 +195,6 @@ public class ApiCallSync extends CliqueApiCall {
             if(dels != null) contactsJS.put("delete", dels);
             bodyJS.put("contacts", contactsJS);
         }
-
         if(request.blips.size() > 0) {
             JSONArray blipsJS = new JSONArray();
             for(Blip blip : request.blips) {
@@ -206,7 +203,6 @@ public class ApiCallSync extends CliqueApiCall {
             }
             bodyJS.put("blips", blipsJS);
         }
-
         if(request.pingSet && request.pingGet) {
             JSONObject pingJS = new JSONObject();
             if(request.pingGet) pingJS.put("get", request.pingGet);
@@ -229,8 +225,8 @@ public class ApiCallSync extends CliqueApiCall {
             JSONObject contactJS = job.getJSONObject("contacts");
             if(contactJS.has("icansee")) {
                 JSONObject icansee = contactJS.getJSONObject("icansee");
-                if(icansee.has("add"))    response.loadIcanSeeAddsFromJSON(icansee.getJSONArray("add"));
-                if(icansee.has("delete")) response.loadIcanSeeDelsFromJSON(icansee.getJSONArray("delete"));
+                if(icansee.has("add"))     response.loadIcanSeeAddsFromJSON(icansee.getJSONArray("add"));
+                if(icansee.has("delete"))  response.loadIcanSeeDelsFromJSON(icansee.getJSONArray("delete"));
             }
             if(contactJS.has("canseeme")) {
                 JSONObject canseeme = contactJS.getJSONObject("canseeme");
@@ -242,16 +238,16 @@ public class ApiCallSync extends CliqueApiCall {
         if(job.has("ping"))      response.loadPingsFromJSON(job.getJSONArray("ping"));
     }
 
-    public double getNewLastSync() { return response.newLastSync; }
-    public String getCallMessage() { return response.callMessage; }
-    public List<Pair<Blip, Long>> getNewBlips() { return response.newBlips; }
-    public String getNewNickname() { return response.newNickname; }
-    public List<Long> getNewIcanSeeAdds() { return response.iCanSeeAdds; }
-    public List<Long> getNewIcanSeeDels() { return response.iCanSeeDels; }
-    public List<Long> getNewCanSeeMeAdds() { return response.canSeeMeAdds; }
-    public List<Long> getNewCanSeeMeDels() { return response.canSeeMeDels; }
-    public List<Pair<Profile, Long>> getNewProfiles() {return response.newProfiles; }
-    public List<Pair<Long, String>> getNewPings() { return response.newPings; }
-    public boolean isAuthSuccess() { return response.authSuccess; }
-    public boolean isCallSuccess() { return response.callSuccess; }
+    public double getNewLastSync()                      { return response.newLastSync; }
+    public String getCallMessage()                      { return response.callMessage; }
+    public List<Pair<Blip, Long>> getNewBlips()         { return response.newBlips; }
+    public String getNewNickname()                      { return response.newNickname; }
+    public List<Long> getNewIcanSeeAdds()               { return response.iCanSeeAdds; }
+    public List<Long> getNewIcanSeeDels()               { return response.iCanSeeDels; }
+    public List<Long> getNewCanSeeMeAdds()              { return response.canSeeMeAdds; }
+    public List<Long> getNewCanSeeMeDels()              { return response.canSeeMeDels; }
+    public List<Pair<Profile, Long>> getNewProfiles()   { return response.newProfiles; }
+    public List<Pair<Long, String>> getNewPings()       { return response.newPings; }
+    public boolean isAuthSuccess()                      { return response.authSuccess; }
+    public boolean isCallSuccess()                      { return response.callSuccess; }
 }

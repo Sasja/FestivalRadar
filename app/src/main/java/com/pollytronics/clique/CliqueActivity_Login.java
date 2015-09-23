@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pollytronics.clique.lib.CliqueActivity;
 import com.pollytronics.clique.lib.api_v02.ApiCallGetSalts;
@@ -33,12 +34,9 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-//import android.app.DialogFragment;
-
 /**
  * TODO: (UI) when pressing "back" from login screen, shit happens
  * TODO: (code) make sure the optional message json-entry in always checked before read, as it is optional
- * TODO: (errorhandling) error handling! and all kinds of server/network error handling
  * TODO: (code) initial sync after logging in, not sure if that has to happen in this class though
  * TODO: (bug) when turning screen orientation while doInBackground, the app will crash (use SystemClock.sleep() to reproduce)
  */
@@ -187,7 +185,10 @@ public class CliqueActivity_Login extends CliqueActivity {
         private static final int AUTH_SUCCESS = 1;
         private static final int NEW_USERNAME = 2;
         private static final int WRONG_PASSWD = 3;
-        private static final int  OTHER_ERROR = 4;
+        private static final int NO_NETWORK   = 4;
+        private static final int IO_ERROR     = 5;
+        private static final int JSON_ERROR   = 6;
+
 
         private final String mUsername;
         private final String mPassword;
@@ -214,6 +215,10 @@ public class CliqueActivity_Login extends CliqueActivity {
             //    if salt    -> calculate key and validate key
             //       if key valid   -> trigger username/key storage and STOP
             //       if key invalid -> trigger wrong password hint and STOP
+            if(!MyAssortedTools.isNetworkAvailable(getApplicationContext())) {
+                Log.i(TAG, "WARNING: trying to log in but no network available");
+                return NO_NETWORK;
+            }
             try {
                 ApiCallGetSalts getSalts = new ApiCallGetSalts(mUsername);
                 getSalts.callAndParse();
@@ -233,10 +238,13 @@ public class CliqueActivity_Login extends CliqueActivity {
                     if(m != null) Log.i(TAG, "api message= " + m);
                     return WRONG_PASSWD;
                 }
-            } catch (IOException | JSONException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
+                return IO_ERROR;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return JSON_ERROR;
             }
-            return OTHER_ERROR;
         }
 
         @Override
@@ -263,10 +271,20 @@ public class CliqueActivity_Login extends CliqueActivity {
                     createNewAccountDialog.setValues(mUsername, mPassword, mUsername);
                     createNewAccountDialog.show(getSupportFragmentManager(), "createNewAccountDialog");
                     break;
-                case OTHER_ERROR:
-                    Log.i(TAG, "something went wrong while logging in... what is it? well let's find out shall we?");
+                case NO_NETWORK:
+                    Toast.makeText(getApplicationContext(), "No network", Toast.LENGTH_SHORT).show();
                     showProgress(ProgressBarState.LOGIN);
+                    break;
+                case IO_ERROR:
+                    Toast.makeText(getApplicationContext(), "Server unreachable", Toast.LENGTH_SHORT).show();
+                    showProgress(ProgressBarState.LOGIN);
+                    break;
+                case JSON_ERROR:
+                    Toast.makeText(getApplicationContext(), "API error", Toast.LENGTH_SHORT).show();
+                    showProgress(ProgressBarState.LOGIN);
+                    break;
                 default:
+                    Log.i(TAG, "something went wrong while logging in... what is it? well let's find out shall we?");
                     showProgress(ProgressBarState.LOGIN);
             }
         }
@@ -393,9 +411,11 @@ public class CliqueActivity_Login extends CliqueActivity {
         }
 
         private class CreateAccountTask extends AsyncTask<Void, Void, Integer> {
-            private final int   CREATE_SUCCESS = 1;
-            private final int CREATE_NOSUCCESS = 2;
-            private final int      OTHER_ERROR = 3;
+            private static final int    SUCCESS = 1;
+            private static final int NO_SUCCESS = 2;
+            private static final int NO_NETWORK = 3;
+            private static final int   IO_ERROR = 4;
+            private static final int JSON_ERROR = 5;
 
             private final String mUsername;
             private final String mPassword;
@@ -421,8 +441,12 @@ public class CliqueActivity_Login extends CliqueActivity {
 
             @Override
             protected Integer doInBackground(Void... params) {
+                if(!MyAssortedTools.isNetworkAvailable(parentActivity)) {
+                    Log.i(TAG, "WARNING no network while creating account");
+                    return NO_NETWORK;
+                }
                 try {
-                    //SystemClock.sleep(3000);
+                    //SystemClock.sleep(3000); // use this to reproduce screen orientation crash bug
                     cs_b64 = MyCrypto.generateSaltb64();
                     key_b64 = MyCrypto.calcKey64(cs_b64, mPassword);
                     cs2_b64 = MyCrypto.generateSaltb64();
@@ -431,24 +455,27 @@ public class CliqueActivity_Login extends CliqueActivity {
                     createAccount.callAndParse();
                     if(createAccount.getCallSuccess()) {
                         this.accountId = createAccount.getAccountId();
-                        return CREATE_SUCCESS;
+                        return SUCCESS;
                     } else {
                         Log.i(TAG, "POST ACCOUNTS returned success:false");
                         String m = createAccount.getCallMessage();
                         if(m != null) Log.i(TAG, "api message= " + m);
-                        return CREATE_NOSUCCESS;
+                        return NO_SUCCESS;
                     }
-                } catch (IOException | JSONException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
+                    return IO_ERROR;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return JSON_ERROR;
                 }
-                return OTHER_ERROR;
             }
 
             @Override
             protected void onPostExecute(Integer loginResult) {
                 mCreateAccountTask = null;
                 switch (loginResult) {
-                    case CREATE_SUCCESS:
+                    case SUCCESS:
                         parentActivity.getCliquePreferences().setAccountLogin(mUsername);
                         parentActivity.getCliquePreferences().setAccountKeyb64(key_b64);
                         parentActivity.getCliquePreferences().setAccountId(accountId);
@@ -459,9 +486,22 @@ public class CliqueActivity_Login extends CliqueActivity {
                         }
                         parentActivity.finish();
                         break;
-                    default:
+                    case NO_SUCCESS:
                         parentActivity.showProgress(ProgressBarState.LOGIN);
-                        Log.i(TAG, "api call POST accounts failed, not doing anything");
+                        Toast.makeText(parentActivity, "Rejected by server", Toast.LENGTH_SHORT).show();
+                        break;
+                    case NO_NETWORK:
+                        parentActivity.showProgress(ProgressBarState.LOGIN);
+                        Toast.makeText(parentActivity, "No network", Toast.LENGTH_SHORT).show();
+                        break;
+                    case IO_ERROR:
+                        parentActivity.showProgress(ProgressBarState.LOGIN);
+                        Toast.makeText(parentActivity, "Server unreachable", Toast.LENGTH_SHORT).show();
+                        break;
+                    case JSON_ERROR:
+                        parentActivity.showProgress(ProgressBarState.LOGIN);
+                        Toast.makeText(parentActivity, "API error", Toast.LENGTH_SHORT).show();
+                        break;
                 }
             }
 

@@ -131,7 +131,7 @@ public class CliqueSyncer {
                 List<Blip> blips = DbSelfBlip.getNew(maxDirtyCounter);
                 if(blips.size()>0) {
                     Log.i(TAG, "found n new blips to upload: " + blips.size());
-                    for(Blip b:blips) syncApiCall.addBlip(b);
+                    syncApiCall.addBlips(blips);
                 }
                 // new profile name
                 Profile newSelfProfile = DbSelfProfile.getChanged(maxDirtyCounter);
@@ -144,12 +144,12 @@ public class CliqueSyncer {
                 List<Long> addCanSeeMe = DbContact.getAdded(maxDirtyCounter);
                 if(addCanSeeMe.size() > 0) {
                     Log.i(TAG, "found n new contacts that may see me to upload: " + addCanSeeMe.size());
-                    for(Long id:addCanSeeMe) syncApiCall.addCanSeeme(id);
+                    syncApiCall.addCanSeeme(addCanSeeMe);
                 }
                 List<Long> delCanSeeMe = DbContact.getDeleted(maxDirtyCounter);
                 if(delCanSeeMe.size() > 0) {
                     Log.i(TAG, "found n contacts to remotely delete: " + delCanSeeMe.size());
-                    for(Long id:delCanSeeMe) syncApiCall.delCanSeeme(id);
+                    syncApiCall.delCanSeeme(delCanSeeMe);
                 }
                 // ping
                 if(pingGet || pingSet) syncApiCall.setPingGetSet(pingGet, pingSet);

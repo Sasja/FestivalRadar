@@ -11,7 +11,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by pollywog on 9/7/15.
@@ -19,96 +21,144 @@ import java.util.List;
  * TODO: (feature) remove the auto-accept behaviour and develop a request/accept flow.
  */
 public class ApiCallSync extends CliqueApiCall {
-    private final String TAG = "ApiCallSync";
+    private static final String TAG = "ApiCallSync";
 
-    private final String apiResourceName = "api/v2/sync";
+    private static final String apiResourceName = "api/v2/sync";
+
     private boolean fullyInitialized = false;
-    private JSONObject bodyJS = new JSONObject();
-    private List<Pair<String, String>> headers = new ArrayList<>();
 
-    private boolean callSuccess = false;
-    private boolean authSuccess = false;
-    private String callMessage = null;
-    private double newLastSync = 0;
-    private List<Pair<Blip, Long>> newBlips = new ArrayList<>();
-    private String newNickname = null;
-    private List<Long> newIcanSeeAdds = new ArrayList<>();
-    private List<Long> newIcanSeeDels = new ArrayList<>();
-    private List<Long> newCanSeeMeAdds = new ArrayList<>();
-    private List<Long> newCanSeeMeDels = new ArrayList<>();
-    private List<Pair<Profile, Long>> newProfiles = new ArrayList<>();
-    private List<Pair<Long, String>> newPings = new ArrayList<>();
+        private List<Pair<String, String>> headers = new ArrayList<>();
+
+    private static class Request {
+        private double lastSync = 0;
+        private boolean lastSyncSet = false;
+        private String nick = null;
+        private Set<Long> canSeeMeAdds = new HashSet<>();
+        private Set<Long> canSeeMeDels = new HashSet<>();
+        private List<Blip> blips = new ArrayList<>();
+        private boolean pingGet = false;
+        private boolean pingSet = false;
+    }
+
+    private Request request = new Request();
+
+    private static class Response {
+        private boolean callSuccess = false;
+        private boolean authSuccess = false;
+        private String callMessage = null;
+        private double newLastSync = 0;
+        private List<Pair<Blip, Long>> newBlips = new ArrayList<>();
+        private String newNickname = null;
+        private List<Long> iCanSeeAdds = new ArrayList<>();
+        private List<Long> iCanSeeDels = new ArrayList<>();
+        private List<Long> canSeeMeAdds = new ArrayList<>();
+        private List<Long> canSeeMeDels = new ArrayList<>();
+        private List<Pair<Profile, Long>> newProfiles = new ArrayList<>();
+        private List<Pair<Long, String>> newPings = new ArrayList<>();
+    }
+
+    private Response response = new Response();
 
     public ApiCallSync(String username, String key) throws JSONException {
-        headers.add(new Pair<String, String>("username", username));
-        headers.add(new Pair<String, String>("key", key));
+        headers.add(new Pair<>("username", username));
+        headers.add(new Pair<>("key", key));
         fullyInitialized = true;
     }
 
     public void setLastSync(double lastSync) throws JSONException {
-        bodyJS.put("lastsync", lastSync);
+        request.lastSync = lastSync;
+        request.lastSyncSet = true;
     }
 
     public void setNickname(String nick) throws JSONException {
-        JSONObject profileJS = new JSONObject().put("nick",nick);
-        bodyJS.put("profile",profileJS);
+        request.nick = nick;
     }
 
-    //TODO: (code) this is nor efficient or very elegant
-    public void addCanSeeme(long id) throws JSONException {
-        JSONObject newEntry = new JSONObject().put("id", id);
-        JSONObject contactsJS = bodyJS.has("contacts") ? bodyJS.getJSONObject("contacts") : new JSONObject();
-        JSONArray adds = contactsJS.has("add") ? contactsJS.getJSONArray("add") : new JSONArray();
-        adds.put(newEntry);
-        contactsJS.put("add", adds);
-        bodyJS.put("contacts",contactsJS);
+    public void addCanSeeme(List<Long> adds) {
+        request.canSeeMeAdds.addAll(adds);
     }
 
-    //TODO: (code) this is duplicate code
-    public void delCanSeeme(long id) throws JSONException {
-        JSONObject newEntry = new JSONObject().put("id", id);
-        JSONObject contactsJS = bodyJS.has("contacts") ? bodyJS.getJSONObject("contacts") : new JSONObject();
-        JSONArray dels = contactsJS.has("delete") ? contactsJS.getJSONArray("delete") : new JSONArray();
-        dels.put(newEntry);
-        contactsJS.put("delete", dels);
-        bodyJS.put("contacts",contactsJS);
+    public void delCanSeeme(List<Long> dels) {
+        request.canSeeMeDels.addAll(dels);
     }
 
-    //TODO: (code) this is nor efficient or very elegant
-    public void addBlip(Blip blip) throws JSONException {
-        JSONObject newEntry = new JSONObject().put("lat",blip.getLatitude()).put("lon", blip.getLongitude()).put("utc_s", blip.getUtc_s());
-        JSONArray blipsJS = bodyJS.has("blips") ? bodyJS.getJSONArray("blips") : new JSONArray();
-        blipsJS.put(newEntry);
-        bodyJS.put("blips", blipsJS);
+    public void addBlips(List<Blip> blips) {
+        request.blips.addAll(blips);
     }
 
-    public void setPingGetSet(boolean get, boolean set) throws JSONException{
-        JSONObject pingJS = new JSONObject().put("get", get).put("set", set);
-        bodyJS.put("ping", pingJS);
+    public void setPingGetSet(boolean get, boolean set) {
+        request.pingGet = get;
+        request.pingSet = set;
     }
 
     @Override
-    protected boolean isFullyInitialized() { return fullyInitialized; }
+    boolean isFullyInitialized() { return fullyInitialized; }
 
     @Override
-    protected String getHttpMethod() { return "POST"; }
+    String getHttpMethod() { return "POST"; }
 
     @Override
-    protected String getApiQueryString() { return baseUrl + apiResourceName; }
+    String getApiQueryString() { return baseUrl + apiResourceName; }
 
     @Override
-    protected List<Pair<String, String>> getExtraHeaders() { return headers; }
+    List<Pair<String, String>> getExtraHeaders() { return headers; }
 
     @Override
-    protected String getApiBodyString() { return bodyJS.toString(); }
+    String getApiBodyString() throws JSONException {
+        JSONObject bodyJS = new JSONObject();
+        if(request.lastSyncSet) bodyJS.put("lastsync", request.lastSync);
+        if(request.nick != null) {
+            JSONObject profileJS = new JSONObject().put("nick", request.nick);
+            bodyJS.put("profile",profileJS);
+        }
+
+        JSONArray adds = null, dels = null;
+        if(request.canSeeMeAdds.size() > 0) {
+            adds = new JSONArray();
+            for(Long id : request.canSeeMeAdds) {
+                JSONObject entry = new JSONObject().put("id", id);
+                adds.put(entry);
+            }
+        }
+        if(request.canSeeMeDels.size() > 0) {
+            dels = new JSONArray();
+            for(Long id : request.canSeeMeDels) {
+                JSONObject entry = new JSONObject().put("id", id);
+                dels.put(entry);
+            }
+        }
+        if((adds != null) || (dels != null)) {
+            JSONObject contactsJS = new JSONObject();
+            if(adds != null) contactsJS.put("add", adds);
+            if(dels != null) contactsJS.put("delete", dels);
+            bodyJS.put("contacts", contactsJS);
+        }
+
+        if(request.blips.size() > 0) {
+            JSONArray blipsJS = new JSONArray();
+            for(Blip blip : request.blips) {
+                JSONObject newEntry = new JSONObject().put("lat",blip.getLatitude()).put("lon", blip.getLongitude()).put("utc_s", blip.getUtc_s());
+                blipsJS.put(newEntry);
+            }
+            bodyJS.put("blips", blipsJS);
+        }
+
+        if(request.pingSet && request.pingGet) {
+            JSONObject pingJS = new JSONObject();
+            if(request.pingGet) pingJS.put("get", request.pingGet);
+            if(request.pingSet) pingJS.put("set", request.pingSet);
+            bodyJS.put("ping", pingJS);
+        }
+        return bodyJS.toString();
+    }
 
     @Override
-    protected void parseContent(String content) throws JSONException {
+    void parseContent(String content) throws JSONException {
         JSONObject job = new JSONObject(content);
-        this.authSuccess = job.getBoolean("auth");
-        this.callSuccess = job.getBoolean("success");
-        if(job.has("message")) this.callMessage = job.getString("message");
-        if(job.has("sync_time")) this.newLastSync = job.getDouble("sync_time");
+        if(job.has("auth")) response.authSuccess = job.getBoolean("auth");
+        if(job.has("success")) response.callSuccess = job.getBoolean("success");
+        if(job.has("message")) response.callMessage = job.getString("message");
+        if(job.has("sync_time")) response.newLastSync = job.getDouble("sync_time");
         // new blips?
         if(job.has("blips")) {
             JSONArray blipsJS = job.getJSONArray("blips");
@@ -117,13 +167,13 @@ public class ApiCallSync extends CliqueApiCall {
                 Log.i(TAG, "blipJS = " + blipJS.toString());
                 Blip blip = new Blip(blipJS.getDouble("lat"), blipJS.getDouble("lon"), blipJS.getDouble("utc_s"));
                 long id = blipJS.getLong("id");
-                newBlips.add(new Pair<Blip, Long>(blip, id));
+                response.newBlips.add(new Pair<Blip, Long>(blip, id));
             }
         }
         // new nickname?
         if(job.has("profile")) {
             JSONObject profileJS = job.getJSONObject("profile");
-            if(profileJS.has("nick")) this.newNickname = profileJS.getString("nick");
+            if(profileJS.has("nick")) response.newNickname = profileJS.getString("nick");
         }
 
         // new contacts?
@@ -136,7 +186,7 @@ public class ApiCallSync extends CliqueApiCall {
                     for(int i=0; i < addsJS.length(); i++) {
                         JSONObject addJS = addsJS.getJSONObject(i);
                         long id = addJS.getLong("id");
-                        newIcanSeeAdds.add(id);
+                        response.iCanSeeAdds.add(id);
                     }
                 }
                 if(icansee.has("delete")) {
@@ -144,7 +194,7 @@ public class ApiCallSync extends CliqueApiCall {
                     for(int i=0; i < delsJS.length(); i++) {
                         JSONObject delJS = delsJS.getJSONObject(i);
                         long id = delJS.getLong("id");
-                        newIcanSeeDels.add(id);
+                        response.iCanSeeDels.add(id);
                     }
                 }
             }
@@ -155,7 +205,7 @@ public class ApiCallSync extends CliqueApiCall {
                     for(int i=0; i < addsJS.length(); i++) {
                         JSONObject addJS = addsJS.getJSONObject(i);
                         long id = addJS.getLong("id");
-                        newCanSeeMeAdds.add(id);
+                        response.canSeeMeAdds.add(id);
                     }
                 }
                 if(canseeme.has("delete")) {
@@ -163,7 +213,7 @@ public class ApiCallSync extends CliqueApiCall {
                     for(int i=0; i < delsJS.length(); i++) {
                         JSONObject delJS = delsJS.getJSONObject(i);
                         long id = delJS.getLong("id");
-                        newCanSeeMeDels.add(id);
+                        response.canSeeMeDels.add(id);
                     }
                 }
             }
@@ -173,7 +223,7 @@ public class ApiCallSync extends CliqueApiCall {
                     JSONObject profileJS = contactProfilesJS.getJSONObject(i);
                     long id = profileJS.getLong("id");
                     String nick = profileJS.getString("nick");
-                    newProfiles.add(new Pair<Profile, Long>(new Profile(nick),id));
+                    response.newProfiles.add(new Pair<Profile, Long>(new Profile(nick),id));
                 }
             }
         }
@@ -185,21 +235,21 @@ public class ApiCallSync extends CliqueApiCall {
                 JSONObject pingJS = pingsJS.getJSONObject(i);
                 long id = pingJS.getLong("id");
                 String nick = pingJS.getString("nick");
-                newPings.add(new Pair<Long, String>(id, nick));
+                response.newPings.add(new Pair<Long, String>(id, nick));
             }
         }
     }
 
-    public double getNewLastSync() { return newLastSync; }
-    public String getCallMessage() { return callMessage; }
-    public List<Pair<Blip, Long>> getNewBlips() { return newBlips; }
-    public String getNewNickname() { return newNickname; }
-    public List<Long> getNewIcanSeeAdds() { return newIcanSeeAdds; }
-    public List<Long> getNewIcanSeeDels() { return newIcanSeeDels; }
-    public List<Long> getNewCanSeeMeAdds() { return newCanSeeMeAdds; }
-    public List<Long> getNewCanSeeMeDels() { return newCanSeeMeDels; }
-    public List<Pair<Profile, Long>> getNewProfiles() {return newProfiles; }
-    public List<Pair<Long, String>> getNewPings() { return newPings; }
-    public boolean isAuthSuccess() { return authSuccess; }
-    public boolean isCallSuccess() { return callSuccess; }
+    public double getNewLastSync() { return response.newLastSync; }
+    public String getCallMessage() { return response.callMessage; }
+    public List<Pair<Blip, Long>> getNewBlips() { return response.newBlips; }
+    public String getNewNickname() { return response.newNickname; }
+    public List<Long> getNewIcanSeeAdds() { return response.iCanSeeAdds; }
+    public List<Long> getNewIcanSeeDels() { return response.iCanSeeDels; }
+    public List<Long> getNewCanSeeMeAdds() { return response.canSeeMeAdds; }
+    public List<Long> getNewCanSeeMeDels() { return response.canSeeMeDels; }
+    public List<Pair<Profile, Long>> getNewProfiles() {return response.newProfiles; }
+    public List<Pair<Long, String>> getNewPings() { return response.newPings; }
+    public boolean isAuthSuccess() { return response.authSuccess; }
+    public boolean isCallSuccess() { return response.callSuccess; }
 }

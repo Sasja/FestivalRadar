@@ -67,7 +67,7 @@ abstract class CliqueApiCall {
      * Override this one if you need to post application/json data to the api
      * @return string to post to api
      */
-    String getApiBodyString() { return ""; }
+    String getApiBodyString() throws JSONException { return ""; }
 
     List<Pair<String,String>> getExtraHeaders() {return new ArrayList<Pair<String, String>>();}
 

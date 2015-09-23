@@ -3,7 +3,6 @@ package com.pollytronics.clique.lib.api_v02;
 import android.util.Log;
 import android.util.Pair;
 
-import com.pollytronics.clique.lib.CliqueApiCall;
 import com.pollytronics.clique.lib.base.Blip;
 import com.pollytronics.clique.lib.base.Profile;
 

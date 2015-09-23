@@ -2,8 +2,6 @@ package com.pollytronics.clique.lib.api_v02;
 
 import android.util.Pair;
 
-import com.pollytronics.clique.lib.CliqueApiCall;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 

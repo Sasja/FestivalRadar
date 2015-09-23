@@ -1,4 +1,4 @@
-package com.pollytronics.clique.lib;
+package com.pollytronics.clique.lib.api_v02;
 
 import android.util.Log;
 import android.util.Pair;
@@ -33,11 +33,10 @@ import java.util.List;
  * TODO: (feature) allow connecting to a testing api by changing baseUrl
  * TODO: (code) apply the builder pattern properly instead of the JavaBeans pattern (see Effective Java 2nd Edition, item 2/page14)
  * TODO: (code) consider adding log warnings to the "safety net finalizers" of the objects that need finalization (see Effective Java 2nd Edition, item 7/page29)
- * TODO: (code) this class should probably move to the api_package and become package private there. having two api packages in the app does not make a lot of sense anyway.
  *
  */
 @SuppressWarnings("FieldCanBeLocal")
-abstract public class CliqueApiCall {
+abstract class CliqueApiCall {
     //protected final String baseUrl = "https://cliqueserver.herokuapp.com/";  // piggyback heroku ssl
     //protected final String baseUrl = "https://cliquedev.herokuapp.com/";     // piggyback heroku ssl
     protected final String baseUrl = "http://192.168.44.162:1337/";
@@ -48,7 +47,7 @@ abstract public class CliqueApiCall {
      * Normally you can assure it is initialized in the only available constructor so then the implementation will be trivial
      * @return true if and only if the object is ready for callAndParse() on background of an asyncTask
      */
-    protected abstract boolean isFullyInitialized();
+    abstract boolean isFullyInitialized();
 
     //public void collectData(CliqueDb_Interface4Local db) {}
 
@@ -56,29 +55,28 @@ abstract public class CliqueApiCall {
      * must return "GET" or "POST" or any implemented other http method
      * @return "GET" or "POST" or "DELETE"
      */
-    protected abstract String getHttpMethod();
+    abstract String getHttpMethod();
 
     /**
      * must return the full url that needs to be called, use the baseUrl attribute to construct it
      * @return full url
      */
-    protected abstract String getApiQueryString();
+    abstract String getApiQueryString();
 
     /**
      * Override this one if you need to post application/json data to the api
      * @return string to post to api
      */
-    @SuppressWarnings("WeakerAccess")
-    protected String getApiBodyString() { return ""; }
+    String getApiBodyString() { return ""; }
 
-    protected List<Pair<String,String>> getExtraHeaders() {return new ArrayList<Pair<String, String>>();}
+    List<Pair<String,String>> getExtraHeaders() {return new ArrayList<Pair<String, String>>();}
 
     /**
      * this method needs to interpret the api reply and store it in the object in a way that can be retrieved later,
      * this could be just as a string or jsonobject but better parse further down to lists of Contacts or Blips and such.
      * @param content the reply of the api
      */
-    protected abstract void parseContent(String content) throws JSONException;
+    abstract void parseContent(String content) throws JSONException;
 
     final public void callAndParse() throws IOException, JSONException {
         if(!isFullyInitialized()) throw new RuntimeException(TAG + " CliqueApiCall object not fully initialized");

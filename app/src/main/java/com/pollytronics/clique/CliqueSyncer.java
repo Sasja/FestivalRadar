@@ -215,10 +215,12 @@ public class CliqueSyncer {
                     }
                     return;
                 case NOT_AUTHORIZED:
+                    Log.i(TAG, "NOT AUTHORIZED");
                     if (toastContext != null) {
                         // TODO: trigger appropriate action here
                         Toast.makeText(toastContext, "Not authorized", Toast.LENGTH_SHORT).show();
                     }
+                    return;
             }
             // else it must have been succesfull.
             try {

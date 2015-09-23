@@ -27,7 +27,7 @@ public class ApiCallSync extends CliqueApiCall {
 
     private boolean fullyInitialized = false;
 
-        private List<Pair<String, String>> headers = new ArrayList<>();
+    private List<Pair<String, String>> headers = new ArrayList<>();
 
     private static class Request {
         private double lastSync = 0;
@@ -55,6 +55,70 @@ public class ApiCallSync extends CliqueApiCall {
         private List<Long> canSeeMeDels = new ArrayList<>();
         private List<Pair<Profile, Long>> newProfiles = new ArrayList<>();
         private List<Pair<Long, String>> newPings = new ArrayList<>();
+
+        private void loadBlipsFromJSON(JSONArray blipsJS) throws JSONException {
+            for (int i = 0; i < blipsJS.length(); i++) {
+                JSONObject blipJS = blipsJS.getJSONObject(i);
+                Log.i(TAG, "blipJS = " + blipJS.toString());
+                Blip blip = new Blip(blipJS.getDouble("lat"), blipJS.getDouble("lon"), blipJS.getDouble("utc_s"));
+                long id = blipJS.getLong("id");
+                newBlips.add(new Pair<Blip, Long>(blip, id));
+            }
+        }
+
+        private void loadNickFromProfileJS(JSONObject profileJS) throws JSONException {
+            if(profileJS.has("nick")) newNickname = profileJS.getString("nick");
+        }
+
+        private void loadIcanSeeAddsFromJSON(JSONArray addsJS) throws JSONException {
+            for (int i = 0; i < addsJS.length(); i++) {
+                JSONObject entryJS = addsJS.getJSONObject(i);
+                long id = entryJS.getLong("id");
+                iCanSeeAdds.add(id);
+            }
+        }
+
+        private void loadIcanSeeDelsFromJSON(JSONArray delsJS) throws JSONException {
+            for(int i=0; i < delsJS.length(); i++) {
+                JSONObject delJS = delsJS.getJSONObject(i);
+                long id = delJS.getLong("id");
+                iCanSeeDels.add(id);
+            }
+        }
+
+        private void loadCanSeeMeAddsFromJSON(JSONArray addsJS) throws JSONException {
+            for(int i=0; i < addsJS.length(); i++) {
+                JSONObject addJS = addsJS.getJSONObject(i);
+                long id = addJS.getLong("id");
+                canSeeMeAdds.add(id);
+            }
+        }
+
+        private void loadCanSeeMeDelsFromJSON(JSONArray delsJS) throws JSONException {
+            for(int i=0; i < delsJS.length(); i++) {
+                JSONObject delJS = delsJS.getJSONObject(i);
+                long id = delJS.getLong("id");
+                canSeeMeDels.add(id);
+            }
+        }
+
+        private void loadProfilesFromJSON(JSONArray profilesJS) throws JSONException {
+            for(int i=0; i < profilesJS.length(); i++) {
+                JSONObject profileJS = profilesJS.getJSONObject(i);
+                long id = profileJS.getLong("id");
+                String nick = profileJS.getString("nick");
+                newProfiles.add(new Pair<>(new Profile(nick), id));
+            }
+        }
+
+        private void loadPingsFromJSON(JSONArray pingsJS) throws JSONException {
+            for(int i=0; i < pingsJS.length(); i++) {
+                JSONObject pingJS = pingsJS.getJSONObject(i);
+                long id = pingJS.getLong("id");
+                String nick = pingJS.getString("nick");
+                newPings.add(new Pair<>(id, nick));
+            }
+        }
     }
 
     private Response response = new Response();
@@ -155,89 +219,27 @@ public class ApiCallSync extends CliqueApiCall {
     @Override
     void parseContent(String content) throws JSONException {
         JSONObject job = new JSONObject(content);
-        if(job.has("auth")) response.authSuccess = job.getBoolean("auth");
-        if(job.has("success")) response.callSuccess = job.getBoolean("success");
-        if(job.has("message")) response.callMessage = job.getString("message");
+        if(job.has("auth"))      response.authSuccess = job.getBoolean("auth");
+        if(job.has("success"))   response.callSuccess = job.getBoolean("success");
+        if(job.has("message"))   response.callMessage = job.getString("message");
         if(job.has("sync_time")) response.newLastSync = job.getDouble("sync_time");
-        // new blips?
-        if(job.has("blips")) {
-            JSONArray blipsJS = job.getJSONArray("blips");
-            for(int i=0; i < blipsJS.length(); i++) {
-                JSONObject blipJS = blipsJS.getJSONObject(i);
-                Log.i(TAG, "blipJS = " + blipJS.toString());
-                Blip blip = new Blip(blipJS.getDouble("lat"), blipJS.getDouble("lon"), blipJS.getDouble("utc_s"));
-                long id = blipJS.getLong("id");
-                response.newBlips.add(new Pair<Blip, Long>(blip, id));
-            }
-        }
-        // new nickname?
-        if(job.has("profile")) {
-            JSONObject profileJS = job.getJSONObject("profile");
-            if(profileJS.has("nick")) response.newNickname = profileJS.getString("nick");
-        }
-
-        // new contacts?
+        if(job.has("blips"))     response.loadBlipsFromJSON(job.getJSONArray("blips"));
+        if(job.has("profile"))   response.loadNickFromProfileJS(job.getJSONObject("profile"));
         if(job.has("contacts")) {
             JSONObject contactJS = job.getJSONObject("contacts");
             if(contactJS.has("icansee")) {
                 JSONObject icansee = contactJS.getJSONObject("icansee");
-                if(icansee.has("add")) {
-                    JSONArray addsJS = icansee.getJSONArray("add");
-                    for(int i=0; i < addsJS.length(); i++) {
-                        JSONObject addJS = addsJS.getJSONObject(i);
-                        long id = addJS.getLong("id");
-                        response.iCanSeeAdds.add(id);
-                    }
-                }
-                if(icansee.has("delete")) {
-                    JSONArray delsJS = icansee.getJSONArray("delete");
-                    for(int i=0; i < delsJS.length(); i++) {
-                        JSONObject delJS = delsJS.getJSONObject(i);
-                        long id = delJS.getLong("id");
-                        response.iCanSeeDels.add(id);
-                    }
-                }
+                if(icansee.has("add"))    response.loadIcanSeeAddsFromJSON(icansee.getJSONArray("add"));
+                if(icansee.has("delete")) response.loadIcanSeeDelsFromJSON(icansee.getJSONArray("delete"));
             }
             if(contactJS.has("canseeme")) {
                 JSONObject canseeme = contactJS.getJSONObject("canseeme");
-                if(canseeme.has("add")) {
-                    JSONArray addsJS = canseeme.getJSONArray("add");
-                    for(int i=0; i < addsJS.length(); i++) {
-                        JSONObject addJS = addsJS.getJSONObject(i);
-                        long id = addJS.getLong("id");
-                        response.canSeeMeAdds.add(id);
-                    }
-                }
-                if(canseeme.has("delete")) {
-                    JSONArray delsJS = canseeme.getJSONArray("delete");
-                    for(int i=0; i < delsJS.length(); i++) {
-                        JSONObject delJS = delsJS.getJSONObject(i);
-                        long id = delJS.getLong("id");
-                        response.canSeeMeDels.add(id);
-                    }
-                }
+                if(canseeme.has("add"))    response.loadCanSeeMeAddsFromJSON(canseeme.getJSONArray("add"));
+                if(canseeme.has("delete")) response.loadCanSeeMeDelsFromJSON(canseeme.getJSONArray("delete"));
             }
-            if(contactJS.has("profiles")) {
-                JSONArray contactProfilesJS = contactJS.getJSONArray("profiles");
-                for(int i=0; i < contactProfilesJS.length(); i++) {
-                    JSONObject profileJS = contactProfilesJS.getJSONObject(i);
-                    long id = profileJS.getLong("id");
-                    String nick = profileJS.getString("nick");
-                    response.newProfiles.add(new Pair<Profile, Long>(new Profile(nick),id));
-                }
-            }
+            if(contactJS.has("profiles"))  response.loadProfilesFromJSON(contactJS.getJSONArray("profiles"));
         }
-
-        // new pings?
-        if(job.has("ping")) {
-            JSONArray pingsJS = job.getJSONArray("ping");
-            for(int i=0; i < pingsJS.length(); i++) {
-                JSONObject pingJS = pingsJS.getJSONObject(i);
-                long id = pingJS.getLong("id");
-                String nick = pingJS.getString("nick");
-                response.newPings.add(new Pair<Long, String>(id, nick));
-            }
-        }
+        if(job.has("ping"))      response.loadPingsFromJSON(job.getJSONArray("ping"));
     }
 
     public double getNewLastSync() { return response.newLastSync; }

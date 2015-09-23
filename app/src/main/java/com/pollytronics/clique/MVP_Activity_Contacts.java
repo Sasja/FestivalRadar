@@ -9,13 +9,11 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.pollytronics.clique.lib.CliqueActivity_MyViewPagerAct;
 import com.pollytronics.clique.lib.base.Contact;
 import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
-import com.pollytronics.clique.lib.tools.MyAssortedTools;
 
 /**
  * TODO: (syncing) Study https://developer.android.com/training/sync-adapters/index.html and consider implementing such a thing
@@ -49,14 +47,8 @@ public class MVP_Activity_Contacts extends CliqueActivity_MyViewPagerAct {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_sync_contacts) {
-            if (MyAssortedTools.isNetworkAvailable(this)) {
-                Log.i(TAG, "syncing contact data");
-                CliqueSyncer.getInstance(this).poke();
-            } else {
-                Log.i(TAG, "cannot sync contact data: no network");
-                Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.toast_no_network), Toast.LENGTH_SHORT);
-                toast.show();
-            }
+            Log.i(TAG, "syncing contact data");
+            CliqueSyncer.getInstance(this).poke(this);
             return true;
         }
         return super.onOptionsItemSelected(item);

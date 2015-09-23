@@ -20,7 +20,6 @@ import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbContact;
 import com.pollytronics.clique.lib.database.cliqueSQLite.local.DbPing;
 import com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbProfile;
-import com.pollytronics.clique.lib.tools.MyAssortedTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,22 +52,16 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         pingButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (MyAssortedTools.isNetworkAvailable(getActivity())) {
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "pinging...", Toast.LENGTH_SHORT);
-                    toast.show();
-                    Log.i(TAG, "starting ping");
-                    try {
-                        com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbPing.flush();
-                    } catch (CliqueDbException e) {
-                        e.printStackTrace();
-                    }
-                    handler.removeCallbacks(pingLoop);  // make sure there's not two running
-                    pingLoop = new PingLoop();
-                    pingLoop.run();
-                } else {
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "no network", Toast.LENGTH_SHORT);
-                    toast.show();
+                Toast.makeText(getActivity().getApplicationContext(), "pinging...", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "starting ping");
+                try {
+                    com.pollytronics.clique.lib.database.cliqueSQLite.sync.DbPing.flush();
+                } catch (CliqueDbException e) {
+                    e.printStackTrace();
                 }
+                handler.removeCallbacks(pingLoop);  // make sure there's not two running
+                pingLoop = new PingLoop();
+                pingLoop.run();
             }
         });
         return view;
@@ -138,10 +131,10 @@ public class Fragment_Contacts_Ping extends MVP_Fragment_Contacts {
         public void run() {
             Log.i(TAG, "calling pingLoopHandler, remaining = " + remaining);
             if(remaining == NLOOPS){
-                CliqueSyncer.getInstance(getActivity()).pokePingGetSet(true, true);
+                CliqueSyncer.getInstance(getActivity()).pokePingGetSet(getActivity(), true, true);
             }
             else {
-                CliqueSyncer.getInstance(getActivity()).pokePingGetSet(true, false);
+                CliqueSyncer.getInstance(getActivity()).pokePingGetSet(getActivity(), true, false);
             }
             if (--remaining > 0) handler.postDelayed(pingLoop, PERIOD_MS);
         }

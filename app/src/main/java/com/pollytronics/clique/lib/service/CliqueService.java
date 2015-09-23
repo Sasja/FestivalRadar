@@ -13,6 +13,7 @@ import com.pollytronics.clique.CliqueActivity_Main;
 import com.pollytronics.clique.R;
 import com.pollytronics.clique.SubService_Cloud_2;
 import com.pollytronics.clique.SubService_Localisation;
+import com.pollytronics.clique.lib.CliqueActivity;
 import com.pollytronics.clique.lib.CliqueActivity_Interface4CliqueService;
 
 /**
@@ -173,5 +174,9 @@ public class CliqueService extends Service implements CliqueService_Interface4Su
         public CliqueService getCliqueService(){
             return CliqueService.this;
         }
+    }
+
+    public CliqueActivity getRegisteredCliqueActivity() {
+        return (CliqueActivity) registeredCliqueActivity;
     }
 }

@@ -6,9 +6,13 @@ import android.util.Log;
 import com.pollytronics.clique.lib.base.Profile;
 import com.pollytronics.clique.lib.database.CliqueDbException;
 import com.pollytronics.clique.lib.database.cliqueSQLite.BaseORM;
+import com.pollytronics.clique.lib.database.cliqueSQLite.DbStructure;
 import com.pollytronics.clique.lib.database.cliqueSQLite.DbStructure.ProfileEntry;
 import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.CliqueDbDelete;
 import com.pollytronics.clique.lib.database.cliqueSQLite.SQLmethodWrappers.CliqueDbQuery;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by pollywog on 9/9/15.
@@ -44,6 +48,25 @@ public class DbProfile extends BaseORM {
         query.setSelection(ProfileEntry.COLUMN_NAME_ID + " = " + Long.toString(id), null);
         query.execute();
         return profile[0];
+    }
+
+    public static Map<Long, Profile> getAll() throws CliqueDbException {
+        final Map<Long, Profile> allProfiles = new HashMap<>();
+        CliqueDbQuery query = new CliqueDbQuery() {
+            @Override
+            public void parseCursor(Cursor c) throws CliqueDbException {
+                for(int i = 0; i < c.getCount(); i++) {
+                    c.moveToPosition(i);
+                    Long id = c.getLong(c.getColumnIndexOrThrow(ProfileEntry.COLUMN_NAME_ID));
+                    String name = c.getString(c.getColumnIndexOrThrow(ProfileEntry.COLUMN_NAME_NICK));
+                    allProfiles.put(id, new Profile(name));
+                }
+            }
+        };
+        query.setTable(ProfileEntry.TABLE_NAME);
+        query.setProjection(new String[]{DbStructure.PingEntry.COLUMN_NAME_ID, ProfileEntry.COLUMN_NAME_NICK});
+        query.execute();
+        return allProfiles;
     }
 
     public static void remove(long id) throws CliqueDbException {

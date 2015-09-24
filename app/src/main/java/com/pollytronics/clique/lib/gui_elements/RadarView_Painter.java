@@ -140,7 +140,7 @@ class RadarView_Painter {
 
             paint.setStrokeWidth(3);
             paint.setStyle(Paint.Style.STROKE);
-            canvas.drawCircle(width / 2, height / 2, radius, paint);
+            canvas.drawCircle(width / 2, height / 2, radius, paint);    // TODO: (optimize) this method call eats over 40% of cpu time of the main activity!
 
             paint.setStrokeWidth(1);
             paint.setStyle(Paint.Style.FILL);

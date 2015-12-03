@@ -25,3 +25,7 @@ android:
     # - sys-img-x86-android-17
 
 script: "./gradlew build"
+
+notifications:
+  webhooks:
+    - https://buildtimetrend.herokuapp.com/travis

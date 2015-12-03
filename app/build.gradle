@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "20.0.0"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.pollytronics.clique"      // if this is changed google play will consider it a new app
